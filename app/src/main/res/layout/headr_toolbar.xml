@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="#BC0F0F"
+    android:orientation="vertical">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="స్వామి శరణం అయ్యప్ప"
+        android:textColor="#fff"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:textStyle="bold"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="(www.ayyappatelugu.com)"
+        android:textColor="#fff"
+        android:gravity="center"
+        android:textSize="16dp"
+        android:layout_marginBottom="10dp"
+        android:textStyle="bold"/>
+
+</LinearLayout>

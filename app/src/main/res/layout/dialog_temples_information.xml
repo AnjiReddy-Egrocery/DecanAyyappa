@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Title with a close icon on the right side -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_dialog_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="దేవాలయాల సమాచారం"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingEnd="8dp" />
+
+        <!-- Close icon on the right side -->
+        <ImageButton
+            android:id="@+id/btn_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:contentDescription="Close"
+            android:background="?android:attr/selectableItemBackgroundBorderless" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="అయ్యప్ప స్వామి భక్తుల కోసం భారతదేశం &amp; ప్రపంచవ్యాప్తంగా అనేక ఆలయాలు ఉన్నాయి. ఈ ఆలయాలు భక్తులకు ప్రత్యేకమైన ఆధ్యాత్మిక అనుభూతిని అందిస్తాయి."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ప్రపంచ ప్రసిద్ధ అయ్యప్ప ఆలయం."
+            android:textSize="16dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:textStyle="bold"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ప్రతి సంవత్సరం కోటి మందికి పైగా భక్తులు సందర్శిస్తారు."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="మండల పూజ, మకరజ్యోతి ప్రత్యేక ఆకర్షణలు."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="పంపా నది వద్ద పవిత్ర స్నానం."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="శబరిమల ఆలయానికి పూర్వోక్తంగా భావించే ప్రదేశం."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="భక్తులు శబరిమల యాత్రకు ముందు ఈ ఆలయాన్ని దర్శిస్తారు."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

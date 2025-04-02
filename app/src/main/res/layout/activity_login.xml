@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="@drawable/bg_logo"
+    tools:context=".User.LoginActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/layout_profile"
+            android:orientation="vertical"
+            android:background="@drawable/background_layout"
+            android:backgroundTint="#BC0F0F">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="USER LOGIN"
+                android:textColor="#FFF"
+                android:textSize="24dp"
+                android:layout_marginTop="50dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_profile"
+            android:elevation="4dp"
+            android:padding="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Please Login to access all our Features"
+                android:textSize="17dp"
+                android:textColor="#fff"
+                android:textStyle="bold"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/edt_email"
+                android:inputType="textEmailAddress"
+                android:hint="Mobile No / Email"
+                android:layout_marginTop="16dp"
+                android:drawablePadding="10dp"
+                android:paddingLeft="10dp"
+                android:textColor="#000"
+                android:textColorHint="#000"
+                android:background="@drawable/editext_border"
+                android:drawableLeft="@drawable/baseline_perm_identity_24"/>
+
+            <RelativeLayout
+                android:id="@+id/laypass"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="16dp">
+
+                <EditText
+                    android:id="@+id/edt_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/editext_border"
+                    android:drawableLeft="@drawable/baseline_lock_24"
+                    android:drawablePadding="10dp"
+                    android:hint="Password"
+                    android:inputType="textPassword"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="15dp"
+                    android:textColor="#000"
+                    android:textColorHint="#000"/>
+
+                <ImageView
+                    android:id="@+id/show_pass_btn"
+                    android:layout_width="35dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="8dp"
+                    android:onClick="ShowHidePass"
+                    android:padding="5dp"
+                    android:src="@drawable/visiablity" />
+            </RelativeLayout>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="16dp"
+                android:text="Login"
+                android:id="@+id/but_login"
+                android:textColor="#FFF"
+                android:textSize="18dp"
+                android:backgroundTint="#BC0F0F"
+                android:textStyle="normal"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:weightSum="2"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="16dp"
+                    android:textColor="#000"
+                    android:layout_weight="1"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Forgot Password?"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    android:layout_weight="1"
+                    android:textColor="#FFF"
+                    android:id="@+id/txt_fwd"/>
+
+            </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="New User ? Can Register Here....."
+                android:textSize="16dp"
+                android:layout_marginTop="20dp"
+                android:textColor="#FFF"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:background="@drawable/text_background"
+                android:layout_weight="1"
+                android:id="@+id/txt_create"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/user_profile_background"
+        android:elevation="4dp"
+        android:layout_marginTop="-50dp"/>
+
+</RelativeLayout>

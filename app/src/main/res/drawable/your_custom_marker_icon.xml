@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- The marker background -->
+    <item android:drawable="@android:color/holo_blue_light" />
+
+    <!-- The marker foreground (icon) -->
+    <item android:drawable="@drawable/baseline_add_location_24" />
+</layer-list>

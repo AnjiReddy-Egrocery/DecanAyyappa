@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/bg_logo"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="75dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="30dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginRight="14dp"
+            android:layout_marginLeft="14dp">
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="14dp"
+                android:layout_marginLeft="18dp"
+                android:layout_marginRight="18dp"
+                android:layout_marginBottom="10dp"
+                card_view:cardElevation="5dp"
+                card_view:cardCornerRadius="15dp">
+            <ImageView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/img"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/app_name"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/txt"
+                android:textSize="22sp"
+                android:text="Title"
+                android:gravity="center"
+                android:layout_marginTop="12dp"
+                android:layout_below="@+id/img"
+                android:textColor="#fff"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/txt_add"
+                    android:textSize="18dp"
+                    android:text="Title"
+                    android:textColor="#fff"
+                    android:layout_marginTop="14dp"
+                    android:layout_below="@+id/img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="normal"/>
+                <TextView
+                    android:textSize="18dp"
+                    android:text="  రోజులు  "
+                    android:layout_marginTop="14dp"
+                    android:layout_below="@+id/img"
+                    android:textColor="#fff"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="normal"/>
+                <TextView
+                    android:textSize="18dp"
+                    android:text=" /    "
+                    android:layout_marginTop="14dp"
+                    android:layout_below="@+id/img"
+                    android:textColor="#fff"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="normal"/>
+                <TextView
+                    android:textSize="18dp"
+                    android:text="12"
+                    android:id="@+id/txt_details"
+                    android:layout_marginTop="14dp"
+                    android:layout_below="@+id/img"
+                    android:textColor="#fff"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="normal"/>
+                <TextView
+                    android:textSize="18dp"
+                    android:text="  భక్తులు "
+                    android:layout_marginTop="14dp"
+                    android:textColor="#fff"
+                    android:layout_below="@+id/img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="normal"/>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:textSize="18dp"
+                    android:text="రూ."
+                    android:layout_marginTop="14dp"
+                    android:layout_marginBottom="14dp"
+                    android:layout_below="@+id/img"
+                    android:textColor="#fff"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="normal"/>
+                <TextView
+                    android:textSize="18dp"
+                    android:id="@+id/txt_amount"
+                    android:text="   hhhhhhhhh "
+                    android:layout_marginTop="14dp"
+                    android:layout_marginBottom="14dp"
+                    android:layout_below="@+id/img"
+                    android:textColor="#fff"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="normal"/>
+                <TextView
+                    android:textSize="18dp"
+                    android:text=" /- "
+                    android:textColor="#fff"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginBottom="14dp"
+                    android:layout_below="@+id/img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="normal"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enquiry About Yathra"
+            android:textColor="#fff"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:layout_marginTop="14dp"
+            android:layout_marginLeft="14dp"
+            android:layout_marginRight="14dp"
+            android:gravity="center"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="14dp"
+            android:layout_marginRight="14dp"
+            android:layout_marginBottom="50dp"
+            android:background="@drawable/enquiry_background"
+            android:layout_marginTop="12dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Provide Your Details"
+                android:gravity="center"
+                android:textSize="20dp"
+                android:layout_marginTop="16dp"
+                android:textColor="#2B812F"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginRight="12dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="10dp">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:hint="Enter the First Name"
+                    android:paddingLeft="10dp"
+                    android:inputType="textAutoComplete"
+                    android:background="@drawable/enq_edt_border"/>
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="12dp"
+                    android:hint="Enter the Lat Name"
+                    android:paddingLeft="10dp"
+                    android:inputType="textAutoComplete"
+                    android:background="@drawable/enq_edt_border"/>
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="12dp"
+                    android:hint="Enter the Email"
+                    android:paddingLeft="10dp"
+                    android:inputType="textAutoComplete"
+                    android:background="@drawable/enq_edt_border"/>
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="12dp"
+                    android:hint="Enter the Mobile Number"
+                    android:paddingLeft="10dp"
+                    android:inputType="textAutoComplete"
+                    android:background="@drawable/enq_edt_border"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:layout_marginTop="12dp"
+                    android:hint="Enter the Message"
+                    android:paddingLeft="10dp"
+                    android:inputType="textAutoComplete"
+                    android:background="@drawable/enq_edt_border"/>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="12dp"
+                    android:text="Submit"
+                    android:textColor="#FFF"
+                    android:textSize="18dp"
+                    android:layout_marginBottom="20dp"
+                    android:backgroundTint="#43A5B1"
+                    android:textStyle="normal"/>
+
+            </LinearLayout>
+        </LinearLayout>
+        </LinearLayout>
+
+
+
+    </ScrollView>
+
+
+</LinearLayout>
+
+
+
+
+

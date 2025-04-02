@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/bg_logo"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="అంతర్యామి"
+        android:layout_marginTop="14dp"
+        android:textColor="#fff"
+        android:textSize="24dp"
+        android:gravity="center_horizontal"
+        android:id="@+id/txt_name"
+        android:textStyle="bold"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/img"
+                android:layout_width="150dp"
+                android:layout_height="250dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="16dp"
+                android:adjustViewBounds="true"
+                android:background="@drawable/rounded_image"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ayyapa_anadanam"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="8dp"
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="8dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+
+
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text=""
+                            android:textColor="#fff"
+                            android:textSize="16dp"
+                            android:autoLink="web"
+                            android:id="@+id/txt_discription"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="2"
+                            android:layout_marginTop="8dp">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Price : "
+                                android:textStyle="bold"
+                                android:layout_weight="1"
+                                android:textColor="#4CAF50"
+                                android:textSize="20dp"/>
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="30dp"
+                                android:layout_marginLeft="-50dp"
+                                android:src="@drawable/baseline_currency_rupee_24"/>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="50"
+                                android:id="@+id/txt_price"
+                                android:layout_weight="1"
+                                android:textSize="20dp"
+                                android:textColor="#ED1212"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="2"
+                            android:layout_marginBottom="14dp"
+                            android:layout_marginTop="8dp">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Qty: "
+                                android:gravity="center_vertical"
+                                android:layout_weight="1"
+                                android:layout_marginTop="10dp"
+                                android:textColor="#fff"
+                                android:textSize="18dp"/>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:weightSum="3"
+                                android:layout_marginLeft="-50dp"
+                                android:layout_weight="1" >
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="50dp"
+                                    android:text="-"
+                                    android:id="@+id/txt_minus"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/txt_qty_background"
+                                    android:gravity="center"
+                                    android:textSize="24dp"
+                                    android:textColor="#000"/>
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="50dp"
+                                    android:text="0"
+                                    android:background="@drawable/quantity_bg"
+                                    android:id="@+id/txt_qty"
+                                    android:gravity="center"
+                                    android:layout_weight="1"
+                                    android:textSize="18dp"
+                                    android:textColor="#fff"/>
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="50dp"
+                                    android:id="@+id/txt_plus"
+                                    android:text="+"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/txt_qty_background"
+                                    android:gravity="center"
+                                    android:textSize="24dp"
+                                    android:textColor="#000"/>
+
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+
+
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+
+
+
+
+
+
+
+
+
+</LinearLayout>
+
+
+
+
+

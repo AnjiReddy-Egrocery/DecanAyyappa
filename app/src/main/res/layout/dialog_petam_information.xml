@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Title with a close icon on the right side -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_dialog_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="పూజా పీటం సమాచారం"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingEnd="8dp" />
+
+        <!-- Close icon on the right side -->
+        <ImageButton
+            android:id="@+id/btn_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:contentDescription="Close"
+            android:background="?android:attr/selectableItemBackgroundBorderless" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="అయ్యప్ప స్వామికి లేదా ఇతర దేవతలకు పూజ నిర్వహించేటప్పుడు పూజా పీటం (పూజా మండపం) ప్రత్యేకంగా అలంకరించాలి. ఇది భక్తి, పవిత్రత, మరియు సౌందర్యానికి ప్రతీకంగా ఉంటుంది. ఇక్కడ పూజా పీటం అలంకరణకు సంబంధించిన ముఖ్యమైన వివరాలు తెలియజేస్తున్నాము."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="పూజా పీటం ఎంపిక"
+            android:textSize="16dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:textStyle="bold"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="పూజా పీటం చక్కటి కట్టుదిట్టమైన తాటి లేదా మరకత కలిగిన (స్వచ్ఛమైన) కట్టతో ఉండాలి."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="మకరమాస పూజల కోసం చందన, తులసి, లేదా రాగి ధాతువులతో పీటం తయారు చేయడం శుభప్రదం."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="మాల ధరించిన తరువాత భక్తులు పూనకోటి అయ్యప్ప స్వామిని ఆరాధించాలి."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="గృహంలోనూ, గుడిలోనూ శుభ్రమైన ప్రదేశంలో, తూర్పు దిశలో పూజా పీటం ఉంచాలి."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="పీటంపై స్వామి విగ్రహం, పటాలు, లేదా కలశం ఉంచవచ్చు."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

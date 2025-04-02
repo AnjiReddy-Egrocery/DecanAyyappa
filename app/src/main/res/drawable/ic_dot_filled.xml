@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#EF1010" /> <!-- The color of the filled dot -->
+    <size
+        android:width="16dp"
+        android:height="16dp" />
+    <corners android:radius="8dp" /> <!-- Makes it circular -->
+</shape>

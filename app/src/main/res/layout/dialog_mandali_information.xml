@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Title with a close icon on the right side -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_dialog_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text=" అయ్యప్ప భజన మండలి  సమాచారం"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingEnd="8dp" />
+
+        <!-- Close icon on the right side -->
+        <ImageButton
+            android:id="@+id/btn_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:contentDescription="Close"
+            android:background="?android:attr/selectableItemBackgroundBorderless" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="అయ్యప్ప భజన మండలి అనేది స్వామి అయ్యప్ప భక్తుల కోసం ఏర్పాటు చేసిన భక్తి మండలి. ఈ మండలిలో అయ్యప్ప భక్తులు కలిసి భజనలు చేస్తారు, భక్తి కార్యక్రమాలు నిర్వహిస్తారు, మకరజ్యోతి మహోత్సవానికి పయనం ఏర్పాట్లు చేస్తారు."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="భజన మండలి ముఖ్య ఉద్దేశ్యాలు"
+            android:textSize="16dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:textStyle="bold"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="అయ్యప్ప భక్తులకు సామూహిక భజన కార్యక్రమాలు"
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="అయ్యప్ప మాలధారణ, దీక్ష విధానాలు"
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="సబరిమల యాత్ర ఏర్పాట్లు"
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="పూజా కార్యక్రమాలు"
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="అన్నదానం &amp; సామాజిక సేవా కార్యక్రమాలు"
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

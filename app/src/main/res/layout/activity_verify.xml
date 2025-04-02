@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="@drawable/bg_logo"
+    tools:context=".User.LoginActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="30dp"
+       >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:id="@+id/layout_profile"
+            android:orientation="vertical"
+            android:background="@drawable/background_layout"
+            android:backgroundTint="#BC0F0F">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Mobile Verification"
+                android:textSize="24dp"
+                android:gravity="center"
+                android:textColor="#FFF"
+                android:layout_marginTop="50dp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_profile"
+            android:elevation="4dp"
+            android:padding="20dp"
+            android:orientation="vertical">
+
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Thank You, Registered Successfully..."
+                android:gravity="center"
+                android:textColor="#fff"
+                android:textSize="17dp"
+                android:textStyle="bold"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="16dp"
+                android:text="Continue With Login"
+                android:id="@+id/but_verify"
+                android:textColor="#FFF"
+                android:textSize="18dp"
+                android:backgroundTint="#BC0F0F"
+                android:textStyle="normal"/>
+
+        </LinearLayout>
+    </RelativeLayout>
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/user_profile_background"
+        android:elevation="4dp"
+        android:layout_marginTop="-30dp"/>
+</RelativeLayout>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Title with a close icon on the right side -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_dialog_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="అయ్యప్ప దేవాలయాల సమాచారం"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingEnd="8dp" />
+
+        <!-- Close icon on the right side -->
+        <ImageButton
+            android:id="@+id/btn_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:contentDescription="Close"
+            android:background="?android:attr/selectableItemBackgroundBorderless" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="అయ్యప్ప స్వామి భక్తుల కోసం ప్రపంచవ్యాప్తంగా అనేక ప్రసిద్ధ దేవాలయాలు ఉన్నాయి. ముఖ్యంగా దక్షిణ భారతదేశంలో, అయ్యప్ప స్వామి పూజలు మరియు దీక్షలు విరివిగా నిర్వహించబడతాయి."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="శబరిమల అయ్యప్ప స్వామి ఆలయం"
+            android:textSize="16dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:textStyle="bold"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ఇది అయ్యప్ప స్వామికి అంకితమైన అత్యంత ప్రాముఖ్యమైన ఆలయం."           android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ప్రతి సంవత్సరం మాండలిక పూజల సమయంలో కోట్లాది మంది భక్తులు ఇక్కడ దర్శనం చేస్తారు."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="41 రోజుల దీక్ష అనంతరం భక్తులు ఇక్కడ మకరజ్యోతి దర్శనం చేసుకోవడం విశేషం."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="అయ్యప్ప స్వామిని ధర్మశాస్త్రగా కొలిచే ప్రదేశం."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ఇక్కడ స్వామివారి ప్రతిమ తురుష్ణ ద్రవ్యాలతో తయారుచేయబడి, స్వామివారు భక్తులకు వైద్య శక్తిని ప్రసాదిస్తారని నమ్మకం."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

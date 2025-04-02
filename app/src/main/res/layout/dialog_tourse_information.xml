@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Title with a close icon on the right side -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_dialog_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="  అయ్యప్ప యాత్రలు సమాచారం"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingEnd="8dp" />
+
+        <!-- Close icon on the right side -->
+        <ImageButton
+            android:id="@+id/btn_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:contentDescription="Close"
+            android:background="?android:attr/selectableItemBackgroundBorderless" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="అయ్యప్ప యాత్ర అనేది భక్తుల ఆధ్యాత్మిక శ్రమయాత్ర, ముఖ్యంగా సబరిమల అయ్యప్ప ఆలయం కు వెళ్లే యాత్రగా ప్రసిద్ధి చెందింది. ఈ యాత్ర మకరజ్యోతి దర్శనం, మండల కాలం (నవంబర్ నుండి జనవరి వరకు) మరియు ఆచార సంప్రదాయాలతో ప్రత్యేకతను కలిగి ఉంది."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="యాత్ర ప్రారంభం"
+            android:textSize="16dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:textStyle="bold"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="భక్తులు సాధారణంగా కార్తీక, మార్గశిర మాసంలో అయ్యప్ప మాలధరిస్తారు."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="దీక్షాకాలంలో శుద్ధి, బ్రహ్మచర్యం, నిరాహార దీక్షలు, భక్తి పాటలు, అన్నదానం వంటి నియమాలు పాటించాలి."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="కొత్త భక్తులకు గురుస్వామి (అనుభవం కలిగిన భక్తుడు) మార్గదర్శకత్వం అందిస్తారు."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ఇది అత్యంత సాధారణ మార్గం, ఎక్కువ మంది భక్తులు ఈ మార్గాన్ని అనుసరిస్తారు."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="భక్తులు ఈ మార్గంలో పాదయాత్ర చేస్తూ భక్తి గీతాలు ఆలపిస్తూ ప్రయాణిస్తారు."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

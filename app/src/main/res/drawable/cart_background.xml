@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#FFFFFF"/>  <!-- White circle background -->
+    <size
+        android:width="50dp"
+        android:height="50dp"/>
+    <corners android:radius="50dp"/>  <!-- Circular shape -->
+    <stroke
+        android:width="2dp"
+        android:color="#4A90E2"/>  <!-- Blue border for cart -->
+</shape>

@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/bg_logo"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@drawable/bg_logo"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:id="@+id/txt_name"
+                    android:text="  రిత్విక డెకరేటర్ "
+                    android:textStyle="bold"
+                    android:textColor="#fff"
+                    android:textSize="18dp"/>
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+
+                        <ImageView
+                            android:id="@+id/img"
+                            android:layout_width="250dp"
+                            android:layout_height="250dp"
+                            android:adjustViewBounds="true"
+                            android:scaleType="centerCrop"
+                            android:layout_margin="10dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/rounded_image"
+                            android:clipToOutline="true"/>
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            >
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:id="@+id/txt_fname"
+                                android:text=" రిత్విక డెకరేటర్ "
+                                android:textStyle="normal"
+                                android:textColor="#FFF"
+                                android:layout_marginTop="12dp"
+                                android:textSize="16dp"/>
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:id="@+id/txt_city"
+                                android:layout_marginTop="12dp"
+                                android:text="  రిత్విక డెకరేటర్ "
+                                android:textStyle="normal"
+                                android:textColor="#FFF"
+                                android:textSize="18dp"
+                                android:layout_marginBottom="12dp"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginTop="16dp">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="3"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="ప్రత్యేకతలు "
+                                    android:layout_weight="1"
+                                    android:textColor="#fff"
+                                    android:textSize="18dp"/>
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text=":"
+                                    android:layout_weight="1"
+                                    android:textColor="#fff"
+                                    android:textSize="18dp"/>
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text=" పీట అలంకరణ   "
+                                    android:id="@+id/txt_spec"
+                                    android:layout_weight="1"
+                                    android:textColor="#fff"
+                                    android:textSize="18dp"/>
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="3"
+                                android:layout_marginTop="12dp"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="గురుస్వామి పేరు"
+                                    android:layout_weight="1"
+                                    android:textColor="#fff"
+                                    android:textSize="18dp"/>
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text=":"
+                                    android:layout_weight="1"
+                                    android:textColor="#fff"
+                                    android:textSize="18dp"/>
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="వాసు పప్లా"
+                                    android:id="@+id/fname"
+                                    android:layout_weight="1"
+                                    android:textColor="#fff"
+                                    android:textSize="18dp"/>
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="3"
+                                android:layout_marginTop="12dp"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="గ్రామం"
+                                    android:layout_weight="1"
+                                    android:textColor="#fff"
+                                    android:textSize="18dp"/>
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text=":"
+                                    android:layout_weight="1"
+                                    android:textColor="#fff"
+                                    android:textSize="18dp"/>
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="మల్లాపూర్"
+                                    android:id="@+id/txt_village"
+                                    android:layout_weight="1"
+                                    android:textColor="#fff"
+                                    android:textSize="18dp"/>
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="3"
+                                android:layout_marginTop="12dp"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="ఫోను నెంబర్"
+                                    android:layout_weight="1"
+                                    android:textColor="#fff"
+                                    android:textSize="18dp"/>
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text=":"
+                                    android:layout_weight="1"
+                                    android:textColor="#fff"
+                                    android:textSize="18dp"/>
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="9704822801"
+                                    android:layout_weight="1"
+                                    android:textColor="#fff"
+                                    android:id="@+id/number"
+                                    android:textSize="18dp"/>
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="3"
+                                android:layout_marginTop="12dp"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="ఈమెయిల"
+                                    android:layout_weight="1"
+                                    android:textColor="#fff"
+                                    android:textSize="18dp"/>
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text=":"
+                                    android:layout_weight="1"
+                                    android:textColor="#fff"
+                                    android:textSize="18dp"/>
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text=""
+                                    android:id="@+id/txt_email"
+                                    android:layout_weight="1"
+                                    android:textColor="#fff"
+                                    android:textSize="18dp"/>
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="వివరణ"
+                                android:textSize="24dp"
+                                android:textColor="#fff"
+                                android:textStyle="bold"/>
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp"
+                                android:textStyle="normal"
+                                android:id="@+id/txt_description"
+                                android:textColor="#fff"
+                                android:textSize="18dp"
+                                android:text="స్వామి శరణం అయ్యప్ప"/>
+
+                        </LinearLayout>
+                    </LinearLayout>
+                </ScrollView>
+            </LinearLayout>
+        </LinearLayout>
+</LinearLayout>
+
+
+
+
+

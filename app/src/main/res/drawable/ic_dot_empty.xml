@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <size
+        android:width="16dp"
+        android:height="16dp" />
+    <solid android:color="#FFFFFF" /> <!-- The color of the inside of the dot (empty) -->
+    <stroke
+        android:width="0dp"
+        android:color="#000000" /> <!-- The outline color of the dot -->
+    <corners android:radius="8dp" /> <!-- Makes it circular -->
+</shape>
