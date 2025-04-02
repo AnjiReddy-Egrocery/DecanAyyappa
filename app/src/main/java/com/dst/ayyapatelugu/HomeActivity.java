@@ -156,6 +156,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     LinearLayout layoutSharanughosha,layoutNityaPooja;
 
+    String Hi;
+
 
 
     @Override
