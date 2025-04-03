@@ -22,8 +22,8 @@
         android:orientation="vertical">
 
           <ImageView
-              android:layout_width="100dp"
-              android:layout_height="60dp"
+              android:layout_width="150dp"
+              android:layout_height="100dp"
               android:id="@+id/img_detail"
               android:src="@drawable/ayyappaphome"
               android:adjustViewBounds="true"
@@ -36,10 +36,10 @@
 
         <TextView
             android:id="@+id/txtname"
-            android:textSize="18dp"
+            android:textSize="16dp"
+            android:singleLine="true"
             android:text="Title"
             android:gravity="center"
-            android:layout_marginTop="6dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"

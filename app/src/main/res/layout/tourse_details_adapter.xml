@@ -21,8 +21,8 @@
             android:orientation="vertical">
 
 
-        <ImageView android:layout_width="100dp"
-            android:layout_height="60dp"
+        <ImageView android:layout_width="150dp"
+            android:layout_height="100dp"
             android:id="@+id/img"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
@@ -36,7 +36,7 @@
 
         <TextView
             android:id="@+id/txt"
-            android:textSize="18dp"
+            android:textSize="16dp"
             android:text="Title"
             android:layout_below="@+id/img"
             android:textColor="#fff"
@@ -57,7 +57,7 @@
             android:orientation="horizontal">
             <TextView
                 android:id="@+id/txt_add"
-                android:textSize="18dp"
+                android:textSize="16dp"
                 android:text="Title"
                 android:textColor="#fff"
                 android:layout_below="@+id/img"
@@ -65,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:textStyle="normal"/>
             <TextView
-                android:textSize="18dp"
+                android:textSize="16dp"
                 android:text=" రోజులు  "
                 android:textColor="#fff"
                 android:layout_below="@+id/img"
@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:textStyle="normal"/>
             <TextView
-                android:textSize="18dp"
+                android:textSize="16dp"
                 android:text="/ "
                 android:textColor="#fff"
                 android:layout_below="@+id/img"
@@ -81,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:textStyle="normal"/>
             <TextView
-                android:textSize="18dp"
+                android:textSize="16dp"
                 android:text="12"
                 android:textColor="#fff"
                 android:id="@+id/txt_details"
@@ -90,7 +90,7 @@
                 android:layout_height="wrap_content"
                 android:textStyle="normal"/>
             <TextView
-                android:textSize="18dp"
+                android:textSize="16dp"
                 android:text=" భక్తులు "
                 android:textColor="#fff"
                 android:layout_below="@+id/img"
@@ -110,7 +110,7 @@
             android:gravity="center"
             android:orientation="horizontal">
             <TextView
-                android:textSize="18dp"
+                android:textSize="16dp"
                 android:text="రూ."
                 android:textColor="#fff"
                 android:layout_below="@+id/img"
@@ -118,7 +118,7 @@
                 android:layout_height="wrap_content"
                 android:textStyle="normal"/>
             <TextView
-                android:textSize="18dp"
+                android:textSize="16dp"
                 android:id="@+id/txt_amount"
                 android:text="   hhhhhhhhh "
                 android:textColor="#fff"
@@ -127,7 +127,7 @@
                 android:layout_height="wrap_content"
                 android:textStyle="normal"/>
             <TextView
-                android:textSize="18dp"
+                android:textSize="16dp"
                 android:text=" /- "
                 android:textColor="#fff"
                 android:layout_below="@+id/img"

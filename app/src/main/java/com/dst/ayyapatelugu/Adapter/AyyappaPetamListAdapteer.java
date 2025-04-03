@@ -58,7 +58,7 @@ public class AyyappaPetamListAdapteer extends RecyclerView.Adapter<AyyappaPetamL
         String email = modal.getEmailId();
         String discription = modal.getDecoratorDescription();
         holder.tvtitle.setText(dname);
-        holder.tvMobile.setText(number);
+      /*  holder.tvMobile.setText(number);*/
         holder.tvLocation.setText(city);
 
         Picasso.get().load(imgUrl).into(holder.image);
@@ -110,7 +110,7 @@ public class AyyappaPetamListAdapteer extends RecyclerView.Adapter<AyyappaPetamL
             super(itemView);
             tvtitle = (TextView) itemView.findViewById(R.id.txt_name);
             tvLocation = (TextView) itemView.findViewById(R.id.txt_location);
-            tvMobile = (TextView) itemView.findViewById(R.id.txt_mobile);
+      /*      tvMobile = (TextView) itemView.findViewById(R.id.txt_mobile);*/
             image = (ImageView) itemView.findViewById(R.id.img);
             layoutPetamList = (LinearLayout) itemView.findViewById(R.id.layout_petam_list);
             //button = (Button) itemView.findViewById(R.id.but_details);

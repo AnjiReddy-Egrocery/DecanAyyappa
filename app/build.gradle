@@ -17,25 +17,11 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
     }
-    signingConfigs {
-        debug {
-            storeFile file('E://Decan Spark//A99//ayyappa.jks')
-            storePassword 'Test@123'
-            keyAlias 'key1'
-            keyPassword 'Test@123'
-        }
-        release  {
-            storeFile file('E://Decan Spark//A99//ayyappa.jks')
-            storePassword 'Test@123'
-            keyAlias 'key1'
-            keyPassword 'Test@123'
-        }
-    }
 
     buildTypes {
         release {
             minifyEnabled false
-            signingConfig signingConfigs.release
+          
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }

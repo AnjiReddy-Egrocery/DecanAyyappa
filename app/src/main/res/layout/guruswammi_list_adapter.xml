@@ -21,8 +21,8 @@
                 android:id="@+id/layout_guruswami_adapter">
 
                 <ImageView
-                    android:layout_width="80dp"
-                    android:layout_height="60dp"
+                    android:layout_width="150dp"
+                    android:layout_height="100dp"
                     android:id="@+id/img"
                     android:src="@drawable/ayyappaphome"
                     android:adjustViewBounds="true"
@@ -40,6 +40,7 @@
                     android:singleLine="true"
                     android:textColor="#fff"
                     android:gravity="center"
+
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
                     android:layout_width="match_parent"
@@ -55,11 +56,10 @@
                     android:textColor="#fff"
                     android:layout_marginRight="8dp"
                     android:layout_marginLeft="8dp"
-                    android:layout_marginTop="6dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textStyle="normal"/>
-                <TextView
+                <!--<TextView
                     android:id="@+id/txt_mobilenum"
                     android:textSize="16dp"
                     android:text="Mobile Num"
@@ -73,7 +73,7 @@
                     android:textColor="#fff"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textStyle="normal"/>
+                    android:textStyle="normal"/>-->
 
 
                 <!-- <androidx.cardview.widget.CardView

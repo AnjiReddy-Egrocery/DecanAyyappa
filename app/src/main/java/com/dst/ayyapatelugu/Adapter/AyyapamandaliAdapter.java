@@ -70,7 +70,7 @@ public class AyyapamandaliAdapter extends RecyclerView.Adapter<AyyapamandaliAdap
         String discription = modal.getBajanamandaliDescription();
         holder.tvtitle.setText(name);
         holder.tvadd.setText(modal.getBajanamandaliLocation());
-        holder.tvMobile.setText(Number);
+       /* holder.tvMobile.setText(Number);*/
 
 
         holder.layoutMandaliList.setOnClickListener(new View.OnClickListener() {
@@ -121,7 +121,7 @@ public class AyyapamandaliAdapter extends RecyclerView.Adapter<AyyapamandaliAdap
             super(itemView);
             tvtitle = (TextView) itemView.findViewById(R.id.txt_name);
             tvadd = (TextView) itemView.findViewById(R.id.txt_address);
-            tvMobile = (TextView) itemView.findViewById(R.id.txt_mobile);
+           /* tvMobile = (TextView) itemView.findViewById(R.id.txt_mobile);*/
             image = (ImageView) itemView.findViewById(R.id.img);
             layoutMandaliList=(LinearLayout) itemView.findViewById(R.id.layout_mandali_list);
 

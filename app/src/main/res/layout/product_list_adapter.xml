@@ -21,8 +21,9 @@
 
 
 
-                <ImageView android:layout_width="100dp"
-                    android:layout_height="50dp"
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="100dp"
                     android:id="@+id/img"
                     android:src="@drawable/ayyappaphome"
                     android:adjustViewBounds="true"
@@ -38,7 +39,6 @@
                     android:textSize="16dp"
                     android:text="Title"
                     android:gravity="center"
-                    android:layout_marginTop="6dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
                     android:layout_marginBottom="8dp"

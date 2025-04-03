@@ -55,12 +55,12 @@ public class GuruSwamiListAdapter extends RecyclerView.Adapter<GuruSwamiListAdap
         String imgUrl = "https://www.ayyappatelugu.com/assets/user_images/"+profilePic ;
 
         String name = modal.getGuruswamiName();
-        String number = modal.getMobileNo();
+     /*   String number = modal.getMobileNo();*/
         String temple = modal.getTempleName();
         String cityName = modal.getCityName();
         holder.tvtitle.setText(name);
         holder.tvaddress.setText(cityName);
-        holder.tvmobile.setText(number);
+      /*  holder.tvmobile.setText(number);*/
 
         ImageLoader.loadImage(mContext, imgUrl, holder.image);
 
@@ -69,7 +69,7 @@ public class GuruSwamiListAdapter extends RecyclerView.Adapter<GuruSwamiListAdap
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, GuruSwamiDetailsActivity.class);
                 intent.putExtra("Name", name);
-                intent.putExtra("Number", number);
+               /* intent.putExtra("Number", number);*/
                 intent.putExtra("Temple", temple);
                 intent.putExtra("City", cityName);
                 intent.putExtra("Image", imgUrl);
@@ -106,7 +106,7 @@ public class GuruSwamiListAdapter extends RecyclerView.Adapter<GuruSwamiListAdap
             super(itemView);
             tvtitle = (TextView) itemView.findViewById(R.id.txt_name);
             tvaddress = (TextView) itemView.findViewById(R.id.txt_address);
-            tvmobile = (TextView) itemView.findViewById(R.id.txt_mobilenum);
+            /*tvmobile = (TextView) itemView.findViewById(R.id.txt_mobilenum);*/
             image = (ImageView) itemView.findViewById(R.id.img);
             layoutGuruSwamiAdapter = (LinearLayout) itemView.findViewById(R.id.layout_guruswami_adapter);
             //butMostPopular = (Button) itemView.findViewById(R.id.but_mostpopular);
