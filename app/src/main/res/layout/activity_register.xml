@@ -84,19 +84,20 @@
                     android:drawableLeft="@drawable/baseline_perm_identity_24"/>
 
                 <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:id="@+id/edt_mail"
-                    android:inputType="textEmailAddress"
-                    android:hint="Enter Email"
-                    android:layout_marginTop="12dp"
-                    android:drawablePadding="10dp"
-                    android:paddingLeft="10dp"
-                    android:textColor="#000"
-                    android:textColorHint="#000"
-                    android:background="@drawable/editext_border"
-                    android:drawableLeft="@drawable/baseline_email_24"/>
-
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/edt_mail"
+                android:hint="Enter Email"
+                android:inputType="none"
+                android:focusable="false"
+                android:clickable="true"
+                android:layout_marginTop="12dp"
+                android:drawablePadding="10dp"
+                android:paddingLeft="10dp"
+                android:textColor="#000"
+                android:textColorHint="#000"
+                android:background="@drawable/editext_border"
+                android:drawableLeft="@drawable/baseline_email_24"/>
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="50dp"

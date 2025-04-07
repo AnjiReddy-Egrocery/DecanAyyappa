@@ -1,5 +1,8 @@
 package com.dst.ayyapatelugu.User;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.IntentSenderRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
@@ -8,6 +11,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -17,6 +22,8 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
@@ -47,11 +54,19 @@ import com.google.android.gms.auth.api.credentials.Credentials;
 import com.google.android.gms.auth.api.credentials.CredentialsApi;
 import com.google.android.gms.auth.api.credentials.CredentialsClient;
 import com.google.android.gms.auth.api.credentials.HintRequest;
+import com.google.android.gms.auth.api.identity.BeginSignInRequest;
+import com.google.android.gms.auth.api.identity.Identity;
+import com.google.android.gms.auth.api.identity.SignInClient;
+import com.google.android.gms.auth.api.identity.SignInCredential;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.Task;
 
 
 import java.util.ArrayList;
@@ -74,17 +89,24 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
     EditText edtFirstName, edtLastName, edtNumber, edtEmail, edtPassword, edtReenterPassword;
     Button butRegister;
 
-   // LinearLayout linearSignUpWithGmail;
-
-    boolean isAllFieldsChecked = false;
 
     private GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 9001;
     private static final int RC_SIGN_UP_WITH_GOOGLE = 9002;
 
-    private static final int PERMISSION_REQUEST_CODE = 1;
-    private static final int REQUEST_PERMISSION = 1;
+
     private static final int CREDENTIAL_PICKER_REQUEST = 1001;
+    private static final int REQUEST_PHONE_NUMBER_PERMISSION = 101;
+    private static final int REQUEST_ACCOUNTS_PERMISSION = 1001;
+    private static final int REQUEST_GOOGLE_SIGN_IN = 9001;
+
+    AlertDialog loadingDialog;
+    private int simRetryCount = 0;
+    private static final int MAX_SIM_RETRY = 5;
+    private static final int REQUEST_CODE_EMAIL_PICKER = 2001;
+    private static final String GOOGLE_ACCOUNT_TYPE = "com.google";
+
+
 
 
     @SuppressLint("MissingInflatedId")
@@ -92,6 +114,8 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+
 
         edtFirstName = findViewById(R.id.edt_name);
         edtLastName = findViewById(R.id.edt_last_name);
@@ -104,6 +128,10 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
         //linearSignUpWithGmail=findViewById(R.id.layout_signup_gmail);
 
 
+        Log.d("GoogleSignIn", "edtEmail initialized: " + (edtEmail != null));
+
+
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
@@ -113,13 +141,21 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-
         edtNumber.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 checkAndRequestPermissions();
             }
         });
+
+        edtEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkPermissionAndShowAccounts();
+            }
+        });
+
+
 
         /*linearSignUpWithGmail.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,120 +202,144 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
         });
     }
     private void checkAndRequestPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {  // Android 13+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { // Android 15+
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS)
                     != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_PHONE_NUMBERS}, REQUEST_PERMISSION);
+                        new String[]{Manifest.permission.READ_PHONE_NUMBERS}, REQUEST_PHONE_NUMBER_PERMISSION);
             } else {
                 getSimNumbers();
             }
-        } else {  // Android 12 and below
+        } else {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
                     != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_PERMISSION);
+                        new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_PHONE_NUMBER_PERMISSION);
             } else {
                 getSimNumbers();
             }
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getSimNumbers(); // ✅ Proceed with fetching SIM numbers
-            } else {
-                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
-            }
+    private void showLoadingDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(R.layout.dialog_loading); // we'll create this layout next
+        builder.setCancelable(false);
+        loadingDialog = builder.create();
+        loadingDialog.show();
+    }
+    private void hideLoadingDialog() {
+        if (loadingDialog != null && loadingDialog.isShowing()) {
+            loadingDialog.dismiss();
         }
     }
 
+
+    private void checkPermissionAndShowAccounts() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.GET_ACCOUNTS}, 123);
+        } else {
+            showAccountPicker();
+        }
+    }
+
+    private void showAccountPicker() {
+        Intent intent = AccountManager.newChooseAccountIntent(
+                null, null,
+                new String[]{GOOGLE_ACCOUNT_TYPE},
+                false, null, null, null, null
+        );
+        startActivityForResult(intent, REQUEST_CODE_EMAIL_PICKER);
+    }
+
+
+
+    @SuppressLint("NewApi")
+    // Fetch multiple SIM numbers
     private void getSimNumbers() {
+        showLoadingDialog(); // 👈 show loader
+
         ArrayList<String> simNumbers = new ArrayList<>();
 
-        // ✅ Primary Method: SubscriptionManager for Android 14+
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-            SubscriptionManager subscriptionManager = (SubscriptionManager) getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
-
-            if (subscriptionManager != null && ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-                List<SubscriptionInfo> subscriptionInfoList = subscriptionManager.getActiveSubscriptionInfoList();
-
-                if (subscriptionInfoList != null && !subscriptionInfoList.isEmpty()) {
-                    for (SubscriptionInfo subscriptionInfo : subscriptionInfoList) {
-                        String phoneNumber = subscriptionInfo.getNumber();  // May return null
-                        int simSlot = subscriptionInfo.getSimSlotIndex();
-                        CharSequence carrierName = subscriptionInfo.getCarrierName();
-                        String iccId = subscriptionInfo.getIccId();  // Useful for fallback
-
-                        // 🔄 Improved Null Handling
-                        if (phoneNumber == null || phoneNumber.isEmpty()) {
-                            if (iccId != null) {
-                                simNumbers.add("SIM " + (simSlot + 1) + " (" + carrierName + "): ICC ID - " + iccId);
-                            } else {
-                                simNumbers.add("SIM " + (simSlot + 1) + " (" + carrierName + "): Number not available");
-                            }
-                        } else {
-                            simNumbers.add("SIM " + (simSlot + 1) + " (" + carrierName + "): " + phoneNumber);
-                        }
-                    }
-                }
-            }
-        }
-
-        // ✅ Secondary Method: TelephonyManager for Backup
-        if (simNumbers.isEmpty() || simNumbers.size() < 2) {
-            TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS) == PackageManager.PERMISSION_GRANTED) {
-                String phoneNumber = telephonyManager.getLine1Number();
-                if (phoneNumber != null && !phoneNumber.isEmpty()) {
-                    simNumbers.add("SIM 1 " + phoneNumber);
-                }
-            }
-        }
-
-        // ✅ Final Fallback: Google’s Hint API
-        if (simNumbers.isEmpty()) {
-            requestHint();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS)
+                != PackageManager.PERMISSION_GRANTED) {
+            hideLoadingDialog();
             return;
         }
 
-        showSimSelectionDialog(simNumbers);
+        SubscriptionManager subscriptionManager = (SubscriptionManager) getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
+        List<SubscriptionInfo> subscriptionInfoList = subscriptionManager.getActiveSubscriptionInfoList();
+
+        if (subscriptionInfoList == null || subscriptionInfoList.isEmpty()) {
+            if (simRetryCount < MAX_SIM_RETRY) {
+                simRetryCount++;
+                new Handler(Looper.getMainLooper()).postDelayed(this::getSimNumbers, 2000);
+            } else {
+                hideLoadingDialog(); // 👈 hide if failed
+                Toast.makeText(this, "Unable to fetch SIM details.", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+
+        simRetryCount = 0;
+        for (SubscriptionInfo info : subscriptionInfoList) {
+            String phoneNumber = info.getNumber();
+            int simSlot = info.getSimSlotIndex();
+            String carrierName = info.getCarrierName().toString();
+
+            if (phoneNumber == null || phoneNumber.isEmpty()) {
+                phoneNumber = "Number not available";
+            }
+
+            simNumbers.add("SIM " + (simSlot + 1) + " (" + carrierName + "): " + phoneNumber);
+        }
+
+        hideLoadingDialog(); // 👈 hide after success
+
+        if (!simNumbers.isEmpty()) {
+            showSimSelectionDialog(simNumbers);
+        }
     }
 
+
+    // Show SIM selection dialog
     private void showSimSelectionDialog(ArrayList<String> simNumbers) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Select SIM Number");
         String[] simArray = simNumbers.toArray(new String[0]);
 
         builder.setItems(simArray, (dialog, which) -> {
-            String selectedSimNumber = simNumbers.get(which).split(": ")[1].trim();
-            edtNumber.setText(selectedSimNumber); // Set to EditText
+            String[] parts = simNumbers.get(which).split(": ");
+            String selectedSimNumber = (parts.length > 1) ? parts[1].trim() : simNumbers.get(which);
+            edtNumber.setText(selectedSimNumber);
         });
-
         builder.setNegativeButton("Cancel", null);
         builder.show();
     }
 
-    private void requestHint() {
-        CredentialsClient credentialsClient = Credentials.getClient(this);
-        HintRequest hintRequest = new HintRequest.Builder()
-                .setPhoneNumberIdentifierSupported(true)
-                .build();
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        try {
-            startIntentSenderForResult(
-                    credentialsClient.getHintPickerIntent(hintRequest).getIntentSender(),
-                    CREDENTIAL_PICKER_REQUEST,
-                    null, 0, 0, 0, null
-            );
-        } catch (Exception e) {
-            Toast.makeText(this, "No SIM numbers found via Hint API", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
+        if (requestCode == REQUEST_PHONE_NUMBER_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Delay SIM fetch to give time for system to populate info
+                new Handler(Looper.getMainLooper()).postDelayed(this::getSimNumbers, 1000); // 2 sec delay
+            } else {
+                Toast.makeText(this, "Permission required to fetch SIM details", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        if (requestCode == 123 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            showAccountPicker();
         }
     }
+
+
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -292,29 +352,18 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
                 }
             }
         }
-    }
 
-
-    private void startCredentialPicker() {
-        CredentialsClient credentialsClient = Credentials.getClient(this);
-
-        HintRequest hintRequest = new HintRequest.Builder()
-                .setPhoneNumberIdentifierSupported(true) // Allow phone number hints
-                .build();
-
-        try {
-            // Directly retrieve the PendingIntent and use it
-            PendingIntent pendingIntent = credentialsClient.getHintPickerIntent(hintRequest);
-
-            startIntentSenderForResult(
-                    pendingIntent.getIntentSender(),
-                    CREDENTIAL_PICKER_REQUEST,
-                    null, 0, 0, 0, null
-            );
-        } catch (IntentSender.SendIntentException e) {
-            e.printStackTrace();
+        if (requestCode == REQUEST_CODE_EMAIL_PICKER && resultCode == RESULT_OK) {
+            if (data != null) {
+                String selectedEmail = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+                if (selectedEmail != null) {
+                    edtEmail.setText(selectedEmail);
+                }
+            }
         }
     }
+
+
 
     public void ShowHidePass(View view) {
 
@@ -550,32 +599,6 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
             }
         });
     }
-
-
-
-
-
-    private GoogleSignInAccount handleSignInResult(GoogleSignInResult signInResultFromIntent) {
-        if (signInResultFromIntent.isSuccess()) {
-            return signInResultFromIntent.getSignInAccount();
-        } else {
-            // Handle sign-in failure
-            return null;
-        }
-    }
-
-    private void handleSignInResult(GoogleSignInAccount account) {
-        // Handle the initial sign-in result
-        String displayName = account.getDisplayName();
-        String email = account.getEmail();
-        // Add your sign-in logic or navigate to the appropriate activity
-        //showToast("Sign-in successful! Display Name: " + displayName + ", Email: " + email);
-
-        // Example: Navigate to HomeActivity for login
-        startActivity(new Intent(this, HomeActivity.class));
-        finish();
-    }
-
     private void performSignUp(GoogleSignInAccount account) {
         // Extract information from the account and perform sign-up
 
@@ -658,4 +681,8 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
     }
 
 
+
+
 }
+
+
