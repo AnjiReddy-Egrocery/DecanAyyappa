@@ -32,6 +32,6 @@ public class MyGlideModule extends AppGlideModule {
                 .build();
 
         // Register OkHttpUrlLoader with Glide
-        registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
+        registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory((Call.Factory) client));
     }
 }

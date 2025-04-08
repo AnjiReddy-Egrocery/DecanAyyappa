@@ -202,19 +202,16 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
         });
     }
     private void checkAndRequestPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { // Android 15+
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS)
-                    != PackageManager.PERMISSION_GRANTED) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Check both permissions
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+
                 ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_PHONE_NUMBERS}, REQUEST_PHONE_NUMBER_PERMISSION);
-            } else {
-                getSimNumbers();
-            }
-        } else {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_PHONE_NUMBER_PERMISSION);
+                        new String[]{
+                                Manifest.permission.READ_PHONE_NUMBERS,
+                                Manifest.permission.READ_PHONE_STATE
+                        }, REQUEST_PHONE_NUMBER_PERMISSION);
             } else {
                 getSimNumbers();
             }
@@ -324,11 +321,18 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == REQUEST_PHONE_NUMBER_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Delay SIM fetch to give time for system to populate info
-                new Handler(Looper.getMainLooper()).postDelayed(this::getSimNumbers, 1000); // 2 sec delay
+            boolean allGranted = true;
+            for (int result : grantResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    allGranted = false;
+                    break;
+                }
+            }
+
+            if (allGranted) {
+                getSimNumbers();
             } else {
-                Toast.makeText(this, "Permission required to fetch SIM details", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Permission denied.", Toast.LENGTH_SHORT).show();
             }
         }
 
