@@ -18,6 +18,13 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="2">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:weightSum="2">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -39,6 +46,17 @@
                 android:src="@drawable/baseline_play_arrow_24"
                 android:layout_gravity="right"
                 android:contentDescription="Play Text as Audio"/>
+        </LinearLayout>
+            <ImageView
+                android:id="@+id/play_replay_icon"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:src="@drawable/baseline_replay_24"
+                android:layout_gravity="right"
+                android:layout_marginRight="20dp"
+                android:contentDescription="Play Text as Audio"
+                android:visibility="gone"/>
         </LinearLayout>
 
 

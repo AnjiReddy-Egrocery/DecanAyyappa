@@ -44,14 +44,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Start Navigation"
-                    android:textSize="16dp"
+                    android:textSize="14dp"
                     android:layout_marginLeft="10dp"
                     android:textColor="#3C54DA"
                     android:textStyle="bold"
                     android:layout_gravity="center"/>
                 <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:text="Start Navigation"
                     android:src="@drawable/navigation_icon"
                     android:backgroundTint="#E41010" />

@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.annotation.SuppressLint;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,8 +26,8 @@ public class AyyapaKarmaDetailsActivity extends AppCompatActivity {
 
     Toolbar toolbar;
 
-    TextView txtName,textDiscription;
-    //WebView webView;
+    TextView txtName;
+    WebView webView;
 
     ImageView imageView;
 
@@ -103,7 +104,9 @@ public class AyyapaKarmaDetailsActivity extends AppCompatActivity {
 
 
         txtName = findViewById(R.id.txt_name);
-        textDiscription = findViewById(R.id.webview);
+        webView = findViewById(R.id.webview);
+        webView.getSettings().setJavaScriptEnabled(true); // if needed
+        webView.setBackgroundColor(Color.TRANSPARENT);
         imageView = findViewById(R.id.image_view);
 
         Bundle bundle = getIntent().getExtras();
@@ -114,9 +117,15 @@ public class AyyapaKarmaDetailsActivity extends AppCompatActivity {
 
         txtName.setText(name);
         Picasso.get().load(imagePath).into(imageView);
-        Spanned spanned= Html.fromHtml(discription);
-        String plainText=spanned.toString();
-        textDiscription.setText(plainText);
+        String htmlContent = "<html><head>" +
+                "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>" +
+                "<style>" +
+                "body { background-color: transparent; color: white; font-size: 14px; line-height: 1.6; }" +
+                "* { color: white !important; }" +
+                "</style>" +
+                "</head><body>" + discription + "</body></html>";
+
+        webView.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null);
        /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 
             WebSettings webSettings = webView.getSettings();

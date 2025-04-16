@@ -41,8 +41,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
-                            android:layout_marginRight="14dp"
-                            android:layout_marginLeft="14dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginLeft="10dp"
                             app:cardCornerRadius="15dp"
                             app:cardElevation="5dp"
                             android:layout_gravity="center_horizontal">
@@ -54,16 +54,12 @@
                             android:scaleType="fitCenter"
                             android:src="@drawable/ayyapa_anadanam"/>
                         </androidx.cardview.widget.CardView>
-                        <TextView
+                        <WebView
                             android:id="@+id/webview"
                             android:layout_width="match_parent"
-                            android:layout_marginTop="12dp"
-                            android:layout_marginBottom="26dp"
-                            android:layout_marginRight="14dp"
-                            android:layout_marginLeft="14dp"
-                            android:layout_height="match_parent"
-                            android:textSize="16dp"
-                            android:textColor="#fff"/>
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginBottom="16dp"/>
                     </LinearLayout>
                 </ScrollView>
             </LinearLayout>

@@ -7,6 +7,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
@@ -42,12 +43,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class NityaPoojaActivity extends AppCompatActivity {
 
     Toolbar toolbar;
-    TextView txtName, textDiscription;
+    TextView txtName;
     ImageView imageView, imageAnadanam;
     TextView textAndanam;
     String activityId = "29";
+    WebView webView;
 
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint({"MissingInflatedId","NewApi"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,7 +80,10 @@ public class NityaPoojaActivity extends AppCompatActivity {
         });
 
         txtName = findViewById(R.id.txt_name);
-        textDiscription = findViewById(R.id.webview);
+        webView = findViewById(R.id.webview);
+        webView.getSettings().setJavaScriptEnabled(true); // if needed
+        webView.setBackgroundColor(Color.TRANSPARENT);
+
         imageView = findViewById(R.id.image_view);
 
         String savedTitle = getFromPreferences("title", null);
@@ -90,9 +95,15 @@ public class NityaPoojaActivity extends AppCompatActivity {
             txtName.setText(savedTitle);
             String url = "https://www.ayyappatelugu.com/assets/activity/" + savedPhoto;
             Picasso.get().load(url).into(imageView);
-            Spanned spanned = Html.fromHtml(savedDescription);
-            String plainText = spanned.toString();
-            textDiscription.setText(plainText);
+            String htmlContent = "<html><head>" +
+                    "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>" +
+                    "<style>" +
+                    "body { background-color: transparent; color: white; font-size: 14px; line-height: 1.6; }" +
+                    "* { color: white !important; }" +
+                    "</style>" +
+                    "</head><body>" + savedDescription + "</body></html>";
+
+            webView.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null);
         } else {
             // Call API if no data is saved
             resultMethod(activityId);
@@ -104,7 +115,7 @@ public class NityaPoojaActivity extends AppCompatActivity {
 
         saveToPreferences("activityId", activityId);
     }
-
+    @SuppressLint("NewApi")
     private void resultMethod(String activityId) {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -138,9 +149,15 @@ public class NityaPoojaActivity extends AppCompatActivity {
 
                         txtName.setText(title);
                         Picasso.get().load(url).into(imageView);
-                        Spanned spanned = Html.fromHtml(description);
-                        String plainText = spanned.toString();
-                        textDiscription.setText(plainText);
+                        String htmlContent = "<html><head>" +
+                                "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>" +
+                                "<style>" +
+                                "body { background-color: transparent; color: white; font-size: 14px; line-height: 1.6; }" +
+                                "* { color: white !important; }" +
+                                "</style>" +
+                                "</head><body>" + description + "</body></html>";
+
+                        webView.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null);
 
                         saveToPreferences("title", title);
                         saveToPreferences("description", description);

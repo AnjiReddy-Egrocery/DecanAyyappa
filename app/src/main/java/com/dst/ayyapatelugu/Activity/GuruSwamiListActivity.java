@@ -240,7 +240,6 @@ public class GuruSwamiListActivity extends AppCompatActivity {
 
         if (query == null || query.trim().isEmpty()) {
             filteredList.addAll(guruswamiList);
-            Log.e("FETCH_GURUSWAMI", "Showing all items, size: " + filteredList.size());
             updateRecyclerView();
             return;
         }
@@ -249,32 +248,87 @@ public class GuruSwamiListActivity extends AppCompatActivity {
         String teluguQuery = transliterateToTelugu(normalizedQuery);
         String englishQuery = transliterateToEnglish(normalizedQuery);
 
+        // Normalize query to remove diacritics
+        String asciiQuery = removeDiacritics(normalizedQuery);
+        String asciiTeluguQuery = removeDiacritics(teluguQuery);
+        String asciiEnglishQuery = removeDiacritics(englishQuery);
+
         for (GuruSwamiModelList item : guruswamiList) {
-            String normalizedName = normalize(item.getGuruswamiName());
-            String normalizedCity = normalize(item.getCityName());
-            String normalizedMobile = normalize(item.getMobileNo());
+            String city = item.getCityName();
+            String name = item.getGuruswamiName();
+            String mobile = item.getMobileNo();
 
-            Log.d("FILTERING", "Checking: " + normalizedName + ", " + normalizedCity);
+            // Normalize city and name to remove diacritics
+            String normalizedCity = normalize(city);
+            String normalizedName = normalize(name);
+            String normalizedMobile = normalize(mobile);
 
-            if (normalizedName.contains(normalizedQuery) ||
-                    normalizedCity.contains(normalizedQuery) ||
-                    normalizedMobile.contains(normalizedQuery) ||
-                    normalizedName.contains(teluguQuery) ||
-                    normalizedCity.contains(teluguQuery) ||
-                    normalizedName.contains(englishQuery) ||
-                    normalizedCity.contains(englishQuery)) {
+            // Transliterate city to English and Telugu
+            String cityInEnglish = normalize(transliterateToEnglish(normalizedCity));
+            String cityInTelugu = normalize(transliterateToTelugu(normalizedCity));
 
+            // Remove diacritics from city names and transliterations
+            String asciiCityInEnglish = removeDiacritics(cityInEnglish);
+            String asciiCityInTelugu = removeDiacritics(cityInTelugu);
+
+            // Compare the ASCII-normalized query and city
+            if (
+                    normalizedName.contains(normalizedQuery) ||
+                            normalizedCity.contains(normalizedQuery) ||
+                            normalizedMobile.contains(normalizedQuery) ||
+                            cityInEnglish.contains(normalizedQuery) ||
+                            cityInTelugu.contains(normalizedQuery) ||
+                            asciiCityInEnglish.contains(asciiQuery) ||
+                            asciiCityInTelugu.contains(asciiQuery) ||
+                            normalizedName.contains(teluguQuery) ||
+                            normalizedCity.contains(teluguQuery) ||
+                            normalizedName.contains(englishQuery) ||
+                            normalizedCity.contains(englishQuery) ||
+                            asciiCityInEnglish.contains(asciiTeluguQuery) ||
+                            asciiCityInEnglish.contains(asciiEnglishQuery)
+            ) {
                 filteredList.add(item);
             }
         }
+
         updateRecyclerView();
+    }
+    private String removeDiacritics(String input) {
+        return Normalizer.normalize(input, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "") // Removes all marks/diacritics
+                .toLowerCase(Locale.getDefault())
+                .trim();
+    }
+    // Helper to check if query is in Telugu script
+    private boolean isTelugu(String query) {
+        // Check if the query contains Telugu characters
+        for (char c : query.toCharArray()) {
+            if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.TELUGU) {
+                return true; // It's in Telugu
+            }
+        }
+        return false; // Otherwise, it's not
     }
 
     private String normalize(String input) {
         return Normalizer.normalize(input, Normalizer.Form.NFKC)
-                .toLowerCase(Locale.getDefault());
+                .toLowerCase(Locale.getDefault())
+                .trim();
     }
 
+    private String transliterateToEnglish(String input) {
+        Transliterator transliterator = Transliterator.getInstance("Telugu-Latin");
+        return transliterator.transliterate(input);
+    }
+
+    private String transliterateToTelugu(String input) {
+        Transliterator transliterator = Transliterator.getInstance("Latin-Telugu");
+        return transliterator.transliterate(input);
+    }
+
+    private String removeSpaces(String input) {
+        return input.replaceAll("\\s+", "").toLowerCase(Locale.getDefault()).trim();
+    }
 
     private void updateRecyclerView() {
       if (guruSwamiListAdapter == null) {
@@ -285,15 +339,7 @@ public class GuruSwamiListActivity extends AppCompatActivity {
         }
     }
 
-    private String transliterateToTelugu(String input) {
-        Transliterator transliterator = Transliterator.getInstance("Latin-Telugu");
-        return transliterator.transliterate(input);
-    }
 
-    private String transliterateToEnglish(String input) {
-        Transliterator transliterator = Transliterator.getInstance("Telugu-Latin");
-        return transliterator.transliterate(input);
-    }
 
     private void fetchGuruSwamiList() {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();

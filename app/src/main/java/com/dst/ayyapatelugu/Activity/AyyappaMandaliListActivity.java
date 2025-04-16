@@ -224,6 +224,7 @@ public class AyyappaMandaliListActivity extends AppCompatActivity {
         }
     }
 
+
     private void filterResults(String query) {
         filteredList.clear();
 
@@ -237,29 +238,77 @@ public class AyyappaMandaliListActivity extends AppCompatActivity {
         String teluguQuery = transliterateToTelugu(normalizedQuery);
         String englishQuery = transliterateToEnglish(normalizedQuery);
 
+        // Normalize query to remove diacritics
+        String asciiQuery = removeDiacritics(normalizedQuery);
+        String asciiTeluguQuery = removeDiacritics(teluguQuery);
+        String asciiEnglishQuery = removeDiacritics(englishQuery);
+
         for (BajanaManadaliListModel item : bajanaManadaliList) {
-            String normalizedName = normalize(item.getBajanamandaliName());
-            String normalizedCity = normalize(item.getBajanamandaliCity());
-            String normalizedMobile = normalize(item.getBajanamandaliMobile());
+            String city = item.getBajanamandaliCity();
+            String name = item.getNameOfGuru();
+            String mobile = item.getBajanamandaliMobile();
 
-            if (normalizedName.contains(normalizedQuery) ||
-                    normalizedCity.contains(normalizedQuery) ||
-                    normalizedMobile.contains(normalizedQuery) ||
-                    normalizedName.contains(teluguQuery) ||
-                    normalizedCity.contains(teluguQuery) ||
-                    normalizedName.contains(englishQuery) ||
-                    normalizedCity.contains(englishQuery)) {
+            // Normalize city and name to remove diacritics
+            String normalizedCity = normalize(city);
+            String normalizedName = normalize(name);
+            String normalizedMobile = normalize(mobile);
 
+            // Transliterate city to English and Telugu
+            String cityInEnglish = normalize(transliterateToEnglish(normalizedCity));
+            String cityInTelugu = normalize(transliterateToTelugu(normalizedCity));
+
+            // Remove diacritics from city names and transliterations
+            String asciiCityInEnglish = removeDiacritics(cityInEnglish);
+            String asciiCityInTelugu = removeDiacritics(cityInTelugu);
+
+            // Compare the ASCII-normalized query and city
+            if (
+                    normalizedName.contains(normalizedQuery) ||
+                            normalizedCity.contains(normalizedQuery) ||
+                            normalizedMobile.contains(normalizedQuery) ||
+                            cityInEnglish.contains(normalizedQuery) ||
+                            cityInTelugu.contains(normalizedQuery) ||
+                            asciiCityInEnglish.contains(asciiQuery) ||
+                            asciiCityInTelugu.contains(asciiQuery) ||
+                            normalizedName.contains(teluguQuery) ||
+                            normalizedCity.contains(teluguQuery) ||
+                            normalizedName.contains(englishQuery) ||
+                            normalizedCity.contains(englishQuery) ||
+                            asciiCityInEnglish.contains(asciiTeluguQuery) ||
+                            asciiCityInEnglish.contains(asciiEnglishQuery)
+            ) {
                 filteredList.add(item);
             }
         }
-        updateRecyclerview();
 
+        updateRecyclerview();
+    }
+    private String removeDiacritics(String input) {
+        return Normalizer.normalize(input, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "") // Removes all marks/diacritics
+                .toLowerCase(Locale.getDefault())
+                .trim();
+    }
+    // Helper to check if query is in Telugu script
+    private boolean isTelugu(String query) {
+        // Check if the query contains Telugu characters
+        for (char c : query.toCharArray()) {
+            if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.TELUGU) {
+                return true; // It's in Telugu
+            }
+        }
+        return false; // Otherwise, it's not
     }
 
     private String normalize(String input) {
         return Normalizer.normalize(input, Normalizer.Form.NFKC)
-                .toLowerCase(Locale.getDefault());
+                .toLowerCase(Locale.getDefault())
+                .trim();
+    }
+
+    private String transliterateToEnglish(String input) {
+        Transliterator transliterator = Transliterator.getInstance("Telugu-Latin");
+        return transliterator.transliterate(input);
     }
 
     private String transliterateToTelugu(String input) {
@@ -267,10 +316,6 @@ public class AyyappaMandaliListActivity extends AppCompatActivity {
         return transliterator.transliterate(input);
     }
 
-    private String transliterateToEnglish(String input) {
-        Transliterator transliterator = Transliterator.getInstance("Telugu-Latin");
-        return transliterator.transliterate(input);
-    }
 
     private void fetchMandaliList() {
 
