@@ -12,6 +12,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -218,6 +219,13 @@ public class GuruSwamiListActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        SwipeRefreshLayout swipeRefresh = findViewById(R.id.swipeRefresh);
+        swipeRefresh.setOnRefreshListener(() -> {
+            fetchGuruSwamiList();
+            swipeRefresh.setRefreshing(false);
+        });
+
     }
 
     private void fetchFreshDataInBackground() {

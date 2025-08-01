@@ -19,6 +19,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.dst.ayyapatelugu.Adapter.ViewAllAyyappaTempleListAdapter;
 import com.dst.ayyapatelugu.DataBase.SharedPreferencesManager;
@@ -75,6 +76,7 @@ public class AllAyyappaTemplesFragment extends Fragment {
 
         fechedDatafromShredPreferences();
 
+
         searchView = view.findViewById(R.id.searchView);
         searchView.setQueryHint("Search by Name");
         searchView.setIconifiedByDefault(false); // Keep it expanded
@@ -110,6 +112,14 @@ public class AllAyyappaTemplesFragment extends Fragment {
                 return false;
             }
         });
+
+        SwipeRefreshLayout swipeRefresh = view.findViewById(R.id.swipeRefresh);
+        swipeRefresh.setOnRefreshListener(() -> {
+            fetchDataFromDataBase();
+            swipeRefresh.setRefreshing(false);
+        });
+
+        fetchDataFromDataBase();
 
 
         return view;
@@ -149,7 +159,7 @@ public class AllAyyappaTemplesFragment extends Fragment {
             public void onResponse(Call<AyyappaTempleList> call, Response<AyyappaTempleList> response) {
                 AyyappaTempleList list=response.body();
                 templeList=new ArrayList<>(Arrays.asList(list.getResult()));
-
+                SharedPreferencesManager.clearAyyappaTempleList(getContext());
                 SharedPreferencesManager.saveAyyappaTempleList(getContext(), templeList);
                 Log.e("TempleList", "Loaded from API: " + templeList.size());
                 updateRecyclerView(templeList);

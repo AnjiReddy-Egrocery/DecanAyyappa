@@ -99,9 +99,9 @@
                 android:background="@drawable/editext_border"
                 android:drawableLeft="@drawable/baseline_email_24"/>
                 <EditText
+                    android:id="@+id/edt_number"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:id="@+id/edt_number"
                     android:inputType="number"
                     android:hint="Enter Mobile Number"
                     android:layout_marginTop="12dp"
@@ -109,7 +109,7 @@
                     android:paddingLeft="10dp"
                     android:textColor="#000"
                     android:focusable="false"
-                    android:textColorHint="#000"
+                    android:cursorVisible="false"
                     android:background="@drawable/editext_border"
                     android:drawableLeft="@drawable/baseline_call_24"/>
 

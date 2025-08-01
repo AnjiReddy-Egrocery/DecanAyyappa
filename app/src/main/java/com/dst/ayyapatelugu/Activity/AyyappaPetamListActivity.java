@@ -9,6 +9,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
@@ -191,6 +192,13 @@ public class AyyappaPetamListActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        SwipeRefreshLayout swipeRefresh = findViewById(R.id.swipeRefresh);
+        swipeRefresh.setOnRefreshListener(() -> {
+            fetchDataFromApiAndSaveToSQLite();
+            swipeRefresh.setRefreshing(false);
+        });
+
 
     }
 

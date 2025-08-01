@@ -32,6 +32,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.dst.ayyapatelugu.Adapter.AyyapakaryamListAdappter;
 import com.dst.ayyapatelugu.Adapter.GuruSwamiListAdapter;
@@ -188,6 +189,13 @@ public class AyyappaKaryamListActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        SwipeRefreshLayout swipeRefresh =findViewById(R.id.swipeRefresh);
+        swipeRefresh.setOnRefreshListener(() -> {
+            fetchDataFromApi();
+            swipeRefresh.setRefreshing(false);
+        });
+
 
         //  fetchDataFromApi();
     }

@@ -1,5 +1,6 @@
 package com.dst.ayyapatelugu.Fragment;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.dst.ayyapatelugu.Adapter.ViewAllTempleListAdapter;
 import com.dst.ayyapatelugu.DataBase.SharedPreferencesManager;
@@ -44,7 +46,7 @@ public class TemplesFragment extends Fragment {
 
     private Retrofit retrofit;
 
-
+    @SuppressLint("MissingInflatedId")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -93,6 +95,15 @@ public class TemplesFragment extends Fragment {
             }
         });
 
+        SwipeRefreshLayout swipeRefresh = view.findViewById(R.id.swipeRefresh);
+        swipeRefresh.setOnRefreshListener(() -> {
+            fetchDataFromDataBase();
+            swipeRefresh.setRefreshing(false);
+        });
+
+        fetchDataFromDataBase();
+
+
         return view;
     }
 
@@ -128,7 +139,7 @@ public class TemplesFragment extends Fragment {
             public void onResponse(Call<TemplesList> call, Response<TemplesList> response) {
                 TemplesList list=response.body();
                 templeList=new ArrayList<>(Arrays.asList(list.getResult()));
-
+                SharedPreferencesManager.clearAyyappaTempleList(getContext());
                 SharedPreferencesManager.saveTempleList(getContext(), templeList);
 
                 updateRecyclerView(templeList);

@@ -9,6 +9,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
@@ -179,6 +180,13 @@ public class AyyapaBooksListActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        SwipeRefreshLayout swipeRefresh = findViewById(R.id.swipeRefresh);
+        swipeRefresh.setOnRefreshListener(() -> {
+            fetchDataFromDataBase();
+            swipeRefresh.setRefreshing(false);
+        });
+
     }
 
 

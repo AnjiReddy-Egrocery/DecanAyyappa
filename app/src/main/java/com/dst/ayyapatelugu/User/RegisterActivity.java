@@ -96,13 +96,13 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
 
 
     private static final int CREDENTIAL_PICKER_REQUEST = 1001;
-    private static final int REQUEST_PHONE_NUMBER_PERMISSION = 101;
+    private static final int REQUEST_PHONE_NUMBER_PERMISSION = 100;
     private static final int REQUEST_ACCOUNTS_PERMISSION = 1001;
     private static final int REQUEST_GOOGLE_SIGN_IN = 9001;
 
     AlertDialog loadingDialog;
     private int simRetryCount = 0;
-    private static final int MAX_SIM_RETRY = 5;
+    private static final int MAX_SIM_RETRY = 3;
     private static final int REQUEST_CODE_EMAIL_PICKER = 2001;
     private static final String GOOGLE_ACCOUNT_TYPE = "com.google";
 
@@ -305,16 +305,50 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
     private void showSimSelectionDialog(ArrayList<String> simNumbers) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Select SIM Number");
+
+        boolean hasUnavailableNumber = false;
+
+        // Check if any SIM has "Number not available"
+        for (String sim : simNumbers) {
+            if (sim.contains("Number not available")) {
+                hasUnavailableNumber = true;
+                break;
+            }
+        }
+
+        // Only add "Enter manually" if any number is not available
+        if (hasUnavailableNumber) {
+            simNumbers.add("Enter manually");
+        }
+
         String[] simArray = simNumbers.toArray(new String[0]);
 
         builder.setItems(simArray, (dialog, which) -> {
-            String[] parts = simNumbers.get(which).split(": ");
-            String selectedSimNumber = (parts.length > 1) ? parts[1].trim() : simNumbers.get(which);
-            edtNumber.setText(selectedSimNumber);
+            String selected = simNumbers.get(which);
+
+            if (selected.equals("Enter manually")) {
+                // Enable manual input
+                edtNumber.setFocusableInTouchMode(true);
+                edtNumber.setFocusable(true);
+                edtNumber.setCursorVisible(true);
+                edtNumber.requestFocus();
+                edtNumber.setText("");
+                edtNumber.setHint("Enter your mobile number");
+                Toast.makeText(this, "Please enter your number manually.", Toast.LENGTH_SHORT).show();
+            } else {
+                // Set the number and disable editing
+                String[] parts = selected.split(": ");
+                String selectedSimNumber = (parts.length > 1) ? parts[1].trim() : selected;
+                edtNumber.setText(selectedSimNumber);
+                edtNumber.setFocusable(false);
+                edtNumber.setCursorVisible(false);
+            }
         });
+
         builder.setNegativeButton("Cancel", null);
         builder.show();
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

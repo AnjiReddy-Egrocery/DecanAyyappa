@@ -23,6 +23,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.dst.ayyapatelugu.Adapter.ViewAllNewsListAdapter;
 import com.dst.ayyapatelugu.DataBase.SharedPreferencesManager;
@@ -166,6 +167,13 @@ public class ViewAllNewsListActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        SwipeRefreshLayout swipeRefresh = findViewById(R.id.swipeRefresh);
+        swipeRefresh.setOnRefreshListener(() -> {
+            fetchDataFromDataBase();
+            swipeRefresh.setRefreshing(false);
+        });
+
     }
     private void fechedDatafromShredPreferences() {
         List<NewsListModel> newsListModels= SharedPreferencesManager.getNewsList(ViewAllNewsListActivity.this);

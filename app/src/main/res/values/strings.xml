@@ -7,12 +7,13 @@
     <string name="ayyappa_calender" translatable="false"> అయ్యప్ప క్యాలెండర్</string>
     <string name="guruswami_list" translatable="false">గురుస్వాములు జాబిత</string>
     <string name="ayyappa_mandali" translatable="false">అయ్యప్ప భజన మండలి</string>
+    <string name="ayyappa_mandali_songs" translatable="false">అయ్యప్ప భజన పాటలు</string>
     <string name="ayyappa_books" translatable="false">అయ్యప్ప పుస్తకాలు</string>
     <string name="ayyappa_tours" translatable="false">అయ్యప్ప యాత్రలు</string>
     <string name="ayyappa_decration" translatable="false">పూజా పీఠం అలంకరణ</string>
     <string name="ayyappa_songs" translatable="false">అయ్యప్ప భజన పాటలు</string>
     <string name="ayyappa_anadanam" translatable="false">అన్నదానం </string>
-    <string name="ayyappa_devlyalu" translatable="false"> దేవాలయాలు</string>
+    <string name="ayyappa_devlyalu" translatable="false"> సకల దేవతల ఆలయాలు</string>
     <string name="ayyappa_ayyappadevlyalu" translatable="false"> అయ్యప్ప దేవాలయాలు</string>
     <string name="ayyappa_details" translatable="false">మా గురించి</string>
     <string name="title_tool_bar" translatable="false">స్వామి శరణం అయ్యప్ప</string>

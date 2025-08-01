@@ -6,11 +6,13 @@ import androidx.appcompat.widget.Toolbar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,7 +37,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class SharanughoshaActivity extends AppCompatActivity {
 
     Toolbar toolbar;
-    TextView txtName, textDiscription,txtsmallDiscription;
+    TextView txtName, txtsmallDiscription;
+    WebView webView;
     ImageView imageView, imageAnadanam,imgNityaPooja;
     TextView textAndanam,txtNityaPooja;
     String activitiesId = "21";
@@ -91,7 +94,9 @@ public class SharanughoshaActivity extends AppCompatActivity {
         });
 
         txtName = findViewById(R.id.txt_sharanu_name);
-        textDiscription = findViewById(R.id.sharanu_webview);
+        webView = findViewById(R.id.sharanu_webview);
+        webView.getSettings().setJavaScriptEnabled(true); // if needed
+        webView.setBackgroundColor(Color.TRANSPARENT);
         imageView = findViewById(R.id.sharanu_image_view);
         txtsmallDiscription  = findViewById(R.id.sharanu_small_discription);
 
@@ -106,9 +111,16 @@ public class SharanughoshaActivity extends AppCompatActivity {
             txtName.setText(savedTitle);
             String url = "https://www.ayyappatelugu.com/assets/activity/" + savedPhoto;
             Picasso.get().load(url).into(imageView);
-            Spanned spanned = Html.fromHtml(savedDescription);
-            String plainText = spanned.toString();
-            textDiscription.setText(plainText);
+
+            String htmlContent = "<html><head>" +
+                    "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>" +
+                    "<style>" +
+                    "body { background-color: transparent; color: white; font-size: 14px; line-height: 1.6; }" +
+                    "* { color: white !important; }" +
+                    "</style>" +
+                    "</head><body>" + savedDescription + "</body></html>";
+
+            webView.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null);
             txtsmallDiscription.setText(savedSmallDiscription);
 
         } else {
@@ -157,9 +169,17 @@ public class SharanughoshaActivity extends AppCompatActivity {
 
                         txtName.setText(title);
                         Picasso.get().load(url).into(imageView);
-                        Spanned spanned = Html.fromHtml(description);
-                        String plainText = spanned.toString();
-                        textDiscription.setText(plainText);
+
+
+                        String htmlContent = "<html><head>" +
+                                "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>" +
+                                "<style>" +
+                                "body { background-color: transparent; color: white; font-size: 14px; line-height: 1.6; }" +
+                                "* { color: white !important; }" +
+                                "</style>" +
+                                "</head><body>" + description + "</body></html>";
+
+                        webView.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null);
                         txtsmallDiscription.setText(smallDiscription);
 
                         saveToSharanuSharedPreferences("title", title);

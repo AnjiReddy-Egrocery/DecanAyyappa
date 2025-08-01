@@ -29,50 +29,53 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".Activity.AyyappaBajanaSognsActivity"
+            android:exported="false"/>
+        <activity
             android:name=".Activity.SharanughoshaActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.ViewAllNewsDetailsActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.NityaPoojaActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.ViewAllNewsListActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.ViewAllAyyappaTemplesActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.ViewTempleListDetailsActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.ViewAllTemplesActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.SevaDetailsActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.ViewAllDetailsActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.ProductDetailsActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.ProductsListActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".User.PrivacyPolicyActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".User.CreatePasswordActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.AyyaappaDevlyaluActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.DevlyaluActivity"
-            android:exported="false" />
+            android:exported="false"/>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -80,68 +83,68 @@
 
         <activity
             android:name=".Activity.AnadanamActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.CalenderActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".User.ResetPasswordActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".User.VerifyActivity"
-            android:exported="true" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.AboutActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.AyyappaBooksDetailsActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.AyyapaBooksListActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.AyyappaTourseActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.AyyappaTourseDetailsACtivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.AyyapaPetamDetailsActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.AyyappaPetamListActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.AyyapaMandaliDetailsActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.GuruSwamiDetailsActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.AyyapaKarmaDetailsActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.AyyappaKaryamListActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.AyyappaMandaliListActivity"
             android:enableOnBackInvokedCallback="true"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Activity.GuruSwamiListActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".HomeActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".User.ForgotPasswordActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".User.RegisterActivity"
-            android:exported="true" />
+            android:exported="true"/>
         <activity
             android:name=".User.LoginActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".SplashActivity"
             android:exported="true">
@@ -151,6 +154,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

@@ -122,4 +122,11 @@ public class SharedPreferencesManager {
         editor.putString(NEWS_LIST_KEY, json);
         editor.apply();
     }
+
+    public static void clearAyyappaTempleList(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.remove("TEMPLES_LIST_KEY");
+        editor.apply();
+    }
 }

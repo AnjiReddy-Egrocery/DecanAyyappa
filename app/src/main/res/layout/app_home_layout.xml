@@ -303,6 +303,114 @@
                 </LinearLayout>
 
             </LinearLayout>
+           <!-- <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="12dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="అయ్యప్ప భజన పాటలు"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:textSize="20dp"
+                        android:textColor="#fff"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="-25dp"
+                        android:gravity="center"
+                        android:layout_marginBottom="-50dp">
+                        <ImageView
+                            android:layout_width="270dp"
+                            android:layout_height="100dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/seva"/>
+                    </LinearLayout>
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="12dp"
+                        android:layout_marginRight="12dp"
+                        android:orientation="vertical">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/layout_bajana_songs"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="&#8226;  అయ్యప్ప"
+                                android:textColor="#fff"
+                                android:padding="5dp"
+                                android:layout_marginTop="20dp"
+                                android:textSize="18dp"
+                                />
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="&#8226;  అయ్యప్ప"
+                                android:textColor="#fff"
+                                android:padding="5dp"
+                                android:layout_marginTop="0dp"
+                                android:textSize="18dp"
+                                />
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="&#8226;  అయ్యప్ప"
+                                android:textColor="#fff"
+                                android:padding="5dp"
+                                android:layout_marginTop="0dp"
+                                android:textSize="18dp"
+                                />
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="&#8226;  అయ్యప్ప"
+                                android:textColor="#fff"
+                                android:padding="5dp"
+                                android:layout_marginTop="0dp"
+                                android:textSize="18dp"
+                                />
+
+                        </LinearLayout>
+
+
+
+ &ndash;&gt;
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="16dp"
+                            android:layout_below="@+id/layout_bajana_songs"
+                            android:orientation="horizontal">
+
+                            <Button
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="ViewAll"
+                                android:textStyle="bold"
+                                android:textSize="16dp"
+                                android:textColor="#6E0303"
+                                android:id="@+id/viewall_but_bajana_songs"
+                                android:layout_margin="4dp"
+                                android:backgroundTint="#FBF3F3"/>
+
+
+                        </LinearLayout>
+                    </RelativeLayout>
+                </LinearLayout>
+            </LinearLayout>-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -564,7 +672,7 @@
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-            <LinearLayout
+            <!--<LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
@@ -645,7 +753,7 @@
 
                     </LinearLayout>
 
-              <!--      <LinearLayout
+              &lt;!&ndash;      <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -669,13 +777,13 @@
                             android:textColor="#E2572C"
                             android:gravity="center"/>
 
-                    </LinearLayout>-->
+                    </LinearLayout>&ndash;&gt;
 
 
-                    <!--<androidx.recyclerview.widget.RecyclerView
+                    &lt;!&ndash;<androidx.recyclerview.widget.RecyclerView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:id="@+id/recycler_seva"/>-->
+                        android:id="@+id/recycler_seva"/>&ndash;&gt;
 
 
                     <Button
@@ -692,7 +800,7 @@
                 </LinearLayout>
 
 
-            </LinearLayout>
+            </LinearLayout>-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

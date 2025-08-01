@@ -37,6 +37,7 @@ import com.dst.ayyapatelugu.Activity.AboutActivity;
 import com.dst.ayyapatelugu.Activity.AnadanamActivity;
 import com.dst.ayyapatelugu.Activity.AyyaappaDevlyaluActivity;
 import com.dst.ayyapatelugu.Activity.AyyapaBooksListActivity;
+import com.dst.ayyapatelugu.Activity.AyyappaBajanaSognsActivity;
 import com.dst.ayyapatelugu.Activity.AyyappaKaryamListActivity;
 import com.dst.ayyapatelugu.Activity.AyyappaMandaliListActivity;
 import com.dst.ayyapatelugu.Activity.AyyappaPetamListActivity;
@@ -112,10 +113,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
 
-    LinearLayout layoutSeva;
-    Button buttonViewAll;
+    //LinearLayout layoutSeva;
+   // Button buttonViewAll;
     List<SevaListModel> sevaList;
     private Retrofit retrofit;
+
+    Button butBajanaSongs;
+    LinearLayout layoutBajanaSongs;
 
     Button butAllNews;
     // RecyclerView recyclerviewnews;
@@ -338,10 +342,31 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         sevaMethod();
 
         newsMethod();
+        bajanaSongsMethod();
 
         TemplesListMethod();
         AyyaTemplesListMethod();
 
+    }
+
+    private void bajanaSongsMethod() {
+       // butBajanaSongs = findViewById(R.id.viewall_but_bajana_songs);
+        //layoutBajanaSongs = findViewById(R.id.layout_bajana_songs);
+
+        /*butBajanaSongs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(HomeActivity.this, AyyappaBajanaSognsActivity.class);
+                startActivity(intent);
+            }
+        });*/
+       /* layoutBajanaSongs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(HomeActivity.this, AyyappaBajanaSognsActivity.class);
+                startActivity(intent);
+            }
+        });*/
     }
 
     private void newsMethod() {
@@ -653,18 +678,18 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 
     private void sevaMethod() {
-        buttonViewAll = findViewById(R.id.but_view_all);
-        layoutSeva = findViewById(R.id.layout_seva);
-        buttonViewAll.setOnClickListener(new View.OnClickListener() {
+//        buttonViewAll = findViewById(R.id.but_view_all);
+       // layoutSeva = findViewById(R.id.layout_seva);
+        /*buttonViewAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(HomeActivity.this, ViewAllDetailsActivity.class);
                 startActivity(intent);
 
             }
-        });
+        });*/
 
-        layoutSeva.setOnClickListener(new View.OnClickListener() {
+      /*  layoutSeva.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!isActivityOpened) {
@@ -677,7 +702,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 }
 
             }
-        });
+        });*/
 
     }
 
@@ -846,7 +871,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             Intent intent = new Intent(HomeActivity.this, AyyappaMandaliListActivity.class);
             startActivity(intent);
 
-        } else if (action == R.id.ayyappa_decration) {
+        }else if (action == R.id.ayyappa_decration) {
 
             Intent intent = new Intent(HomeActivity.this, AyyappaPetamListActivity.class);
             startActivity(intent);
@@ -877,12 +902,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         }else if(action == R.id.ayyappa_devalyalu){
 
-            Intent intent=new Intent(HomeActivity.this, DevlyaluActivity.class);
+            Intent intent=new Intent(HomeActivity.this, ViewAllTemplesActivity.class);
             startActivity(intent);
 
         }else if(action == R.id.ayyappa_ayyappadevlyalu){
 
-            Intent intent=new Intent(HomeActivity.this, AyyaappaDevlyaluActivity.class);
+            Intent intent=new Intent(HomeActivity.this, ViewAllAyyappaTemplesActivity.class);
             startActivity(intent);
 
         }else if(action == R.id.ayyappa_policy){

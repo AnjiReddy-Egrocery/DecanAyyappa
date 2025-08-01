@@ -9,6 +9,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
@@ -184,6 +185,12 @@ public class AyyappaTourseDetailsACtivity extends AppCompatActivity {
             }
         });
         fetchDataFromApi();
+        SwipeRefreshLayout swipeRefresh =findViewById(R.id.swipeRefresh);
+        swipeRefresh.setOnRefreshListener(() -> {
+            fetchDataFromApi();
+            swipeRefresh.setRefreshing(false);
+        });
+
     }
 
     private void filterResults(String query) {

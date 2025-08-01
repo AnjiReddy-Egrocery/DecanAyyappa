@@ -21,7 +21,7 @@ import com.squareup.picasso.Picasso;
 public class AyyapaPetamDetailsActivity extends AppCompatActivity {
 
     Toolbar toolbar;
-    TextView txtFname, txtDname, txtCity, txtVillage, txtnumber, txtemail, txtSpecilization, txtDiscription, txtGName;
+    TextView txtFname, txtDname, txtVillage, txtnumber, txtemail, txtSpecilization, txtDiscription, txtGName;
     ImageView imageView;
     ImageView imageAnadanam,imageNityaPooja;
     TextView textAndanam,txtNityaPooja;
@@ -95,7 +95,7 @@ public class AyyapaPetamDetailsActivity extends AppCompatActivity {
         imageView = findViewById(R.id.img);
         txtDname = findViewById(R.id.txt_name);
         txtFname = findViewById(R.id.txt_fname);
-        txtCity = findViewById(R.id.txt_city);
+        //txtCity = findViewById(R.id.txt_city);
         txtSpecilization = findViewById(R.id.txt_spec);
         txtVillage = findViewById(R.id.txt_village);
         txtnumber = findViewById(R.id.number);
@@ -117,9 +117,8 @@ public class AyyapaPetamDetailsActivity extends AppCompatActivity {
         String imagePath = bundle.getString("ImagePath");
 
         txtDname.setText(dname);
-        ;
-        txtFname.setText(fname);
-        txtCity.setText(city);
+        //txtFname.setText(fname);
+        //txtCity.setText(city);
         txtSpecilization.setText(Specilization);
         txtVillage.setText(village);
         txtnumber.setText(number);
@@ -127,6 +126,8 @@ public class AyyapaPetamDetailsActivity extends AppCompatActivity {
         txtDiscription.setText(discription);
         txtGName.setText(gName);
         Picasso.get().load(imagePath).into(imageView);
+
+        txtFname.setText(fname + " , " + city);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             txtDiscription.setText(Html.fromHtml(discription));

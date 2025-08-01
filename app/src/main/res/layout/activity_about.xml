@@ -28,26 +28,142 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_marginTop="70dp">
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
-            android:layout_marginBottom="12dp"
-            android:layout_marginTop="12dp">
-
-            <TextView
+            android:layout_marginBottom="20dp">
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="మనకు ఎంతోమంది దేవుళ్ళు ఉన్నారు. ఆ దేవుళ్ళల్లో మన అయ్యప్పస్వామి ఒకరు. ఏ దేవుడి ప్రత్యేకత ఆ దేవుడికి ఉంటుందనేది మనందరికి తెలిసిందే ! అలాగే మన అయ్యప్పస్వామి దేవుడికి కూడా ప్రత్యేకత ఉంది. వారి శక్తుల గురించి, వారికి చేయాల్సిన పూజల గురించి, ఎలా పూజిస్తే అయ్యప్పస్వామి మనల్ని కరుణించి కాపాడుతాడో ఎప్పటికప్పుడు మనం తెలుసుకుంటూ ఉందాం !
-                                                                 ఇక్కడ లభించే  సమాచారం అయ్యప్ప పూజ కార్యక్రమాలు, గురుస్వాముల జాబిత, అయ్యప్ప పుస్తకాలు, అయ్యప్ప యాత్రలు, పూజా పీఠం అలంకరించు వారి వివరాలు, అయ్యప్ప పాటలు మొదలగు సమచారం లభించును.
-                                                                  తల్లిదండ్రులు గతించినచో ఏడాదికాలము వరకు మాల ధరించరాదు. సవతి తల్లిదండ్రులు గతించినచో 6 నెలల వరకు మాల ధరించరాదు. భార్య గతించినచో 6 నెలల వరకు మాల ధరించరాదు తల్లిదండ్రులు గతించినచో ఏడాదికాలము వరకు మాల ధరించరాదు. సవతి తల్లిదండ్రులు గతించినచో 6 నెలల వరకు మాల ధరించరాదు. భార్య గతించినచో 6 నెలల వరకు మాల ధరించరాదు తల్లిదండ్రులు గతించినచో ఏడాదికాలము వరకు మాల ధరించరాదు. సవతి తల్లిదండ్రులు గతించినచో 6 నెలల వరకు మాల ధరించరాదు. భార్య గతించినచో 6 నెలల వరకు మాల ధరించరాదు తల్లిదండ్రులు గతించినచో ఏడాదికాలము వరకు మాల ధరించరాదు. సవతి తల్లిదండ్రులు గతించినచో 6 నెలల వరకు మాల ధరించరాదు. భార్య గతించినచో 6 నెలల వరకు మాల ధరించరాదు
-        "
-                android:textStyle="normal"
-                android:textColor="#fff"
-                android:textSize="18dp"/>
-        </LinearLayout>
+                android:orientation="vertical"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginBottom="12dp"
+                android:layout_marginTop="12dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="ఓం శ్రీ స్వామియే శరణం అయ్యప్ప"
+                    android:textStyle="normal"
+                    android:textColor="#fff"
+                    android:textSize="18dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="అయ్యప్ప తెలుగు కి స్వాగతం"
+                    android:textStyle="normal"
+                    android:textColor="#fff"
+                    android:layout_marginTop="14dp"
+                    android:textSize="18dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="అయ్యప్ప తెలుగు అనేది తెలుగు అయ్యప్ప భక్తులకు సంబందించి డెక్కన్ స్పార్క్ టెక్నాలజీస్ చేత డెవలప్ చేయబడిన Website  మరియు Mobile App (Android App)."
+                    android:textStyle="normal"
+                    android:textColor="#fff"
+                    android:layout_marginTop="14dp"
+                    android:textSize="18dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="అయ్యప్ప తెలుగు ముఖ్య ఉద్దేశం అయ్యప్ప భక్తులకు సంబందించి ప్రతి ముఖ్య సమాచారం ఇవ్వబడును. "
+                    android:textStyle="normal"
+                    android:textColor="#fff"
+                    android:layout_marginTop="14dp"
+                    android:textSize="18dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="ముఖ్యాంశాలు:  "
+                    android:textStyle="normal"
+                    android:textColor="#fff"
+                    android:layout_marginTop="14dp"
+                    android:textSize="18dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="అన్నదానం: భక్తులకు సమీపంలో ఉన్న అన్నదానాలు నిర్వహించే సన్నీదానాలు మరియు గుడుల వివరాలు తెలుపబడును. Google maps ఆదారంగా అన్నదానాలు నిర్వహించే స్థలాలకు భక్తులు చేరుకోగలరు."
+                    android:textStyle="normal"
+                    android:textColor="#fff"
+                    android:layout_marginTop="14dp"
+                    android:textSize="18dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="భజన మండలి: అయ్యప్ప భక్తులు భజన మండలి వివరాలు తెలుసుకోవచ్చు మరియు వారిని నేరుగా సంప్రదించవచ్చు. "
+                    android:textStyle="normal"
+                    android:textColor="#fff"
+                    android:layout_marginTop="14dp"
+                    android:textSize="18dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="గురుస్వాములు: అయ్యప్ప భక్తులు, పడిపూజాలు నిర్వహించే గురుస్వాముల వివరాలు తెలుసుకోవచ్చు మరియు వారిని నేరుగా సంప్రదించవచ్చు. "
+                    android:textStyle="normal"
+                    android:textColor="#fff"
+                    android:layout_marginTop="14dp"
+                    android:textSize="18dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="పూజా  కార్యక్రమాలు: అయ్యప్ప భక్తులకు సంబందించి నిత్యపూజా విదానం, శరనుఘోష, హరివరాశనం, మొదలగు వివరాలు లబించును. "
+                    android:textStyle="normal"
+                    android:textColor="#fff"
+                    android:layout_marginTop="14dp"
+                    android:textSize="18dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="వార్తలు: అయ్యప్ప స్వాములకు మరియు శబరిమల ఆలయానికి సంబందించిన వార్తా విశేషాలు అందించడం జరుగుతుంది."
+                    android:textStyle="normal"
+                    android:textColor="#fff"
+                    android:layout_marginTop="14dp"
+                    android:textSize="18dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="అయ్యప్ప క్యాలండర్: అయ్యప్ప క్యాలండర్ నందు శబరిమల అయ్యప్ప దేవాలయం తెరిచే సమయాలు (నెలల వారీగా) పొందుపరచడం జరిగింది."
+                    android:textStyle="normal"
+                    android:textColor="#fff"
+                    android:layout_marginTop="14dp"
+                    android:textSize="18dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="అయ్యప్ప దేవాలయాల వివరాలు: అయ్యప్ప ఆలయ వివరాలు, ప్రదేశం, ఆలయాలు తెరిచే సమయం, ఆ రోజులో మూసివేసే సమయం మరియు విరామ సమయాలు తెలుపబడును. ఆలయ ప్రదేశానికి నేరుగా వెళ్లాడాన్నికి Google Maps navigation Integrate చేయడం జరిగింది."
+                    android:textStyle="normal"
+                    android:textColor="#fff"
+                    android:layout_marginTop="14dp"
+                    android:textSize="18dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="సకల దేవతల ఆలయాల వివరాలు: ఆలయ వివరాలు, ప్రదేశం, ఆలయాలు తెరిచే సమయం, ఆ రోజులో మూసివేసే సమయం మరియు విరామ సమయాలు తెలుపబడును. ఆలయ ప్రదేశానికి నేరుగా వెళ్లాడాన్నికి Google Maps navigation Integrate చేయడం జరిగింది."
+                    android:textStyle="normal"
+                    android:textColor="#fff"
+                    android:layout_marginTop="14dp"
+                    android:textSize="18dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="సేవా సంస్థల వివరాలు: సేవా సంస్థలు మరియు వారి వివరాలు పొందుపరిచాము."
+                    android:textStyle="normal"
+                    android:textColor="#fff"
+                    android:layout_marginTop="14dp"
+                    android:textSize="18dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="ధన్యవాదాలు."
+                    android:textStyle="normal"
+                    android:textColor="#fff"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="14dp"
+                    android:textSize="18dp"/>
+            </LinearLayout>
+        </ScrollView>
+
     </LinearLayout>
 
 

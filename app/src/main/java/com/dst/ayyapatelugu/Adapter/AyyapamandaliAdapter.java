@@ -62,7 +62,7 @@ public class AyyapamandaliAdapter extends RecyclerView.Adapter<AyyapamandaliAdap
 
 
 
-        String name = modal.getNameOfGuru();
+        String name = modal.getBajanamandaliName();
         String GuruNme = modal.getNameOfGuru();
         String City = modal.getBajanamandaliCity();
         String Number = modal.getBajanamandaliMobile();
