@@ -23,6 +23,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -206,7 +207,9 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
         mapList = SharedPreferenceHelper.getTempleData(this);
 
         if (mapList != null && !mapList.isEmpty()) {
-            addMarkers(mapList);
+            new Handler().postDelayed(() -> {
+                addMarkers(mapList);
+            }, 200); // Delay marker loading
         } else {
 
             Call<MapDataResponse> call = apiClient.getMapList();
@@ -222,7 +225,9 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
 
 
                             // Add markers for each location
-                            addMarkers(locations);
+                            new Handler().postDelayed(() -> {
+                                addMarkers(locations);
+                            }, 200); // Delay marker loading
 
                             SharedPreferenceHelper.saveTempleData(AnadanamActivity.this, mapList);
                         }
@@ -243,9 +248,19 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     private void addMarkers(List<MapDataResponse.Result> locations) {
-        if(mMap != null) {
+       /* if(mMap != null) {
             DrawMarkersTask drawMarkersTask = new DrawMarkersTask(locations);
             drawMarkersTask.execute();
+        }*/
+        for (MapDataResponse.Result temple : locations) {
+            try {
+                LatLng position = new LatLng(Double.parseDouble(temple.getLatitude()), Double.parseDouble(temple.getLongitude()));
+                mMap.addMarker(new MarkerOptions().position(position)
+                        .title(temple.getAnnadhanamNameTelugu())
+                        .snippet(temple.getLocation()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
     }
@@ -424,11 +439,11 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
                         myTempleList.get(i).getLocation());
 
                 publishProgress(markerOptions); // pass it for the main UI thread for displaying
-                try {
+                /*try {
                     Thread.sleep(50); // sleep for 50 ms so that main UI thread can handle user actions in the meantime
                 } catch (InterruptedException e) {
                     // NOP (no operation)
-                }
+                }*/
             }
             return null;
         }

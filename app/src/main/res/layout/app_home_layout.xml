@@ -447,99 +447,25 @@
                         android:layout_marginLeft="12dp"
                         android:layout_marginRight="12dp"
                         android:orientation="vertical">
-                        <LinearLayout
+                        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                            android:id="@+id/swipeRefreshLayout2"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/layout_news"
-                            android:orientation="vertical">
+                            android:layout_height="150dp">
 
-                            <TextView
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/recycler_news"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="&#8226;  శబరిమలలో స్వామికి జరిగే నిత్య సౌకర్యాలు ఇవే! "
-                                android:textColor="#fff"
-                                android:padding="5dp"
-                                android:layout_marginTop="20dp"
-                                android:textSize="18dp"
-                                />
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="&#8226;  శబరిమలలో స్వామికి జరిగే నిత్య సౌకర్యాలు ఇవే! "
-                                android:textColor="#fff"
-                                android:padding="5dp"
-                                android:layout_marginTop="0dp"
-                                android:textSize="18dp"
-                                />
-
-                        </LinearLayout>
-
-
-                       <!-- <ImageView
-                            android:id="@+id/leftIcon2"
-                            android:layout_width="75dp"
-                            android:layout_height="100dp"
-                            android:layout_alignParentStart="true"
-                            android:layout_marginLeft="-25dp"
-                            android:layout_marginRight="-10dp"
-                            android:layout_marginTop="25dp"
-                            android:src="@drawable/baseline_keyboard_arrow_left_24" />
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_toStartOf="@id/rightIcon2"
-                            android:layout_toEndOf="@id/leftIcon2"
-                            android:id="@+id/recycler_news"/>
-                        <ImageView
-                            android:id="@+id/rightIcon2"
-                            android:layout_width="75dp"
-                            android:layout_height="100dp"
-                            android:layout_alignParentEnd="true"
-                            android:padding="1dp"
-                            android:layout_marginRight="-25dp"
-                            android:layout_marginLeft="-20dp"
-                            android:layout_marginTop="25dp"
-                            android:src="@drawable/baseline_keyboard_arrow_right_24" />
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal" />
+                        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 -->
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
                             android:layout_marginTop="16dp"
-                            android:layout_below="@+id/layout_news"
+                            android:layout_below="@+id/swipeRefreshLayout2"
                             android:orientation="horizontal">
-
-                            <!-- Indicator Dots - You can adjust the number of dots as needed -->
-                            <!-- <ImageView
-                                 android:layout_width="16dp"
-                                 android:layout_height="16dp"
-                                 android:layout_margin="4dp"
-                                 android:background="@drawable/ic_dot_empty" />
-
-                             <ImageView
-                                 android:layout_width="16dp"
-                                 android:layout_height="16dp"
-                                 android:layout_margin="4dp"
-                                 android:background="@drawable/ic_dot_empty" />
-
-                             <ImageView
-                                 android:layout_width="16dp"
-                                 android:layout_height="16dp"
-                                 android:layout_margin="4dp"
-                                 android:background="@drawable/ic_dot_empty" />
-
-                             <ImageView
-                                 android:layout_width="16dp"
-                                 android:layout_height="16dp"
-                                 android:layout_margin="4dp"
-                                 android:background="@drawable/ic_dot_empty" />
-
-                             <ImageView
-                                 android:layout_width="16dp"
-                                 android:layout_height="16dp"
-                                 android:layout_margin="4dp"
-                                 android:background="@drawable/ic_dot_empty" />-->
 
                             <Button
                                 android:layout_width="wrap_content"
@@ -846,14 +772,21 @@
                             android:layout_marginTop="18dp"
                             android:src="@drawable/baseline_keyboard_arrow_left_24" />
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/recycler_ayyappa_temples"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_toStartOf="@id/rightIcon1"
-                            android:layout_toEndOf="@id/leftIcon1"
-                            android:orientation="horizontal" />
 
+
+                        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                            android:id="@+id/swipeRefreshLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:layout_toStartOf="@id/rightIcon1"
+                            android:layout_toEndOf="@id/leftIcon1">
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/recycler_ayyappa_temples"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal" />
+                        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
                         <ImageView
                             android:id="@+id/rightIcon1"
                             android:layout_width="55dp"
@@ -867,52 +800,10 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_below="@id/recycler_ayyappa_temples"
+                            android:layout_below="@id/swipeRefreshLayout"
                             android:layout_centerHorizontal="true"
                             android:layout_marginTop="16dp"
                             android:orientation="horizontal">
-
-                            <!-- Indicator Dots - You can adjust the number of dots as needed -->
-                            <!-- <ImageView
-                                 android:layout_width="16dp"
-                                 android:layout_height="16dp"
-                                 android:layout_margin="4dp"
-                                 android:background="@drawable/ic_dot_empty" />
-
-                             <ImageView
-                                 android:layout_width="16dp"
-                                 android:layout_height="16dp"
-                                 android:layout_margin="4dp"
-                                 android:background="@drawable/ic_dot_empty" />
-
-                             <ImageView
-                                 android:layout_width="16dp"
-                                 android:layout_height="16dp"
-                                 android:layout_margin="4dp"
-                                 android:background="@drawable/ic_dot_empty" />
-
-                             <ImageView
-                                 android:layout_width="16dp"
-                                 android:layout_height="16dp"
-                                 android:layout_margin="4dp"
-                                 android:background="@drawable/ic_dot_empty" />
-
-                             <ImageView
-                                 android:layout_width="16dp"
-                                 android:layout_height="16dp"
-                                 android:layout_margin="4dp"
-                                 android:background="@drawable/ic_dot_empty" />-->
-
-<!--                            <Button-->
-<!--                                android:layout_width="wrap_content"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:text="View All"-->
-<!--                                android:textStyle="bold"-->
-<!--                                android:textSize="16dp"-->
-<!--                                android:textColor="#6E0303"-->
-<!--                                android:id="@+id/viewall_but"-->
-<!--                                android:layout_margin="4dp"-->
-<!--                                android:backgroundTint="#FBF3F3"/>-->
 
 
                             <Button
@@ -976,13 +867,18 @@
                             android:layout_marginRight="-10dp"
                             android:layout_marginTop="18dp"
                             android:src="@drawable/baseline_keyboard_arrow_left_24" />
+                        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                            android:id="@+id/swipeRefreshLayout1"
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:layout_toStartOf="@id/rightIcon"
+                            android:layout_toEndOf="@id/leftIcon">
                         <androidx.recyclerview.widget.RecyclerView
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:orientation="horizontal"
-                            android:layout_toStartOf="@id/rightIcon"
-                            android:layout_toEndOf="@id/leftIcon"
                             android:id="@+id/recycler_temples"/>
+                        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
                         <ImageView
                             android:id="@+id/rightIcon"
                             android:layout_width="55dp"
@@ -991,59 +887,19 @@
                             android:padding="1dp"
                             android:layout_marginTop="18dp"
                             android:layout_marginRight="-15dp"
-                            android:layout_marginLeft="-20dp"
                             android:src="@drawable/baseline_keyboard_arrow_right_24" />
+
 
                         <LinearLayout
                             android:id="@+id/indicatorLayout"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_below="@id/recycler_temples"
+                            android:layout_below="@id/swipeRefreshLayout1"
                             android:layout_centerHorizontal="true"
                             android:layout_marginTop="16dp"
                             android:orientation="horizontal">
 
-                            <!-- Indicator Dots - You can adjust the number of dots as needed -->
-                            <!-- <ImageView
-                                 android:layout_width="16dp"
-                                 android:layout_height="16dp"
-                                 android:layout_margin="4dp"
-                                 android:background="@drawable/ic_dot_empty" />
 
-                             <ImageView
-                                 android:layout_width="16dp"
-                                 android:layout_height="16dp"
-                                 android:layout_margin="4dp"
-                                 android:background="@drawable/ic_dot_empty" />
-
-                             <ImageView
-                                 android:layout_width="16dp"
-                                 android:layout_height="16dp"
-                                 android:layout_margin="4dp"
-                                 android:background="@drawable/ic_dot_empty" />
-
-                             <ImageView
-                                 android:layout_width="16dp"
-                                 android:layout_height="16dp"
-                                 android:layout_margin="4dp"
-                                 android:background="@drawable/ic_dot_empty" />
-
-                             <ImageView
-                                 android:layout_width="16dp"
-                                 android:layout_height="16dp"
-                                 android:layout_margin="4dp"
-                                 android:background="@drawable/ic_dot_empty" />-->
-
-<!--                            <Button-->
-<!--                                android:layout_width="wrap_content"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:text="View All"-->
-<!--                                android:textStyle="bold"-->
-<!--                                android:textSize="16dp"-->
-<!--                                android:textColor="#6E0303"-->
-<!--                                android:layout_margin="4dp"-->
-<!--                                android:id="@+id/but_viewAll"-->
-<!--                                android:backgroundTint="#FBF3F3"/>-->
                             <Button
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"

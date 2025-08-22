@@ -11,6 +11,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -46,6 +47,7 @@ import com.dst.ayyapatelugu.Activity.CalenderActivity;
 import com.dst.ayyapatelugu.Activity.DevlyaluActivity;
 import com.dst.ayyapatelugu.Activity.GuruSwamiListActivity;
 import com.dst.ayyapatelugu.Activity.NityaPoojaActivity;
+import com.dst.ayyapatelugu.Activity.PanchagamActivity;
 import com.dst.ayyapatelugu.Activity.ProductsListActivity;
 import com.dst.ayyapatelugu.Activity.SevaDetailsActivity;
 import com.dst.ayyapatelugu.Activity.SharanughoshaActivity;
@@ -54,6 +56,7 @@ import com.dst.ayyapatelugu.Activity.ViewAllDetailsActivity;
 import com.dst.ayyapatelugu.Activity.ViewAllNewsDetailsActivity;
 import com.dst.ayyapatelugu.Activity.ViewAllNewsListActivity;
 import com.dst.ayyapatelugu.Activity.ViewAllTemplesActivity;
+import com.dst.ayyapatelugu.Adapter.AllNewsListAdapter;
 import com.dst.ayyapatelugu.Adapter.AyyappaListAdapter;
 import com.dst.ayyapatelugu.Adapter.AyyappaTemplesListAdapter;
 import com.dst.ayyapatelugu.Adapter.NewsListAdapter;
@@ -124,11 +127,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     Button butAllNews;
     // RecyclerView recyclerviewnews;
 
-    List<NewsListModel> newsList;
-    LinearLayout layoutNews;
+    //List<NewsListModel> newsList;
+    /*LinearLayout layoutNews;*/
     private boolean isActivityOpened = false;
 
-    NewsListAdapter viewNewsListAdapter;
+    //NewsListAdapter viewNewsListAdapter;
 
 
 
@@ -147,6 +150,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     AyyappaListAdapter ayyappaListAdapter;
     private LinearLayoutManager layoutManagerAyyappaTemple;
 
+    private LinearLayoutManager layoutManagerNews;
+
 
     private static final int REQUEST_PERMISSION_CODE = 1;
 
@@ -159,6 +164,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     Button butViewAll,viewallButton;
 
     LinearLayout layoutSharanughosha,layoutNityaPooja;
+    SwipeRefreshLayout swipeRefreshLayout,swipeRefreshLayout1,swipeRefreshLayout2;
+
+    RecyclerView recyclerviewnews;
+
+    List<NewsListModel> newsList;
+    AllNewsListAdapter viewAllNewsListAdapter;
+
 
 
 
@@ -370,9 +382,15 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void newsMethod() {
+        recyclerviewnews = findViewById(R.id.recycler_news);
         butAllNews = findViewById(R.id.viewall_but_news);
-        layoutNews = findViewById(R.id.layout_news);
+        //layoutNews = findViewById(R.id.layout_news);
         newsList = new ArrayList<>();
+
+        LinearLayoutManager layoutManager =new LinearLayoutManager(this);
+        recyclerviewnews.setLayoutManager(layoutManager);
+
+        newsfechedDatafromShredPreferences();
         butAllNews.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -380,24 +398,38 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(intentnews);
             }
         });
-        layoutNews.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                if (!isActivityOpened) {
-                    isActivityOpened = true;
-                    // Open the desired activity
-                    newsfetchDataFromDataBase();
 
-                    // Optionally reset after some time or when the target activity is closed
-                    new Handler().postDelayed(() -> isActivityOpened = false, 1000);
-                }
-                //Toast.makeText(HomeActivity.this, "News Details will be Clicked", Toast.LENGTH_SHORT).show();
+        swipeRefreshLayout2 = findViewById(R.id.swipeRefreshLayout2);
 
-            }
+        swipeRefreshLayout2.setOnRefreshListener(() -> {
+            ayyappafetchDataFromDataBase();  // Manual Pull Refresh API Call
         });
+
+
+
     }
+
+    private void newsfechedDatafromShredPreferences() {
+        newsfetchDataFromDataBase();
+
+        List<NewsListModel> newsListModels= SharedPreferencesManager.getNewsList(HomeActivity.this);
+        if (newsListModels != null && !newsListModels.isEmpty()) {
+            // Data exists in SharedPreferences, update RecyclerView
+            updateRecyclerViewNews(newsListModels);
+        } else {
+            // Data doesn't exist in SharedPreferences, fetch from the network
+            newsfetchDataFromDataBase();
+        }
+
+    }
+
+
+
     private void newsfetchDataFromDataBase() {
+        if (swipeRefreshLayout != null && !swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(true); // Show refresh loader
+        }
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -416,43 +448,36 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         call.enqueue(new Callback<NewsList>() {
             @Override
             public void onResponse(Call<NewsList> call, Response<NewsList> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    NewsList newsList1 = response.body();
-                    newsList = new ArrayList<>(Arrays.asList(newsList1.getResult()));
+                swipeRefreshLayout.setRefreshing(false); // Hide loader
+                NewsList newsList1=response.body();
+                newsList = new ArrayList<>(Arrays.asList(newsList1.getResult()));
 
-                    if (!newsList.isEmpty()) {
-                        NewsListModel newsListModel = newsList.get(0);
+                SharedPreferencesManager.saveNewsList(HomeActivity.this, newsList);
 
-                        String profilepic = newsListModel.getImage();
-                        String imageUrl = "https://www.ayyappatelugu.com/assets/news_images/" + profilepic;
-                        String name = newsListModel.getNewsTitle();
-
-                        Intent intent = new Intent(HomeActivity.this, ViewAllNewsDetailsActivity.class);
-                        intent.putExtra("Name", name);
-                        intent.putExtra("imagePath", imageUrl);
-                        intent.putExtra("position", 0); // Passing position
-                        startActivity(intent);
-                    } else {
-                        Log.e("NewsFetch", "No news items available");
-                    }
-                } else {
-                    Log.e("NewsFetch", "Response error: " + response.code());
-                }
+                updateRecyclerViewNews(newsList);
             }
 
             @Override
             public void onFailure(Call<NewsList> call, Throwable t) {
-              /*  newsList = SharedPreferencesManager.getNewsList(HomeActivity.this);
+                swipeRefreshLayout.setRefreshing(false); // Hide loader
+                newsList = SharedPreferencesManager.getNewsList(HomeActivity.this);
                 if (newsList != null && !newsList.isEmpty()) {
                     Log.d("Data Check", "NewsList size: " + newsList.size());
-                    //newsupdateRecyclerView(newsList);
-                }*/
+                    updateRecyclerViewNews(newsList);
+                }
 
             }
         });
     }
 
+    private void updateRecyclerViewNews(List<NewsListModel> newsListModels) {
+        viewAllNewsListAdapter = new AllNewsListAdapter(HomeActivity.this,newsListModels);
+        recyclerviewnews.setAdapter(viewAllNewsListAdapter);
+
+    }
+
     private void AyyaTemplesListMethod() {
+
         recyclerviewAyyappaTemples = findViewById(R.id.recycler_ayyappa_temples);
         viewallButton = findViewById(R.id.viewall_but);
         viewallButton.setOnClickListener(new View.OnClickListener() {
@@ -484,6 +509,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 scrollRecyclerViewRightayyappa();
             }
         });
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            ayyappafetchDataFromDataBase();  // Manual Pull Refresh API Call
+        });
+
 
     }
 
@@ -502,18 +533,20 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void ayyappafechedDatafromShredPreferences() {
-        List<AyyaTempleListModel> templesListModels= SharedPreferencesManager.getAyyappaTemplesList(HomeActivity.this);
+        ayyappafetchDataFromDataBase();
+
+        // 2. Meanwhile show cached data (if exists) until network response comes
+        List<AyyaTempleListModel> templesListModels = SharedPreferencesManager.getAyyappaTemplesList(HomeActivity.this);
         if (templesListModels != null && !templesListModels.isEmpty()) {
-            // Data exists in SharedPreferences, update RecyclerView
+            // Show cached data instantly
             ayyappaupdateRecyclerView(templesListModels);
-        } else {
-            // Data doesn't exist in SharedPreferences, fetch from the network
-           ayyappafetchDataFromDataBase();
         }
     }
 
     private void ayyappafetchDataFromDataBase() {
-
+        if (swipeRefreshLayout != null && !swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(true); // Show refresh loader
+        }
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -532,23 +565,25 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         modelCall.enqueue(new Callback<AyyappaTempleList>() {
             @Override
             public void onResponse(Call<AyyappaTempleList> call, Response<AyyappaTempleList> response) {
-                AyyappaTempleList list=response.body();
-                ayyaTempleListModels=new ArrayList<>(Arrays.asList(list.getResult()));
+                swipeRefreshLayout.setRefreshing(false); // Hide loader
+                    AyyappaTempleList list= response.body();
+                    ayyaTempleListModels = Arrays.asList(list.getResult());
 
-                SharedPreferencesManager.saveAyyappaTempleList(HomeActivity.this, ayyaTempleListModels);
+                    // Save to SharedPreferences for caching
+                    SharedPreferencesManager.saveAyyappaTempleList(HomeActivity.this, ayyaTempleListModels);
 
-                ayyappaupdateRecyclerView(ayyaTempleListModels);
-
-            }
+                    // Update RecyclerView
+                    ayyappaupdateRecyclerView(ayyaTempleListModels);
+                }
 
             @Override
             public void onFailure(Call<AyyappaTempleList> call, Throwable t) {
+                swipeRefreshLayout.setRefreshing(false); // Hide loader
                 ayyaTempleListModels = SharedPreferencesManager.getAyyappaTemplesList(HomeActivity.this);
                 if (ayyaTempleListModels != null && !ayyaTempleListModels.isEmpty()) {
                     // Update the RecyclerView
                     ayyappaupdateRecyclerView(ayyaTempleListModels);
                 }
-
             }
         });
 
@@ -596,6 +631,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 scrollRecyclerViewRight();
             }
         });
+        swipeRefreshLayout1 = findViewById(R.id.swipeRefreshLayout1);
+
+        swipeRefreshLayout1.setOnRefreshListener(() -> {
+            fetchDataFromDataBase();  // Manual Pull Refresh API Call
+        });
     }
 
     private void scrollRecyclerViewRight() {
@@ -613,6 +653,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void fechedDatafromShredPreferences() {
+        fetchDataFromDataBase();
         List<TemplesListModel> templesListModels= SharedPreferencesManager.getTemplesList(HomeActivity.this);
         if (templesListModels != null && !templesListModels.isEmpty()) {
             // Data exists in SharedPreferences, update RecyclerView
@@ -624,6 +665,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void fetchDataFromDataBase() {
+        if (swipeRefreshLayout1 != null && !swipeRefreshLayout1.isRefreshing()) {
+            swipeRefreshLayout1.setRefreshing(true); // Show refresh loader
+        }
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -642,6 +686,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         modelCall.enqueue(new Callback<TemplesList>() {
             @Override
             public void onResponse(Call<TemplesList> call, Response<TemplesList> response) {
+                swipeRefreshLayout1.setRefreshing(false); // Hide loader
                 TemplesList list=response.body();
                 templeList=new ArrayList<>(Arrays.asList(list.getResult()));
 
@@ -653,6 +698,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onFailure(Call<TemplesList> call, Throwable t) {
+                swipeRefreshLayout1.setRefreshing(false); // Hide loader
                 templeList = SharedPreferencesManager.getTemplesList(HomeActivity.this);
                 if (templeList != null && !templeList.isEmpty()) {
                     // Update the RecyclerView
@@ -894,6 +940,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             Intent intent=new Intent(HomeActivity.this, CalenderActivity.class);
             startActivity(intent);
 
+
+        } else if (action == R.id.menu_panchagam){
+
+            Intent intent = new Intent(HomeActivity.this, PanchagamActivity.class);
+            startActivity(intent);
 
         } else if(action == R.id.ayyappa_anadanam){
 

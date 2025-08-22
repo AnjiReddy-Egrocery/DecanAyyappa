@@ -23,11 +23,19 @@
     <group android:id="@+id/group3"
         >
         <item
+            android:id="@+id/menu_panchagam"
+            android:icon="@drawable/baseline_fiber_manual_record_24"
+            android:title="@string/ayyappa_panchagam"/>
+    </group>
+
+    <group android:id="@+id/group4"
+        >
+        <item
             android:id="@+id/guruswami_list"
             android:icon="@drawable/baseline_fiber_manual_record_24"
             android:title="@string/guruswami_list"/>
     </group>
-    <group android:id="@+id/group4"
+    <group android:id="@+id/group5"
         >
         <item
             android:id="@+id/ayyappa_mandali"

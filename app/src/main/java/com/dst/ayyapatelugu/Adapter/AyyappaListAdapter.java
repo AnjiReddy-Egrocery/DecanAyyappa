@@ -2,6 +2,7 @@ package com.dst.ayyapatelugu.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,6 +85,8 @@ public class AyyappaListAdapter extends RecyclerView.Adapter<AyyappaListAdapter.
         return 0;
 
     }
+
+
 
 
     public class MyviewHolder extends RecyclerView.ViewHolder {

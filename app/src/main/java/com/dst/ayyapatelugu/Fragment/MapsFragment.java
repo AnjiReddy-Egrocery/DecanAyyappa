@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -382,7 +383,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
         if (templeList != null && !templeList.isEmpty()) {
             Log.d("TempleDebug", "Temple List Loaded from SharedManager: " + templeList.size());
-            addMarkers(templeList);
+            new Handler().postDelayed(() -> {
+                addMarkers(templeList);
+            }, 200); // Delay marker loading
+
             displayNearByTemples(); // ✅ Directly call when data exists
         } else {
             Log.d("TempleDebug", "Temple List Empty. Fetching from API...");
@@ -402,8 +406,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                             Log.d("TempleDebug", "Temple List Fetched from API: " + templeList.size());
 
                             // ✅ Add markers & update UI
-                            addMarkers(templeList);
-                           // displayNearByTemples(); // ✅ Force UI refresh
+                            new Handler().postDelayed(() -> {
+                                addMarkers(templeList);
+                            }, 200); // Delay marker loading
+
+                            // displayNearByTemples(); // ✅ Force UI refresh
                         } else {
                             Log.e("API Response", "Invalid response: " + response.code());
                         }
@@ -420,9 +427,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     }
     private void addMarkers(List<AyyappaTempleMapDataResponse.Result> ayyappatemples) {
-        if(mMap != null) {
-            DrawMarkersTask drawMarkersTask = new DrawMarkersTask(ayyappatemples);
-            drawMarkersTask.execute();
+        for (AyyappaTempleMapDataResponse.Result temple : ayyappatemples) {
+            try {
+                LatLng position = new LatLng(Double.parseDouble(temple.getLatitude()), Double.parseDouble(temple.getLongitude()));
+                mMap.addMarker(new MarkerOptions().position(position)
+                        .title(temple.getTempleNameTelugu())
+                        .snippet(temple.getLocation()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
     private class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
@@ -551,11 +564,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
                 publishProgress(markerOptions); // pass it for the main UI thread for displaying
 
-                try {
-                    Thread.sleep(50);
+               /* try {
+                   // Thread.sleep(50);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }
+                }*/
             }
 
             return null;

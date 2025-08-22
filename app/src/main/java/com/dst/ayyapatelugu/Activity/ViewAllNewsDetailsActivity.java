@@ -7,6 +7,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.dst.ayyapatelugu.HomeActivity;
 import com.dst.ayyapatelugu.R;
 import com.squareup.picasso.Picasso;
 
@@ -37,7 +39,7 @@ public class ViewAllNewsDetailsActivity extends AppCompatActivity {
     private TextToSpeech textToSpeech;
     private ImageView playAudioIcon;
     ImageView playReplayIcon;
-    private TextView textContent;
+    private TextView textContent,txtViewMore;
 
     private boolean isPlaying = false; // Track the playing state
 
@@ -61,7 +63,8 @@ public class ViewAllNewsDetailsActivity extends AppCompatActivity {
         toolbar.setTitle("www.ayyappatelugu.com");
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));*/
 
-        textContent = findViewById(R.id.webview);
+
+        txtViewMore = findViewById(R.id.txt_view_more);
         playAudioIcon = findViewById(R.id.play_audio_icon); // XML లో music player icon ID
         playReplayIcon = findViewById(R.id.play_replay_icon);
 
@@ -122,16 +125,36 @@ public class ViewAllNewsDetailsActivity extends AppCompatActivity {
         });
 
         txtName = findViewById(R.id.txt_name);
-
+        textContent = findViewById(R.id.webview);
         imageView = findViewById(R.id.image_view);
 
         Bundle bundle = getIntent().getExtras();
         String name = bundle.getString("Name");
         String imagePath = bundle.getString("imagePath");
+        String discription = bundle.getString("Discription");
 
         txtName.setText(name);
 
+        txtViewMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentnews=new Intent(ViewAllNewsDetailsActivity.this,ViewAllNewsListActivity.class);
+                startActivity(intentnews);
+            }
+        });
+
         Picasso.get().load(imagePath).into(imageView);
+        String htmlDescription = bundle.getString("Discription");
+
+// Render HTML tags & remove special characters like &zwnj; &lsquo;
+        if (htmlDescription != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                textContent.setText(Html.fromHtml(htmlDescription, Html.FROM_HTML_MODE_LEGACY));
+            } else {
+                textContent.setText(Html.fromHtml(htmlDescription));
+            }
+        }
+       // textContent.setText(discription);
 
         textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override

@@ -74,6 +74,8 @@ public class ViewAllNewsListAdapter extends RecyclerView.Adapter<ViewAllNewsList
                 Intent intent = new Intent(mContext, ViewAllNewsDetailsActivity.class);
                 intent.putExtra("Name",name);
                 intent.putExtra("imagePath", imageUrl);
+                intent.putExtra("Discription",newsDiscription);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(intent);
 
                 Log.d("ViewAllNewsDetails", "Name: " + name + ", ImagePath: " + imageUrl);

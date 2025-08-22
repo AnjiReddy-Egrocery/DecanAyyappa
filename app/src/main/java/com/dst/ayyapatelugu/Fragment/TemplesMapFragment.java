@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -316,9 +317,15 @@ public class TemplesMapFragment extends Fragment implements OnMapReadyCallback {
 
 
     private void addMarkers(List<TempleMapDataResponse.Result> temples) {
-        if(mMap != null) {
-            DrawMarkersTask drawMarkersTask = new DrawMarkersTask(temples);
-            drawMarkersTask.execute();
+        for (TempleMapDataResponse.Result temple : temples) {
+            try {
+                LatLng position = new LatLng(Double.parseDouble(temple.getLatitude()), Double.parseDouble(temple.getLongitude()));
+                mMap.addMarker(new MarkerOptions().position(position)
+                        .title(temple.getTempleNameTelugu())
+                        .snippet(temple.getLocation()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -449,7 +456,9 @@ public class TemplesMapFragment extends Fragment implements OnMapReadyCallback {
         templeList = SharedPreferenceManager.getTempleData(getContext());
 
         if (templeList != null && !templeList.isEmpty()) {
-            addMarkers(templeList);
+            new Handler().postDelayed(() -> {
+                addMarkers(templeList);
+            }, 200);
         } else {
             // Fetch data from API if SharedPreferences data is not available
             Call<TempleMapDataResponse> call = apiClient.getTempleMapList();
@@ -460,7 +469,9 @@ public class TemplesMapFragment extends Fragment implements OnMapReadyCallback {
                         TempleMapDataResponse templeMapDataResponse = response.body();
                         if (templeMapDataResponse != null && templeMapDataResponse.getErrorCode().equals("200")) {
                             templeList = templeMapDataResponse.getResult();
-                            addMarkers(templeList);
+                            new Handler().postDelayed(() -> {
+                                addMarkers(templeList);
+                            }, 200);
 
                             // Save data to SharedPreferences for future use
                             SharedPreferenceManager.saveTempleData(getContext(), templeList);
@@ -526,11 +537,11 @@ public class TemplesMapFragment extends Fragment implements OnMapReadyCallback {
                         myTempleList.get(i).getLocation());
 
                 publishProgress(markerOptions); // pass it for the main UI thread for displaying
-                try {
+               /* try {
                     Thread.sleep(50); // sleep for 50 ms so that main UI thread can handle user actions in the meantime
                 } catch (InterruptedException e) {
                     // NOP (no operation)
-                }
+                }*/
             }
             return null;
         }

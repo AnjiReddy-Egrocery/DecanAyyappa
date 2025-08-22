@@ -6,7 +6,7 @@ public class NewsListModel {
 
     private  String newsTitle;
 
-    private String newsMiniDescription;
+    private String newsDescription;
 
     private String image;
 
@@ -16,7 +16,7 @@ public class NewsListModel {
 
     public NewsListModel(String newsTitle, String discription, String image) {
         this.newsTitle = newsTitle;
-        this.newsMiniDescription = discription;
+        this.newsDescription = discription;
         this.image = image;
     }
 
@@ -29,11 +29,11 @@ public class NewsListModel {
     }
 
     public String getDiscription() {
-        return newsMiniDescription;
+        return newsDescription;
     }
 
     public void setDiscription(String discription) {
-        this.newsMiniDescription = discription;
+        this.newsDescription = discription;
     }
 
     public String getImage() {
