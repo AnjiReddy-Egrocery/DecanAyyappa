@@ -26,7 +26,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="అయ్యప్ప పుస్తకాలు"
+            android:text="అప్ప పుస్తకాలుయ్య"
             android:textSize="20dp"
             android:textStyle="bold"
             android:textColor="#fff"/>

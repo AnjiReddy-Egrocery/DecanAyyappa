@@ -29,7 +29,7 @@
                 android:textColor="#fff"
                 android:layout_marginLeft="20dp"
                 android:textSize="18dp"
-                android:text="పూజా పీటం అలంకరణ జాబితా"/>
+                android:text="పూజా పీఅటం లంకరణ జాబితా"/>
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="30dp"

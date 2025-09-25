@@ -269,7 +269,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        layoutAnadanam = findViewById(R.id.layout_anadanam);
+
         layoutAnadanam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
