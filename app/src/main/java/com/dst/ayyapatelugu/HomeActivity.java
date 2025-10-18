@@ -172,10 +172,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     AllNewsListAdapter viewAllNewsListAdapter;
 
 
-
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -269,7 +265,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-
+        layoutAnadanam = findViewById(R.id.layout_anadanam);
         layoutAnadanam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -944,6 +940,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         } else if (action == R.id.menu_panchagam){
 
             Intent intent = new Intent(HomeActivity.this, PanchagamActivity.class);
+            startActivity(intent);
+
+        } else if (action == R.id.Ayyapa_bajana_songs) {
+
+            Intent intent = new Intent(HomeActivity.this, AyyappaBajanaSognsActivity.class);
             startActivity(intent);
 
         } else if(action == R.id.ayyappa_anadanam){

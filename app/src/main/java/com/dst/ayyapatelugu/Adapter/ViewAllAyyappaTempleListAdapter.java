@@ -48,7 +48,7 @@ public class ViewAllAyyappaTempleListAdapter extends RecyclerView.Adapter<ViewAl
     public void onBindViewHolder(@NonNull ViewAllAyyappaTempleListAdapter.MyviewHolder holder, int position) {
         AyyaTempleListModel templesListModel = listModels.get(position);
         String profilepic = templesListModel.getImage();
-        String imageUrl = "https://www.ayyappatelugu.com/assets/temple_images/" + profilepic;
+        String imageUrl = "https://www.ayyappatelugu.com/public/assets/img/temple_images/" + profilepic;
         String name = templesListModel.getTempleName();
         String tName=templesListModel.getTempleNameTelugu();
         String open=templesListModel.getOpeningTime();
@@ -59,7 +59,11 @@ public class ViewAllAyyappaTempleListAdapter extends RecyclerView.Adapter<ViewAl
         holder.tvTempleName.setText(name);
 
         // holder.tvTempleName.setText(name);
-        Picasso.get().load(imageUrl).into(holder.imgTemple);
+        Picasso.get()
+                .load(imageUrl)
+                .placeholder(R.drawable.ayyapaimage)  // 🔹 loading సమయంలో చూపించేది
+                .error(R.drawable.ayyapaimage)         // 🔹 image load కాలేకపోతే చూపించేది
+                .into(holder.imgTemple);
 
         holder.layoutAllAyyapaTemples.setOnClickListener(new View.OnClickListener() {
             @Override

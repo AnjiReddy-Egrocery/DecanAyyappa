@@ -165,7 +165,7 @@ public class SharanughoshaActivity extends AppCompatActivity {
                         String description = sharanughosaModel.getResult().get(0).getDescription();
                         String smallDiscription = sharanughosaModel.getResult().get(0).getSmallDescription();
                         String photo = sharanughosaModel.getResult().get(0).getImage();
-                        String url = "https://www.ayyappatelugu.com/assets/activity/" + photo;
+                        String url = "https://www.ayyappatelugu.com/public/assets/img/activity/" + photo;
 
                         txtName.setText(title);
                         Picasso.get().load(url).into(imageView);

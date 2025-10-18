@@ -37,38 +37,38 @@ import retrofit2.http.Query;
 
 public interface APiInterface {
 
-    @GET("APICalls/Decorators/index")
+    @POST("APICalls/Decorators/index")
     Call<decoratorListModel> getDecoratorsList();
 
-    @GET("APICalls/Books/index")
+    @POST("APICalls/Books/index")
     Call<BooksListModel> getBookList();
 
-    @GET("APICalls/Guruswami/index")
+    @POST("APICalls/Guruswami/index")
     Call<GuruSwamiList> getGuruSwamiList();
 
-    @GET("APICalls/Yatralu/index")
+    @POST("APICalls/Yatralu/index")
     Call<YatraList> getYatraList();
 
-    @GET("APICalls/Bajanamandali/index")
+    @POST("APICalls/Bajanamandali/index")
     Call<BajanaMandaliList> getBajamandaliList();
 
 
-    @GET("APICalls/Products/index")
+    @POST("APICalls/Products/index")
     Call<ProductList> getProductList();
 
-    @GET("APICalls/Sevasamasthalu/index")
+    @POST("APICalls/Sevasamasthalu/index")
     Call<SevaList> getSevaList();
 
-    @GET("APICalls/News/index")
+    @POST("APICalls/News/index")
     Call<NewsList> getNewsList();
 
-    @GET("APICalls/Activities/index")
+    @POST("APICalls/Activities/index")
     Call<KaryakarmamList> getKaryakaramamList();
 
-    @GET("APICalls/Temples/index")
+    @POST("APICalls/Temples/index")
     Call<TemplesList> getTempleList();
 
-    @GET("APICalls/Temples/ayyappaTemples")
+    @POST("APICalls/Temples/ayyappaTemples")
     Call<AyyappaTempleList> getAyyappaTempleList();
 
     @POST("APICalls/Bajanamandali/info")
@@ -99,13 +99,13 @@ public interface APiInterface {
     @POST("APICalls/Calendar/index")
     Call<CalenderDataResponse> calenderData(@Part("year") RequestBody year);
 
-    @GET("APICalls/Annadhanams/Index")
+    @POST("APICalls/Annadhanams/index")
     Call<MapDataResponse> getMapList();
 
-    @GET("APICalls/Temples/Index")
+    @POST("APICalls/Temples/index")
     Call<TempleMapDataResponse> getTempleMapList();
 
-    @GET("APICalls/Temples/ayyappaTemples")
+    @POST("APICalls/Temples/ayyappaTemples")
     Call<AyyappaTempleMapDataResponse> getAyyaooaTempleMapList();
 
     @Multipart

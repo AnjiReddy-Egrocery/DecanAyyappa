@@ -3,26 +3,27 @@ package com.dst.ayyapatelugu.Activity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dst.ayyapatelugu.R;
 
-public class AyyappaBajanaSognsActivity extends AppCompatActivity {
-    LinearLayout layoutBajanaSongs;
+public class AyyappaBajanaSognsDetailsActivity extends AppCompatActivity {
+
+    Toolbar toolbar;
     ImageView imageAnadanam,imageNityaPooja;
     TextView textAndanam,txtNityaPooja;
-    Toolbar toolbar;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ayyappa_bajana_sogns);
+        setContentView(R.layout.activity_ayyappa_bajana_sogns_details);
 
         toolbar = findViewById(R.id.toolbar);
        /* toolbar.setLogo(R.drawable.user_profile_background);
@@ -48,7 +49,7 @@ public class AyyappaBajanaSognsActivity extends AppCompatActivity {
         imageAnadanam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(AyyappaBajanaSognsActivity.this,AnadanamActivity.class);
+                Intent intent=new Intent(AyyappaBajanaSognsDetailsActivity.this,AnadanamActivity.class);
                 startActivity(intent);
             }
         });
@@ -57,7 +58,7 @@ public class AyyappaBajanaSognsActivity extends AppCompatActivity {
         textAndanam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(AyyappaBajanaSognsActivity.this,AnadanamActivity.class);
+                Intent intent=new Intent(AyyappaBajanaSognsDetailsActivity.this,AnadanamActivity.class);
                 startActivity(intent);
             }
         });
@@ -68,7 +69,7 @@ public class AyyappaBajanaSognsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent intent=new Intent(AyyappaBajanaSognsActivity.this, NityaPoojaActivity.class);
+                Intent intent=new Intent(AyyappaBajanaSognsDetailsActivity.this, NityaPoojaActivity.class);
                 startActivity(intent);
 
             }
@@ -77,18 +78,7 @@ public class AyyappaBajanaSognsActivity extends AppCompatActivity {
         imageNityaPooja.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(AyyappaBajanaSognsActivity.this,NityaPoojaActivity.class);
-                startActivity(intent);
-            }
-        });
-
-
-        layoutBajanaSongs = findViewById(R.id.layout_bajanasong_detail);
-
-        layoutBajanaSongs.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(AyyappaBajanaSognsActivity.this, AyyappaBajanaSognsDetailsActivity.class);
+                Intent intent=new Intent(AyyappaBajanaSognsDetailsActivity.this,NityaPoojaActivity.class);
                 startActivity(intent);
             }
         });

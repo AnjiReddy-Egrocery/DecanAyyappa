@@ -177,7 +177,7 @@ public class AyyapaBooksListActivity extends AppCompatActivity {
                 if (ayyappaBooksListAdapter != null) {
                     ayyappaBooksListAdapter.getFilter().filter(newText);
                 }
-                return false;
+                return true;
             }
         });
 
@@ -244,8 +244,12 @@ public class AyyapaBooksListActivity extends AppCompatActivity {
     }
 
     private void updateRecyclerView(List<BooksModelResult> bookList) {
-        ayyappaBooksListAdapter = new AyyappaBooksListAdapter(AyyapaBooksListActivity.this, bookList);
-        recyclerView.setAdapter(ayyappaBooksListAdapter);
+        if (ayyappaBooksListAdapter == null) {
+            ayyappaBooksListAdapter = new AyyappaBooksListAdapter(AyyapaBooksListActivity.this, bookList);
+            recyclerView.setAdapter(ayyappaBooksListAdapter);
+        } else {
+            ayyappaBooksListAdapter.setData(bookList);
+        }
     }
 
     @Override

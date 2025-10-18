@@ -44,7 +44,7 @@ public class AyyappaListAdapter extends RecyclerView.Adapter<AyyappaListAdapter.
 
         AyyaTempleListModel templesListModel = listModels.get(position);
         String profilepic = templesListModel.getImage();
-        String imageUrl = "https://www.ayyappatelugu.com/assets/temple_images/" + profilepic;
+        String imageUrl = "https://www.ayyappatelugu.com/public/assets/img/temple_images/" + profilepic;
         String name = templesListModel.getTempleName();
 
         if (name.length() > 40) { // Arbitrary length, adjust based on design
@@ -61,7 +61,11 @@ public class AyyappaListAdapter extends RecyclerView.Adapter<AyyappaListAdapter.
         String location= templesListModel.getLocation();
 
         // holder.tvTempleName.setText(name);
-        Picasso.get().load(imageUrl).into(holder.imgTemple);
+        Picasso.get()
+                .load(imageUrl)
+                .placeholder(R.drawable.ayyapaimage)  // 🔹 loading సమయంలో చూపించేది
+                .error(R.drawable.ayyapaimage)         // 🔹 image load కాలేకపోతే చూపించేది
+                .into(holder.imgTemple);
         holder.layoutTemples.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

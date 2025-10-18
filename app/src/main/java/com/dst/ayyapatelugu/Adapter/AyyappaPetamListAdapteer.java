@@ -48,7 +48,7 @@ public class AyyappaPetamListAdapteer extends RecyclerView.Adapter<AyyappaPetamL
     @Override
     public void onBindViewHolder(AyyappaPetamListAdapteer.MyviewHolder holder, int position) {
         decoratormodelResult modal = decoratorList.get(position);
-        String imgUrl = "https://www.ayyappatelugu.com/assets/decorators/" + modal.getProfilePic();
+        String imgUrl = "https://www.ayyappatelugu.com/public/assets/img/decorators/" + modal.getProfilePic();
         String dname = modal.getDecoratorName();
         String fname = modal.getFullName();
         String city = modal.getCityName();

@@ -50,7 +50,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
     public void onBindViewHolder(ProductListAdapter.MyviewHolder holder, int position) {
         ProductListModel modal = listModels.get(position);
         String profilePic = modal.getImage();
-        String imgUrl = "https://www.ayyappatelugu.com/assets/productimages/" + profilePic;
+        String imgUrl = "https://www.ayyappatelugu.com/public/assets/productimages/" + profilePic;
 
         // Log the URL for debugging
         Log.d("Image URL", "Image URL: " + imgUrl);

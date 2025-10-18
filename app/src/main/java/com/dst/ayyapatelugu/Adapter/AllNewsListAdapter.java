@@ -57,7 +57,7 @@ public class AllNewsListAdapter extends RecyclerView.Adapter<AllNewsListAdapter.
 
 
         String profilepic = newsListModel.getImage();
-        String imageUrl = "https://www.ayyappatelugu.com/assets/news_images/" + profilepic;
+        String imageUrl = "https://www.ayyappatelugu.com/public/assets/news_images/" + profilepic;
         String name = newsListModel.getNewsTitle();
         String newsDiscription = newsListModel.getDiscription();
 

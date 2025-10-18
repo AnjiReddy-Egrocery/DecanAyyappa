@@ -225,7 +225,7 @@
                     android:gravity="center"
                     android:textColor="#fff"
                     android:textSize="18dp"
-                    android:text="మ. 3:22 నుండి సా. 4:14 వరకు<br>మ. 3:22 నుండి సా. 4:14 వరకు"/>
+                    android:text="మ. 3:22 నుండి సా. 4:14 వరకు మ. 3:22 నుండి సా. 4:14 వరకు"/>
 
             </LinearLayout>
 

@@ -42,7 +42,7 @@ public class AyyappaTemplesListAdapter extends RecyclerView.Adapter<AyyappaTempl
 
         TemplesListModel templesListModel=listModels.get(position);
         String profilepic=templesListModel.getImage();
-        String imageUrl="https://www.ayyappatelugu.com/assets/temple_images/"+profilepic;
+        String imageUrl="https://www.ayyappatelugu.com/public/assets/img/temple_images/"+profilepic;
         String name=templesListModel.getTempleName();
 
         if (name.length() > 40) { // Arbitrary length, adjust based on design

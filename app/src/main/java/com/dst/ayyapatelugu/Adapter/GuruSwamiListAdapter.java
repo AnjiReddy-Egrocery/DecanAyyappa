@@ -52,7 +52,7 @@ public class GuruSwamiListAdapter extends RecyclerView.Adapter<GuruSwamiListAdap
         //String profilePic = "https://www.ayyappatelugu.com/assets/user_images/" + modal.getProfilePic();
 
         String profilePic = modal.getProfilePic();
-        String imgUrl = "https://www.ayyappatelugu.com/assets/user_images/"+profilePic ;
+        String imgUrl = "https://www.ayyappatelugu.com/public/assets/user_images/"+profilePic ;
 
         String name = modal.getGuruswamiName();
      /*   String number = modal.getMobileNo();*/

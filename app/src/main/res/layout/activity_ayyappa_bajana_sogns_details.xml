@@ -25,11 +25,10 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <include
-        layout="@layout/activity_ayyappa_bajana_sogns_list"
+        layout="@layout/ayyappa_bajanasongs_details"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="67dp"/>
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -54,17 +53,17 @@
                 android:id="@+id/layout_image_anadanam"
                 android:layout_marginLeft="-20dp"
                 android:src="@drawable/location"/>
-             <TextView
-                 android:layout_width="0dp"
-                 android:layout_height="wrap_content"
-                 android:text="అన్నదానం"
-                 android:layout_weight="1"
-                 android:textColor="#E41B1B"
-                 android:id="@+id/layout_txt_anadanam"
-                 android:gravity="center"
-                 android:layout_marginLeft="-20dp"
-                 android:textSize="16dp"
-                 android:textStyle="bold"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="అన్నదానం"
+                android:layout_weight="1"
+                android:textColor="#E41B1B"
+                android:id="@+id/layout_txt_anadanam"
+                android:gravity="center"
+                android:layout_marginLeft="-20dp"
+                android:textSize="16dp"
+                android:textStyle="bold"/>
 
             <ImageView
                 android:layout_width="0dp"
@@ -99,6 +98,5 @@
     </LinearLayout>
 
 
-
-
+    <!---->
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

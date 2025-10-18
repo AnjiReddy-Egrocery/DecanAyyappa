@@ -52,7 +52,7 @@ public class AyyapamandaliAdapter extends RecyclerView.Adapter<AyyapamandaliAdap
     public void onBindViewHolder(AyyapamandaliAdapter.MyviewHolder holder, int position) {
         BajanaManadaliListModel modal = listModels.get(position);
         String profilePic = modal.getProfilePic();
-        String imgUrl = "https://www.ayyappatelugu.com/assets/user_images/"+profilePic ;
+        String imgUrl = "https://www.ayyappatelugu.com/public/assets/user_images/"+profilePic ;
 
         // Log the URL for debugging
         Log.d("Image URL", "Image URL: " + imgUrl);
@@ -68,7 +68,7 @@ public class AyyapamandaliAdapter extends RecyclerView.Adapter<AyyapamandaliAdap
         String Number = modal.getBajanamandaliMobile();
         String Email = modal.getBajanamandaliEmail();
         String discription = modal.getBajanamandaliDescription();
-        holder.tvtitle.setText(name);
+        holder.tvtitle.setText(GuruNme);
         holder.tvadd.setText(modal.getBajanamandaliLocation());
        /* holder.tvMobile.setText(Number);*/
 

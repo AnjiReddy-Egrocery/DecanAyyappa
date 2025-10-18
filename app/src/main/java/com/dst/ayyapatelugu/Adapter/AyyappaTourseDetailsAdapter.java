@@ -43,7 +43,7 @@ public class AyyappaTourseDetailsAdapter extends RecyclerView.Adapter<AyyappaTou
     @Override
     public void onBindViewHolder(AyyappaTourseDetailsAdapter.MyviewHolder holder, int position) {
         YatraListModel modal = listModel.get(position);
-        String imgUrl = "https://www.ayyappatelugu.com/assets/tourpackage/" + modal.getImage();
+        String imgUrl = "https://www.ayyappatelugu.com/public/assets/img/tourpackage/" + modal.getImage();
         String name = modal.getNameOfPlace();
         String days = modal.getDays();
         String details = modal.getDevotees();

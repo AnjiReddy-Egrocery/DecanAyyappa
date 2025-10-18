@@ -145,7 +145,7 @@ public class NityaPoojaActivity extends AppCompatActivity {
                         String title = nityaPoojaModel.getResult().get(0).getTitle();
                         String description = nityaPoojaModel.getResult().get(0).getDescription();
                         String photo = nityaPoojaModel.getResult().get(0).getImage();
-                        String url = "https://www.ayyappatelugu.com/assets/activity/" + photo;
+                        String url = "https://www.ayyappatelugu.com/public/assets/img/activity/" + photo;
 
                         txtName.setText(title);
                         Picasso.get().load(url).into(imageView);

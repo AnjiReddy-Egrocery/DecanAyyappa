@@ -47,7 +47,7 @@ public class AyyappaBooksListAdapter extends RecyclerView.Adapter<AyyappaBooksLi
     @Override
     public void onBindViewHolder(AyyappaBooksListAdapter.MyviewHolder holder, int position) {
         BooksModelResult modal = bookList.get(position);
-        String imgUrl = "https://www.ayyappatelugu.com/assets/bookimage/" + modal.getImage();
+        String imgUrl = "https://www.ayyappatelugu.com/public/assets/bookimage/" + modal.getImage();
         String name = modal.getName();
         String price = modal.getPrice();
         String author = modal.getAuthor();
@@ -86,6 +86,8 @@ public class AyyappaBooksListAdapter extends RecyclerView.Adapter<AyyappaBooksLi
 
     public void setData(List<BooksModelResult> bookList) {
         this.bookList = bookList;
+        this.bookListFull.clear();
+        this.bookListFull.addAll(bookList);
         notifyDataSetChanged();
     }
 
@@ -138,8 +140,15 @@ public class AyyappaBooksListAdapter extends RecyclerView.Adapter<AyyappaBooksLi
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             bookList.clear();
-            bookList.addAll((List) results.values);
+            bookList.addAll((List<BooksModelResult>) results.values);
             notifyDataSetChanged();
+
+            if (mContext instanceof AyyapaBooksListActivity) {
+                ((AyyapaBooksListActivity) mContext).runOnUiThread(() -> {
+                    RecyclerView recyclerView = ((AyyapaBooksListActivity) mContext).findViewById(R.id.recycler_books);
+                    recyclerView.scrollToPosition(0);
+                });
+            }
         }
     };
 }

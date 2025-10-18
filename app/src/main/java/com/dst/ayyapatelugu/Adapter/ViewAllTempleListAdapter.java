@@ -51,7 +51,7 @@ public class ViewAllTempleListAdapter extends RecyclerView.Adapter<ViewAllTemple
 
         TemplesListModel templesListModel = listModels.get(position);
         String profilepic = templesListModel.getImage();
-        String imageUrl = "https://www.ayyappatelugu.com/assets/temple_images/" + profilepic;
+        String imageUrl = "https://www.ayyappatelugu.com/public/assets/img/temple_images/" + profilepic;
         String name = templesListModel.getTempleName();
         String tName=templesListModel.getTempleNameTelugu();
         String open=templesListModel.getOpeningTime();
