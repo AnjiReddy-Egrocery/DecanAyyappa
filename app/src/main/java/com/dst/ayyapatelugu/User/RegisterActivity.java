@@ -107,8 +107,6 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
     private static final String GOOGLE_ACCOUNT_TYPE = "com.google";
 
 
-
-
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -336,12 +334,31 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
                 edtNumber.setHint("Enter your mobile number");
                 Toast.makeText(this, "Please enter your number manually.", Toast.LENGTH_SHORT).show();
             } else {
-                // Set the number and disable editing
+                // Extract number
                 String[] parts = selected.split(": ");
                 String selectedSimNumber = (parts.length > 1) ? parts[1].trim() : selected;
-                edtNumber.setText(selectedSimNumber);
-                edtNumber.setFocusable(false);
-                edtNumber.setCursorVisible(false);
+
+                // ✅ Remove +91 or 91 prefix automatically
+                if (selectedSimNumber.startsWith("+91")) {
+                    selectedSimNumber = selectedSimNumber.substring(3);
+                } else if (selectedSimNumber.startsWith("91") && selectedSimNumber.length() > 10) {
+                    selectedSimNumber = selectedSimNumber.substring(2);
+                }
+
+                // ✅ Ensure it’s exactly 10 digits
+                if (selectedSimNumber.length() == 10 && selectedSimNumber.matches("\\d{10}")) {
+                    edtNumber.setText(selectedSimNumber);
+                    edtNumber.setFocusable(false);
+                    edtNumber.setCursorVisible(false);
+                } else {
+                    edtNumber.setFocusableInTouchMode(true);
+                    edtNumber.setFocusable(true);
+                    edtNumber.setCursorVisible(true);
+                    edtNumber.requestFocus();
+                    edtNumber.setText("");
+                    edtNumber.setHint("Enter your mobile number");
+                    Toast.makeText(this, "Invalid SIM number detected. Please enter manually.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -514,8 +531,9 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
         RequestBody emailPart = RequestBody.create(MediaType.parse("text/plain"), email);
         RequestBody mobileNumberPart = RequestBody.create(MediaType.parse("text/plain"), number);
         RequestBody pwdPart = RequestBody.create(MediaType.parse("text/plain"), password);
+        RequestBody isIOSPart = RequestBody.create(MediaType.parse("text/plain"), "0");
         Log.d("RegisterActivity", "Prepared request body for API call.");
-        Call<UserDataResponse> call = apiClient.postData(firstnamePart, lastnamePart, emailPart, mobileNumberPart, pwdPart);
+        Call<UserDataResponse> call = apiClient.postData(firstnamePart, lastnamePart, emailPart, mobileNumberPart, pwdPart, isIOSPart);
         call.enqueue(new Callback<UserDataResponse>() {
             @Override
             public void onResponse(Call<UserDataResponse> call, Response<UserDataResponse> response) {

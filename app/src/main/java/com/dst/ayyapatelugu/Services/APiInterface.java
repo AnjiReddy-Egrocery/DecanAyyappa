@@ -82,7 +82,8 @@ public interface APiInterface {
             @Part("lastName") RequestBody lastName,
             @Part("emailId") RequestBody emailId,
             @Part("mobileNumber") RequestBody mobileNumber,
-            @Part("pwd") RequestBody pwd
+            @Part("pwd") RequestBody pwd,
+            @Part("isIOS") RequestBody isIOS
     );
 
     @Multipart

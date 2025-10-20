@@ -89,7 +89,6 @@ public class LoginActivity extends AppCompatActivity {
         butLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 String loginInput = edtEmail.getText().toString().trim();
                 String loginPassword = edtPassword.getText().toString().trim();
 
