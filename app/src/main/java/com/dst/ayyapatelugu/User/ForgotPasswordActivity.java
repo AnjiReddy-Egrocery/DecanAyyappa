@@ -76,162 +76,40 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
         createPasswordButton = findViewById(R.id.but_create_pwd);
 
-        edtMobileNumber.setOnClickListener(new View.OnClickListener() {
+
+        createPasswordButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                checkAndRequestPermissions();
+            public void onClick(View v) {
+                handlePasswordChange();
             }
-
         });
 
-        createPasswordButton.setOnClickListener(view -> handlePasswordChange());
-    }
 
-    private void checkAndRequestPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS)
-                    != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_PHONE_NUMBERS}, REQUEST_PERMISSION);
-            } else {
-                getSimNumbers();
-            }
-        } else { // Android 12 and below
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_PERMISSION);
-            } else {
-                getSimNumbers();
-            }
-        }
-    }
+       }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getSimNumbers();
-            } else {
-                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 
-    private void getSimNumbers() {
-        ArrayList<String> simNumbers = new ArrayList<>();
-
-        // ✅ Android 10+ (API 29): Try using TelephonyManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS)
-                    == PackageManager.PERMISSION_GRANTED) {
-                String phoneNumber = telephonyManager.getLine1Number();
-                if (phoneNumber != null && !phoneNumber.isEmpty()) {
-                    simNumbers.add("SIM 1: " + phoneNumber);
-                }
-            }
-        }
-
-        // ✅ Android 12 and below: Use SubscriptionManager
-        if (simNumbers.isEmpty()) {
-            SubscriptionManager subscriptionManager = null;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
-                subscriptionManager = (SubscriptionManager) getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
-            }
-            if (subscriptionManager != null && ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
-                    == PackageManager.PERMISSION_GRANTED) {
-                List<SubscriptionInfo> subscriptionInfoList = null;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
-                    subscriptionInfoList = subscriptionManager.getActiveSubscriptionInfoList();
-                }
-                if (subscriptionInfoList != null && !subscriptionInfoList.isEmpty()) {
-                    for (SubscriptionInfo subscriptionInfo : subscriptionInfoList) {
-                        String phoneNumber = null;
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
-                            phoneNumber = subscriptionInfo.getNumber();
-                        }
-                        int simSlot = 0;
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
-                            simSlot = subscriptionInfo.getSimSlotIndex();
-                        }
-                        if (phoneNumber != null && !phoneNumber.isEmpty()) {
-                            simNumbers.add("SIM " + (simSlot + 1) + ": " + phoneNumber);
-                        }
-                    }
-                }
-            }
-        }
-
-        // ✅ If no SIM numbers found, try Google's HintRequest API
-        if (simNumbers.isEmpty()) {
-            requestHint();
-            return;
-        }
-
-        // ✅ If numbers found, show selection dialog
-        showSimSelectionDialog(simNumbers);
-    }
-
-    private void showSimSelectionDialog(ArrayList<String> simNumbers) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Select SIM Number");
-        String[] simArray = simNumbers.toArray(new String[0]);
-
-        builder.setItems(simArray, (dialog, which) -> {
-            String selectedSimNumber = simNumbers.get(which).split(": ")[1]; // Extract only number
-            edtMobileNumber.setText(selectedSimNumber); // Set to EditText
-        });
-
-        builder.setNegativeButton("Cancel", null);
-        builder.show();
-    }
-
-    private void requestHint() {
-        CredentialsClient credentialsClient = Credentials.getClient(this);
-        HintRequest hintRequest = new HintRequest.Builder()
-                .setPhoneNumberIdentifierSupported(true)
-                .build();
-
-        try {
-            startIntentSenderForResult(
-                    credentialsClient.getHintPickerIntent(hintRequest).getIntentSender(),
-                    CREDENTIAL_PICKER_REQUEST,
-                    null, 0, 0, 0, null
-            );
-        } catch (Exception e) {
-            Toast.makeText(this, "No SIM numbers found", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CREDENTIAL_PICKER_REQUEST && resultCode == RESULT_OK) {
-            Credential credential = data.getParcelableExtra(Credential.EXTRA_KEY);
-            if (credential != null) {
-                edtMobileNumber.setText(credential.getId()); // Set number from Google HintRequest API
-            }
-        }
-    }
 
 
     private void handlePasswordChange() {
         mobileNumber = edtMobileNumber.getText().toString();
 
 
-        if (isValidInputs()) {
+        if (isValidEmail(mobileNumber)) {
+
+
             validationMethod(mobileNumber);
+            //Toast.makeText(RegisterActivity.this,"Data is Saved",Toast.LENGTH_LONG).show();
         }
+
     }
 
-    private boolean isValidInputs() {
-        return isValidMobileNumber(mobileNumber);
+    private boolean isValidEmail(String email) {
+        if (TextUtils.isEmpty(email)){
+            Toast.makeText(ForgotPasswordActivity.this,"Please Enter Your emailId",Toast.LENGTH_SHORT).show();
+        }
+        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+        return email.matches(emailPattern);
     }
-
-
 
 
     private void validationMethod(String mobileNumber) {
@@ -288,16 +166,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             }
         });
     }
-
-    private boolean isValidMobileNumber(String number) {
-        if (TextUtils.isEmpty(number)) {
-            Toast.makeText(ForgotPasswordActivity.this, "Please enter your mobile number", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        return Patterns.PHONE.matcher(number).matches();
-    }
-
-
 
 }
 

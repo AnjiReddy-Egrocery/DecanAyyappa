@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_logo"
+    android:fitsSystemWindows="true"
     tools:context=".HomeActivity">
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -25,7 +26,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <include
-        layout="@layout/ayyappa_bajanasongs_details"
+        layout="@layout/ayyappa_songs_details"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="67dp"/>

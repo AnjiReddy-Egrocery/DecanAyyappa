@@ -7,63 +7,62 @@
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/layout_card_background"
-        android:layout_marginTop="8dp"
-        android:id="@+id/layout_bajanasong_detail"
-        android:layout_marginLeft="14dp"
-        android:layout_marginRight="14dp">
-
-
+        android:layout_height="match_parent"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="80dp"
+        android:background="@drawable/bg_logo"
+        android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="14dp"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp">
-
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginLeft="10dp"
-                        app:cardCornerRadius="15dp"
-                        app:cardElevation="5dp"
-                        android:layout_gravity="center_horizontal">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:adjustViewBounds="true"
-                            android:scaleType="fitCenter"
-                            android:id="@+id/image_view"
-                            android:src="@drawable/ayyapa_anadanam" />
-                    </androidx.cardview.widget.CardView>
-
-
-                    <TextView
-                        android:id="@+id/webview"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:gravity="center"
-                        android:textColor="#fff"
-                        android:textSize="16dp"
-                        android:textStyle="bold"
-                        android:text="హరివరాసనం (శ్రీ హరిహరాత్మజాష్టకం)"
-                        android:layout_marginBottom="16dp"/>
-                </LinearLayout>
-
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="8dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="అయ్యప్ప భజన పాటలు"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                android:textColor="#fff"
+                android:gravity="center"/>
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="50dp"
+                android:src="@drawable/nearby"
+                android:layout_gravity="right"/>
         </LinearLayout>
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:iconifiedByDefault="false"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:clickable="true"
+            android:queryHint="Search by Title"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:textColorHint="#000"
+            android:background="@drawable/searchview_bg"/>
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresh"
+            android:layout_width="match_parent"
+            android:layout_marginTop="12dp"
+            android:layout_height="match_parent">
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/recycler_bajana_songs"
+                android:layout_marginTop="8dp"/>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </LinearLayout>
+
+
 </LinearLayout>
 
 

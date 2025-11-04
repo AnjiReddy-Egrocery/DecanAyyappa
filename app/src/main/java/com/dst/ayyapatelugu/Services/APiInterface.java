@@ -4,6 +4,7 @@ import com.dst.ayyapatelugu.Model.AyyappaTempleList;
 import com.dst.ayyapatelugu.Model.AyyappaTempleMapDataResponse;
 import com.dst.ayyapatelugu.Model.BajanaManadaliListModel;
 import com.dst.ayyapatelugu.Model.BajanaMandaliList;
+import com.dst.ayyapatelugu.Model.BajanaSongsList;
 import com.dst.ayyapatelugu.Model.BooksListModel;
 import com.dst.ayyapatelugu.Model.CalenderDataResponse;
 import com.dst.ayyapatelugu.Model.ForgotDataResponse;
@@ -24,6 +25,7 @@ import com.dst.ayyapatelugu.Model.UserDataResponse;
 import com.dst.ayyapatelugu.Model.VerifyUserDataResponse;
 import com.dst.ayyapatelugu.Model.YatraList;
 import com.dst.ayyapatelugu.Model.decoratorListModel;
+import com.dst.ayyapatelugu.Model.panchagamModel;
 
 
 import okhttp3.RequestBody;
@@ -64,6 +66,9 @@ public interface APiInterface {
 
     @POST("APICalls/Activities/index")
     Call<KaryakarmamList> getKaryakaramamList();
+
+    @POST("APICalls/Bajanasongs/index")
+    Call<BajanaSongsList> getBajanaSongsList();
 
     @POST("APICalls/Temples/index")
     Call<TemplesList> getTempleList();
@@ -132,6 +137,10 @@ public interface APiInterface {
     Call<ResetPasswordResponse> resetData(@Part("registerId") RequestBody registerId ,
                                           @Part("otp") RequestBody otp,
                                           @Part("pwd") RequestBody pwd);
+
+    @Multipart
+    @POST("APICalls/panchang")
+    Call<panchagamModel> getPanchaamData(@Part("date") RequestBody date );
 
 
 
