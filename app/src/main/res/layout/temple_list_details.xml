@@ -155,8 +155,8 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Location"
-                            android:textSize="24dp"
+                            android:text="Address"
+                            android:textSize="19dp"
                             android:textColor="#fff"
                             android:textStyle="bold"/>
                         <TextView

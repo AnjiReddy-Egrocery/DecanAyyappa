@@ -1,10 +1,8 @@
 package com.dst.ayyapatelugu.Activity;
 
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -15,32 +13,21 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.location.Address;
-import android.location.Geocoder;
 
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dst.ayyapatelugu.DataBase.SharedPreferenceHelper;
-
 import com.dst.ayyapatelugu.Model.MapDataResponse;
-
 import com.dst.ayyapatelugu.R;
 import com.dst.ayyapatelugu.Services.APiInterface;
 import com.dst.ayyapatelugu.Services.UnsafeTrustManager;
@@ -54,8 +41,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-
-import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -87,6 +74,7 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
     private static final float ZOOM_LEVEL_OUT = -1.0f;
 
     private List<MapDataResponse.Result> mapList;
+
     @SuppressLint("MissingInflatedId")
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -95,11 +83,7 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
         setContentView(R.layout.activity_anadanam);
 
         toolbar = findViewById(R.id.toolbar);
-       /* toolbar.setLogo(R.drawable.user_profile_background);
-        toolbar.setTitle("www.ayyappatelugu.com");
-        toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));*/
         setSupportActionBar(toolbar);
-        ;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         Drawable nav = toolbar.getNavigationIcon();
@@ -107,54 +91,40 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
             nav.setTint(getResources().getColor(R.color.white));
         }
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> finish());
 
         zoomInButton = findViewById(R.id.zoom_in_button);
         zoomOutButton = findViewById(R.id.zoom_out_button);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            // Request location permissions here
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     LOCATION_PERMISSION_REQUEST_CODE);
         } else {
             initMap();
         }
-        zoomInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                zoomInMap();
-            }
-        });
-        zoomOutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                zoomOutMap();
-            }
-        });
+
+        zoomInButton.setOnClickListener(v -> zoomInMap());
+        zoomOutButton.setOnClickListener(v -> zoomOutMap());
 
         context = this;
-
 
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .sslSocketFactory(UnsafeTrustManager.createTrustAllSslSocketFactory(), UnsafeTrustManager.createTrustAllTrustManager())
-                .hostnameVerifier((hostname, session) -> true) // Bypasses hostname verification
+                .hostnameVerifier((hostname, session) -> true)
                 .addInterceptor(loggingInterceptor)
                 .build();
+
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://www.ayyappatelugu.com/") // Replace with your API URL
+                .baseUrl("https://www.ayyappatelugu.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
+
         apiClient = retrofit.create(APiInterface.class);
     }
 
@@ -163,55 +133,39 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         } else {
-
+            Log.e("AnadanamActivity", "mapFragment is null in initMap()");
         }
     }
+
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            // Location permission is granted
             mMap.setMyLocationEnabled(true);
             setupMarkerClickListeners();
             displayCurrentUserLocation();
-            if (mMap != null) {
-                fetchLocationDataAndAddMarkers();
-            } else {
-                Log.e("MapFragment", "GoogleMap object is null");
-            }
-        } else {
-            // Request location permissions here
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    LOCATION_PERMISSION_REQUEST_CODE);
+            fetchLocationDataAndAddMarkers();
         }
+
         float initialZoomLevel = SharedPreferenceHelper.getZoomLevel(this);
         mMap.animateCamera(CameraUpdateFactory.zoomTo(initialZoomLevel));
 
-        mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
-            @Override
-            public void onCameraIdle() {
-                float newZoomLevel = mMap.getCameraPosition().zoom;
-                if (Math.abs(newZoomLevel - currentZoomLevel) > ZOOM_THRESHOLD) {
-                    // Update markers or perform other actions based on zoom level change
-                    currentZoomLevel = newZoomLevel;
-
-                    SharedPreferenceHelper.setZoomLevel(AnadanamActivity.this, newZoomLevel);
-
-                }
+        mMap.setOnCameraIdleListener(() -> {
+            float newZoomLevel = mMap.getCameraPosition().zoom;
+            if (Math.abs(newZoomLevel - currentZoomLevel) > ZOOM_THRESHOLD) {
+                currentZoomLevel = newZoomLevel;
+                SharedPreferenceHelper.setZoomLevel(AnadanamActivity.this, newZoomLevel);
             }
         });
     }
+
     private void fetchLocationDataAndAddMarkers() {
         mapList = SharedPreferenceHelper.getTempleData(this);
 
         if (mapList != null && !mapList.isEmpty()) {
-            new Handler().postDelayed(() -> {
-                addMarkers(mapList);
-            }, 200); // Delay marker loading
+            new Handler().postDelayed(() -> addMarkers(mapList), 200);
         } else {
-
             Call<MapDataResponse> call = apiClient.getMapList();
 
             call.enqueue(new Callback<MapDataResponse>() {
@@ -220,72 +174,60 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
                     if (response.isSuccessful()) {
                         MapDataResponse mapDataResponse = response.body();
 
-                        if (mapDataResponse != null && mapDataResponse.getErrorCode().equals("200")) {
+                        if (mapDataResponse != null && "200".equals(mapDataResponse.getErrorCode())) {
                             List<MapDataResponse.Result> locations = mapDataResponse.getResult();
-
-
-                            // Add markers for each location
-                            new Handler().postDelayed(() -> {
-                                addMarkers(locations);
-                            }, 200); // Delay marker loading
-
-                            SharedPreferenceHelper.saveTempleData(AnadanamActivity.this, mapList);
+                            new Handler().postDelayed(() -> addMarkers(locations), 200);
+                            SharedPreferenceHelper.saveTempleData(AnadanamActivity.this, locations);
                         }
-                    } else {
-                        // Handle unsuccessful response
                     }
                 }
 
                 @Override
                 public void onFailure(Call<MapDataResponse> call, Throwable t) {
-                    // Handle API request failure, e.g., network failure or request timeout
+                    Log.e("AnadanamActivity", "API call failed: " + t.getMessage(), t);
                 }
             });
-
         }
-        // Assuming you have an API endpoint defined in your APiInterface
-
     }
 
     private void addMarkers(List<MapDataResponse.Result> locations) {
-       /* if(mMap != null) {
-            DrawMarkersTask drawMarkersTask = new DrawMarkersTask(locations);
-            drawMarkersTask.execute();
-        }*/
+        if (mMap == null || locations == null) return;
+
+        mMap.clear();
         for (MapDataResponse.Result temple : locations) {
             try {
-                LatLng position = new LatLng(Double.parseDouble(temple.getLatitude()), Double.parseDouble(temple.getLongitude()));
-                mMap.addMarker(new MarkerOptions().position(position)
+                LatLng position = new LatLng(
+                        Double.parseDouble(temple.getLatitude()),
+                        Double.parseDouble(temple.getLongitude())
+                );
+
+                Marker marker = mMap.addMarker(new MarkerOptions()
+                        .position(position)
                         .title(temple.getAnnadhanamNameTelugu())
                         .snippet(temple.getLocation()));
+
+                if (marker != null) {
+                    marker.setTag(temple);
+                }
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e("AnadanamActivity", "Error adding marker: " + temple, e);
             }
         }
-
     }
+
     private void setupMarkerClickListeners() {
         mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                marker.showInfoWindow();
-                return true;
-            }
+        mMap.setOnMarkerClickListener(marker -> {
+            marker.showInfoWindow();
+            return true;
         });
 
-        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-                startNavigation(marker.getPosition());
-            }
-        });
+        mMap.setOnInfoWindowClickListener(marker -> startNavigation(marker.getPosition()));
     }
-
 
     private class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
-        View mContentsView;
+        private final View mContentsView;
 
         CustomInfoWindowAdapter() {
             mContentsView = getLayoutInflater().inflate(R.layout.custom_info_window, null);
@@ -300,23 +242,66 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
         @Nullable
         @Override
         public View getInfoWindow(@NonNull Marker marker) {
-            TextView title = mContentsView.findViewById(R.id.info_window_title);
-            title.setText(marker.getTitle());
 
+            TextView title = mContentsView.findViewById(R.id.info_window_title);
             TextView txtLocation = mContentsView.findViewById(R.id.info_location);
-            //String address = (String) marker.getTag();
+            TextView txtStartDate = mContentsView.findViewById(R.id.info_start_date);
+            TextView txtEndDate = mContentsView.findViewById(R.id.info_end_date);
+            TextView txtStartTime = mContentsView.findViewById(R.id.info_start_time);
+            TextView txtEndTime = mContentsView.findViewById(R.id.info_end_time);
+
+            title.setText(marker.getTitle());
             txtLocation.setText(marker.getSnippet());
 
-            // Handle the "Start Navigation" button click
-            LinearLayout startNavigationButton = mContentsView.findViewById(R.id.start_navigation_button);
-            startNavigationButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startNavigation(marker.getPosition());
+            Object tag = marker.getTag();
+            if (tag instanceof MapDataResponse.Result) {
+                MapDataResponse.Result data = (MapDataResponse.Result) tag;
+
+                String startDateRaw = safeString(data.getStartingDate());
+                String endDateRaw = safeString(data.getEndingDate());
+                String startTimeRaw = safeString(data.getStartTime());
+                String endTimeRaw = safeString(data.getEndTime());
+
+                txtStartDate.setText("Start Date: " + formatDate(startDateRaw));
+                txtEndDate.setText("End Date: " + formatDate(endDateRaw));
+                txtStartTime.setText("Start Time: " + formatTime(startTimeRaw));
+                txtEndTime.setText("End Time: " + formatTime(endTimeRaw));
+
+                // *********** NEW CONDITION ADDED ***********
+                boolean activeNow = isCurrentTimeBetween(startTimeRaw, endTimeRaw);
+
+                if (activeNow) {
+                    txtStartTime.setTextColor(Color.GREEN);
+                    txtEndTime.setTextColor(Color.GREEN);
+                } else {
+                    txtStartTime.setTextColor(Color.RED);
+                    txtEndTime.setTextColor(Color.RED);
                 }
-            });
+                // ********************************************
+            }
 
             return mContentsView;
+        }
+    }
+
+    /***
+     * NEW METHOD
+     * Check if current time is between Start Time and End Time
+     */
+    private boolean isCurrentTimeBetween(String start, String end) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+
+            Date startTime = sdf.parse(start);
+            Date endTime = sdf.parse(end);
+
+            String nowStr = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
+            Date now = sdf.parse(nowStr);
+
+            return now.after(startTime) && now.before(endTime);
+
+        } catch (Exception e) {
+            return false;
         }
     }
 
@@ -325,36 +310,17 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
         Uri gmmIntentUri = Uri.parse("google.navigation:q=" + destinationStr);
 
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-        mapIntent.setPackage("com.google.android.apps.maps"); // Use the Google Maps app
+        mapIntent.setPackage("com.google.android.apps.maps");
 
         if (mapIntent.resolveActivity(getPackageManager()) != null) {
             startActivity(mapIntent);
         } else {
-            Toast.makeText(this, "No navigation app installed. Please install a navigation app.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No navigation app installed.", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private String getAddressFromLocation(double latitude, double longitude) {
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-        try {
-            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
-            if (!addresses.isEmpty()) {
-                Address address = addresses.get(0);
-                StringBuilder addressStr = new StringBuilder();
-                for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
-                    addressStr.append(address.getAddressLine(i)).append("\n");
-                }
-                return addressStr.toString().trim();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "Address not found";
     }
 
     private void zoomOutMap() {
         if (mMap != null) {
-
             float newZoomLevel = mMap.getCameraPosition().zoom + ZOOM_LEVEL_OUT;
             mMap.animateCamera(CameraUpdateFactory.zoomTo(newZoomLevel));
         }
@@ -368,7 +334,6 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     private void displayCurrentUserLocation() {
-        //FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -377,16 +342,8 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, location -> {
                     if (location != null) {
-                        double latitude = location.getLatitude();
-                        double longitude = location.getLongitude();
-                        userLocation = new LatLng(latitude, longitude);
-                        if (mMap != null) {
-                            moveCameraToUserLocation();
-                        } else {
-                            // Handle the case when mMap is null
-                            initMap();
-                        }
-
+                        userLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        moveCameraToUserLocation();
                     }
                 });
     }
@@ -397,103 +354,42 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-               // displayCurrentUserLocation();
-                initMap();
+    private String safeString(String s) {
+        return s == null ? "" : s;
+    }
+
+    // ⭐ FIXED – NOW CONVERTS UNIX TIMESTAMP → dd-MM-yyyy ⭐
+    private String formatDate(String inputDate) {
+        try {
+            if (inputDate == null || inputDate.trim().isEmpty()) return "-";
+
+            if (inputDate.matches("\\d+")) {
+                long ts = Long.parseLong(inputDate);
+                if (inputDate.length() == 10) {
+                    ts = ts * 1000;
+                }
+                Date date = new Date(ts);
+                return new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(date);
             }
+
+            SimpleDateFormat in = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            Date parsed = in.parse(inputDate);
+            return new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(parsed);
+
+        } catch (Exception e) {
+            return inputDate;
         }
     }
 
-
-    public class DrawMarkersTask extends AsyncTask<Void, MarkerOptions, Void> {
-        List<MapDataResponse.Result> myTempleList;
-
-        public DrawMarkersTask(List<MapDataResponse.Result> locations) {
-            myTempleList = locations;
-        }
-
-
-
-        protected void onPreExecute() {
-            // this method executes in UI thread
-            mMap.clear();
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(15.0f));
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            // this method executes in separate background thread
-            // you CANT modify UI here
-            for (int i = 0; i < myTempleList.size(); i++) {
-                MarkerOptions markerOptions = new MarkerOptions().position(
-                        new LatLng(Double.parseDouble(myTempleList.get(i)
-                                .getLatitude()), Double
-                                .parseDouble(myTempleList.get(i)
-                                        .getLongitude()))).title(
-                        myTempleList.get(i).getAnnadhanamNameTelugu()).snippet(
-                        myTempleList.get(i).getLocation());
-
-                publishProgress(markerOptions); // pass it for the main UI thread for displaying
-                /*try {
-                    Thread.sleep(50); // sleep for 50 ms so that main UI thread can handle user actions in the meantime
-                } catch (InterruptedException e) {
-                    // NOP (no operation)
-                }*/
-            }
-            return null;
-        }
-
-        protected void onProgressUpdate(MarkerOptions... markerOptions) {
-            // this executes in main ui thread so you can add prepared marker to your map
-            mMap.addMarker(markerOptions[0]);
-        }
-
-        protected void onPostExecute(Void result) {
-
+    private String formatTime(String inputTime) {
+        if (inputTime == null || inputTime.trim().isEmpty()) return "-";
+        try {
+            SimpleDateFormat in = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+            Date parsed = in.parse(inputTime);
+            return new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(parsed);
+        } catch (Exception e) {
+            return inputTime;
         }
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.popup_menu,menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId(); // Get the clicked menu item ID
-
-        if (id == R.id.popup_info) {
-            informationDialog();
-            return true;
-        }
-        else {
-            return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private void informationDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(AnadanamActivity.this);
-        View dialogView = LayoutInflater.from(AnadanamActivity.this).inflate(R.layout.dialog_anadanam_information, null);
-        builder.setView(dialogView);
-
-        AlertDialog dialog = builder.create();
-
-        ImageButton closeButton = dialogView.findViewById(R.id.btn_close);
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
-    }
-
-
 }
