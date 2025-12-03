@@ -122,18 +122,18 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.MyView
             return textView;
         }
 
-        private TextView createMultiLineTextView(String text, int width) {
-            TextView textView = new TextView(mContext);
-            textView.setText(text);
-            textView.setTextColor(mContext.getResources().getColor(R.color.white)); // White text color
-            textView.setTextSize(16);
-            textView.setGravity(Gravity.CENTER);
-            textView.setPadding(8, 8, 8, 8);
-            textView.setMaxLines(3); // Allow maximum 3 lines
-            textView.setEllipsize(null);
-            textView.setWidth(width);
-            return textView;
-        }
+            private TextView createMultiLineTextView(String text, int width) {
+                TextView textView = new TextView(mContext);
+                textView.setText(text);
+                textView.setTextColor(mContext.getResources().getColor(R.color.white)); // White text color
+                textView.setTextSize(16);
+                textView.setGravity(Gravity.CENTER);
+                textView.setPadding(8, 8, 8, 8);
+                textView.setMaxLines(3); // Allow maximum 3 lines
+                textView.setEllipsize(null);
+                textView.setWidth(width);
+                return textView;
+            }
 
         private TextView createHeaderTextView(String text, int width) {
             TextView textView = new TextView(mContext);
