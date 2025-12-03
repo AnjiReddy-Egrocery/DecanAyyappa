@@ -211,7 +211,7 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
                         .icon(icon)
                 );
 
-                if (marker != null) marker.setTag(temple);
+                marker.setTag(new Object[]{ temple, isActive });
 
             } catch (Exception ignored) { }
         }
@@ -233,26 +233,33 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
     private boolean isCurrentDateTimeBetween(String startDate, String endDate,
                                              String startTime, String endTime) {
         try {
-            // Time format
-            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-
-            // Convert timestamps (seconds → milliseconds)
+            // Convert UNIX timestamps to millis
             long startDateMillis = Long.parseLong(startDate) * 1000;
             long endDateMillis = Long.parseLong(endDate) * 1000;
 
-            // Convert times
+            // Parse time only (HH:mm:ss or HH:mm)
+            SimpleDateFormat timeFormat;
+            if (startTime.length() == 5)
+                timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            else
+                timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+
             Date startTimeDate = timeFormat.parse(startTime);
             Date endTimeDate = timeFormat.parse(endTime);
 
+            // Create full start datetime
             Calendar startCal = Calendar.getInstance();
             startCal.setTimeInMillis(startDateMillis);
             startCal.set(Calendar.HOUR_OF_DAY, startTimeDate.getHours());
             startCal.set(Calendar.MINUTE, startTimeDate.getMinutes());
+            startCal.set(Calendar.SECOND, 0);
 
+            // Create full end datetime
             Calendar endCal = Calendar.getInstance();
             endCal.setTimeInMillis(endDateMillis);
             endCal.set(Calendar.HOUR_OF_DAY, endTimeDate.getHours());
             endCal.set(Calendar.MINUTE, endTimeDate.getMinutes());
+            endCal.set(Calendar.SECOND, 0);
 
             long now = System.currentTimeMillis();
 
@@ -263,7 +270,6 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
             return false;
         }
     }
-
     private long convertToTimestamp(String dateStr, String timeStr) {
         try {
             // If UNIX timestamp
@@ -331,13 +337,62 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
             loc.setText(marker.getSnippet());
 
             Object tagObj = marker.getTag();
-            if (tagObj instanceof MapDataResponse.Result) {
-                MapDataResponse.Result d = (MapDataResponse.Result) tagObj;
+
+            if (tagObj instanceof Object[]) {
+
+                Object[] arr = (Object[]) tagObj;
+
+                MapDataResponse.Result d = (MapDataResponse.Result) arr[0];
+                boolean isActive = (boolean) arr[1];   // <-- GREEN marker? or RED marker?
 
                 sDate.setText("Start Date: " + formatDate(d.getStartingDate()));
                 eDate.setText("End Date: " + formatDate(d.getEndingDate()));
                 sTime.setText("Start Time: " + formatTime(d.getStartTime()));
                 eTime.setText("End Time: " + formatTime(d.getEndTime()));
+
+                // 🔥 If marker is RED → ALWAYS UNCONDITIONALLY RED
+                // 🔥 If marker is GREEN → Check time
+                int finalColor;
+
+                if (!isActive) {
+                    // ❗ marker RED → start & end time RED
+                    finalColor = Color.RED;
+                } else {
+
+                    // ✔ Only for GREEN marker → time-base check
+                    try {
+                        SimpleDateFormat timeFormat;
+
+                        if (d.getStartTime().length() == 5)
+                            timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                        else
+                            timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+
+                        Date startTime = timeFormat.parse(d.getStartTime());
+                        Date endTime   = timeFormat.parse(d.getEndTime());
+
+                        Calendar cal = Calendar.getInstance();
+                        String nowStr = String.format("%02d:%02d",
+                                cal.get(Calendar.HOUR_OF_DAY),
+                                cal.get(Calendar.MINUTE)
+                        );
+
+                        Date now = timeFormat.parse(nowStr);
+
+                        boolean isInTimeRange =
+                                now.equals(startTime) ||
+                                        now.equals(endTime) ||
+                                        (now.after(startTime) && now.before(endTime));
+
+                        finalColor = isInTimeRange ? Color.GREEN : Color.RED;
+
+                    } catch (Exception e) {
+                        finalColor = Color.RED;
+                    }
+                }
+
+                sTime.setTextColor(finalColor);
+                eTime.setTextColor(finalColor);
             }
 
             return view;
