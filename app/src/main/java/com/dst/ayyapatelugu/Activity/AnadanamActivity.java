@@ -262,13 +262,23 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
                 String startTimeRaw = safeString(data.getStartTime());
                 String endTimeRaw = safeString(data.getEndTime());
 
+// ⭐ ALWAYS normalize – Telugu OR 24-hour OR English
+                String startTimeClean = fixMissingAmPm(startTimeRaw);
+                String endTimeClean = fixMissingAmPm(endTimeRaw);
+                Log.d("TIME_CHECK", "Start=" + startTimeClean + " End=" + endTimeClean);
+
+                String startTime24 = detectFormatAndConvert(startTimeClean);
+                String endTime24   = detectFormatAndConvert(endTimeClean);
+
+                Log.d("TIME_CHECK", "Start24=" + startTime24 + " End24=" + endTime24);
+
                 txtStartDate.setText("Start Date: " + formatDate(startDateRaw));
                 txtEndDate.setText("End Date: " + formatDate(endDateRaw));
-                txtStartTime.setText("Start Time: " + formatTime(startTimeRaw));
-                txtEndTime.setText("End Time: " + formatTime(endTimeRaw));
+                txtStartTime.setText("Start Time: " + safeTo12Hour(startTime24));
+                txtEndTime.setText("End Time: " + safeTo12Hour(endTime24));
 
-                // *********** NEW CONDITION ADDED ***********
-                boolean activeNow = isCurrentTimeBetween(startTimeRaw, endTimeRaw);
+
+                boolean activeNow = isCurrentTimeBetween(startTime24, endTime24);
 
                 if (activeNow) {
                     txtStartTime.setTextColor(Color.GREEN);
@@ -277,10 +287,35 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
                     txtStartTime.setTextColor(Color.RED);
                     txtEndTime.setTextColor(Color.RED);
                 }
+
                 // ********************************************
             }
 
             return mContentsView;
+        }
+    }
+
+    private String fixMissingAmPm(String startTimeRaw) {
+        if (startTimeRaw == null || startTimeRaw.isEmpty()) return null;
+
+        try {
+            // 24-hour already
+            if (startTimeRaw.matches("^([01]?\\d|2[0-3]):[0-5]\\d$")) {
+                return startTimeRaw;
+            }
+
+            // No AM/PM → guess from time
+            String[] parts = startTimeRaw.split(":");
+            int hour = Integer.parseInt(parts[0]);
+
+            // Default logic:
+            // Before 8 → AM, After 8 → PM
+            String suffix = (hour < 8) ? " AM" : " PM";
+
+            return startTimeRaw + suffix;
+
+        } catch (Exception e) {
+            return null;
         }
     }
 
@@ -290,17 +325,23 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
      */
     private boolean isCurrentTimeBetween(String start, String end) {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            Date now = sdf.parse(sdf.format(new Date()));
             Date startTime = sdf.parse(start);
             Date endTime = sdf.parse(end);
 
-            String nowStr = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
-            Date now = sdf.parse(nowStr);
+            // Normal time (e.g., 08:00 - 20:00)
+            if (startTime.before(endTime)) {
+                return now.after(startTime) && now.before(endTime);
+            }
 
-            return now.after(startTime) && now.before(endTime);
+            // Midnight cross (e.g., 22:00 - 05:00)
+            else {
+                return now.after(startTime) || now.before(endTime);
+            }
 
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -384,12 +425,135 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
 
     private String formatTime(String inputTime) {
         if (inputTime == null || inputTime.trim().isEmpty()) return "-";
+
         try {
-            SimpleDateFormat in = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+            SimpleDateFormat in = new SimpleDateFormat("hh:mm a", Locale.getDefault());
             Date parsed = in.parse(inputTime);
+
             return new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(parsed);
+
         } catch (Exception e) {
             return inputTime;
         }
     }
+
+    private String parseTeluguTime(String raw) {
+
+        if (raw == null || raw.trim().isEmpty()) return null;
+
+        raw = raw.trim();
+        String meridiem = ""; // AM/PM
+
+        if (raw.contains("ఉదయం")) meridiem = "AM";
+        else if (raw.contains("మధ్యాహ్నం")) meridiem = "PM";
+        else if (raw.contains("సాయంత్రం")) meridiem = "PM";
+        else if (raw.contains("రాత్రి")) meridiem = "PM";
+
+        // Extract 12:30 / 3:00 etc
+        String time = raw.replaceAll("[^0-9:]", "");
+
+        if (!time.contains(":")) return null;
+
+        // Fix 3:00 → 03:00
+        if (time.matches("\\d:\\d{2}")) {
+            time = "0" + time;
+        }
+
+        return time + " " + meridiem; // 03:00 PM
+    }
+
+    private String convertTo12Hour(String time24) {
+        try {
+            SimpleDateFormat in = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            Date d = in.parse(time24);
+
+            SimpleDateFormat out = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+            return out.format(d);
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+
+    private String normalizeTime(String timeRaw) {
+
+        if (timeRaw == null || timeRaw.trim().isEmpty())
+            return null;
+
+        timeRaw = timeRaw.trim();
+
+        // If contains Telugu characters → do not touch
+        if (timeRaw.matches(".*[అ-హౠౡా-ౌ్౦-౯].*")) {
+            return timeRaw;   // Example: "3:00 గం||ల వరకు"
+        }
+
+        // Telugu to AM/PM (if any)
+        String teluguConverted = parseTeluguTime(timeRaw);
+        if (teluguConverted != null) {
+            return teluguConverted;  // e.g. "03:00 PM"
+        }
+
+        // Pure 24-hour input (13:30, 16:02, 05:00)
+        if (timeRaw.matches("^([01]?\\d|2[0-3]):[0-5]\\d$")) {
+            return timeRaw;  // KEEP as 24-hour, do NOT convert here
+        }
+
+        // Already AM/PM (12:30 PM)
+        if (timeRaw.toUpperCase().contains("AM") || timeRaw.toUpperCase().contains("PM")) {
+            return timeRaw;
+        }
+
+        return timeRaw;
+
+    }
+
+    private String convertTo24Hour(String time) {
+        if (time == null) return null;
+
+        try {
+            // If it's already 24-hour (e.g., 13:30)
+            if (time.matches("^([01]?\\d|2[0-3]):[0-5]\\d$")) {
+                return time;
+            }
+
+            // Convert AM/PM to 24-hour
+            SimpleDateFormat in = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+            SimpleDateFormat out = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            return out.format(in.parse(time));
+
+        } catch (Exception e) {
+            return null;
+        }    }
+
+
+    private String detectFormatAndConvert(String time) {
+        if (time == null || time.trim().isEmpty()) return null;
+
+        // If already 24-hour (e.g., 15:00)
+        if (time.matches("^([01]?\\d|2[0-3]):[0-5]\\d$")) {
+            return time; // no change
+        }
+
+        // Else convert 12-hour to 24-hour
+        return convertTo24Hour(time);
+    }
+
+    private String safeTo12Hour(String time24) {
+        if (time24 == null || time24.trim().isEmpty()) return "";
+
+        try {
+            // Already 24-hour (works for 00:00 - 23:59)
+            SimpleDateFormat sdf24 = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            SimpleDateFormat sdf12 = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+
+            Date date = sdf24.parse(time24);
+            return sdf12.format(date);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return time24; // worst case, show raw time
+        }
+    }
+
 }

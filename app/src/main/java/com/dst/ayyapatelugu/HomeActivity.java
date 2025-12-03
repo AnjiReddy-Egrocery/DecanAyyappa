@@ -51,6 +51,7 @@ import com.dst.ayyapatelugu.Activity.PanchagamActivity;
 import com.dst.ayyapatelugu.Activity.ProductsListActivity;
 import com.dst.ayyapatelugu.Activity.SevaDetailsActivity;
 import com.dst.ayyapatelugu.Activity.SharanughoshaActivity;
+import com.dst.ayyapatelugu.Activity.TeluguCalenderActivity;
 import com.dst.ayyapatelugu.Activity.ViewAllAyyappaTemplesActivity;
 import com.dst.ayyapatelugu.Activity.ViewAllDetailsActivity;
 import com.dst.ayyapatelugu.Activity.ViewAllNewsDetailsActivity;
@@ -937,7 +938,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             startActivity(intent);
 
 
-        } else if (action == R.id.menu_panchagam){
+        } else if (action == R.id.ayyappa_telugu_calender){
+
+            Intent intent=new Intent(HomeActivity.this, TeluguCalenderActivity.class);
+            startActivity(intent);
+
+
+        }else if (action == R.id.menu_panchagam){
 
             Intent intent = new Intent(HomeActivity.this, PanchagamActivity.class);
             startActivity(intent);

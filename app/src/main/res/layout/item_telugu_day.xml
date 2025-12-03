@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="4dp"
+    android:id="@+id/rootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/day_box_bg">
+
+    <!-- DATE -->
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:textColor="#D32F2F"
+        android:gravity="center"/>
+
+    <!-- VAARA -->
+
+    <!-- TITHI -->
+    <TextView
+        android:id="@+id/tvTithi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="#000"
+        android:gravity="center"/>
+
+    <!-- NAKSHATRA -->
+    <TextView
+        android:id="@+id/tvNakshatra"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="#000"
+        android:gravity="center"/>
+
+    <!-- SUNRISE -->
+    <TextView
+        android:id="@+id/tvSunrise"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="#000"
+        android:gravity="center"/>
+
+</LinearLayout>

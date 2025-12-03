@@ -19,6 +19,7 @@ import com.dst.ayyapatelugu.Model.ResetPasswordResponse;
 import com.dst.ayyapatelugu.Model.SevaList;
 import com.dst.ayyapatelugu.Model.SharanughosaModel;
 import com.dst.ayyapatelugu.Model.SignUpWithGmail;
+import com.dst.ayyapatelugu.Model.TeluguCalenderDataResponse;
 import com.dst.ayyapatelugu.Model.TempleMapDataResponse;
 import com.dst.ayyapatelugu.Model.TemplesList;
 import com.dst.ayyapatelugu.Model.UserDataResponse;
@@ -104,6 +105,11 @@ public interface APiInterface {
     @Multipart
     @POST("APICalls/Calendar/index")
     Call<CalenderDataResponse> calenderData(@Part("year") RequestBody year);
+
+    @Multipart
+    @POST("APICalls/panchangmonth")
+    Call<TeluguCalenderDataResponse> telugucalenderdata(@Part("month") RequestBody month,
+                                                        @Part("year") RequestBody year);
 
     @POST("APICalls/Annadhanams/index")
     Call<MapDataResponse> getMapList();

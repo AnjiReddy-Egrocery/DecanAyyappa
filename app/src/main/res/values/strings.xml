@@ -5,6 +5,7 @@
 
     <string name="Ayyapa_karyam" translatable="false">పూజా కార్యక్రమాలు</string>
     <string name="ayyappa_calender" translatable="false"> అయ్యప్ప క్యాలెండర్</string>
+    <string name="ayyappa_telugucalender" translatable="false"> తెలుగు క్యాలెండర్</string>
     <string name="ayyappa_panchagam" translatable="false">పంచాంగం</string>
     <string name="guruswami_list" translatable="false">గురుస్వాములు జాబిత</string>
     <string name="ayyappa_mandali" translatable="false">అయ్యప్ప భజన మండలి</string>
