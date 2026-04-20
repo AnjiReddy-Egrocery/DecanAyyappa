@@ -43,6 +43,7 @@ import com.dst.ayyapatelugu.Activity.AyyappaKaryamListActivity;
 import com.dst.ayyapatelugu.Activity.AyyappaMandaliListActivity;
 import com.dst.ayyapatelugu.Activity.AyyappaPetamListActivity;
 import com.dst.ayyapatelugu.Activity.AyyappaTourseDetailsACtivity;
+import com.dst.ayyapatelugu.Activity.BlogsActivity;
 import com.dst.ayyapatelugu.Activity.CalenderActivity;
 import com.dst.ayyapatelugu.Activity.DevlyaluActivity;
 import com.dst.ayyapatelugu.Activity.GuruSwamiListActivity;
@@ -935,6 +936,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         } else if (action == R.id.ayyappa_calender){
 
             Intent intent=new Intent(HomeActivity.this, CalenderActivity.class);
+            startActivity(intent);
+
+
+        }else if (action == R.id.ayyappa_blogs){
+
+            Intent intent=new Intent(HomeActivity.this, BlogsActivity.class);
             startActivity(intent);
 
 

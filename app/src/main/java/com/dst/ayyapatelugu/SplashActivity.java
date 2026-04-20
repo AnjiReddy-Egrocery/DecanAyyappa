@@ -7,9 +7,12 @@ import androidx.core.content.ContextCompat;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.dst.ayyapatelugu.User.LoginActivity;
+import android.Manifest;
+
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -17,6 +20,7 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        askNotificationPermission();
         Thread loading = new Thread() {
             public void run() {
                 try {
@@ -42,10 +46,26 @@ public class SplashActivity extends AppCompatActivity {
                 } finally {
                     finish(); // Close SplashActivity
                 }
+
             }
         };
 
         loading.start();
+    }
+
+    private void askNotificationPermission() {
+
+        if (Build.VERSION.SDK_INT >= 33) {
+
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                requestPermissions(
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        1
+                );
+            }
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.gms.google-services'
 }
 android {
     namespace 'com.dst.ayyapatelugu'
@@ -94,7 +95,9 @@ dependencies {
 
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
-
+    implementation 'com.google.firebase:firebase-messaging:23.4.0'
 
 
 }
+
+

@@ -229,7 +229,7 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
                 startNavigation(marker.getPosition()));
     }
 
-
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private boolean isCurrentDateTimeBetween(String startDate, String endDate,
                                              String startTime, String endTime) {
         try {
@@ -371,11 +371,17 @@ public class AnadanamActivity extends AppCompatActivity implements OnMapReadyCal
                         Date startTime = timeFormat.parse(d.getStartTime());
                         Date endTime   = timeFormat.parse(d.getEndTime());
 
-                        Calendar cal = Calendar.getInstance();
-                        String nowStr = String.format("%02d:%02d",
-                                cal.get(Calendar.HOUR_OF_DAY),
-                                cal.get(Calendar.MINUTE)
-                        );
+                        Calendar cal = null;
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                            cal = Calendar.getInstance();
+                        }
+                        String nowStr = null;
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                            nowStr = String.format("%02d:%02d",
+                                    cal.get(Calendar.HOUR_OF_DAY),
+                                    cal.get(Calendar.MINUTE)
+                            );
+                        }
 
                         Date now = timeFormat.parse(nowStr);
 

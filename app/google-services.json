@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "304015152909",
+    "project_id": "ayyappatelugu-c6e6a",
+    "storage_bucket": "ayyappatelugu-c6e6a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:304015152909:android:a414db7bf9ee42f6284244",
+        "android_client_info": {
+          "package_name": "com.dst.ayyapatelugu"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7dpfEtVL73mJqlw9FWh64kqw6ZDrGUB4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
