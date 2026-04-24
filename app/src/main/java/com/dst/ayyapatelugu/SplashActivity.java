@@ -10,8 +10,10 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.dst.ayyapatelugu.Activity.ViewAllNewsDetailsActivity;
 import com.dst.ayyapatelugu.User.LoginActivity;
 import android.Manifest;
+import android.util.Log;
 
 
 public class SplashActivity extends AppCompatActivity {
@@ -31,13 +33,22 @@ public class SplashActivity extends AppCompatActivity {
                     SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
                     boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
 
+                    Intent incomingIntent = getIntent();
+                    String newsId = incomingIntent.getStringExtra("newsId");
+
                     Intent intent;
-                    if (isLoggedIn) {
-                        // Redirect to HomeActivity if user is logged in
-                        intent = new Intent(SplashActivity.this, HomeActivity.class);
+
+                    if (newsId != null && !newsId.isEmpty()) {
+                        // 🔥 Direct ga News Details ki vellali
+                        intent = new Intent(SplashActivity.this, ViewAllNewsDetailsActivity.class);
+                        intent.putExtra("newsId", newsId);
+                        Log.d("FCM_DEBUG", "Received newsId: " + newsId);
                     } else {
-                        // Redirect to LoginActivity if user is not logged in
-                        intent = new Intent(SplashActivity.this, LoginActivity.class);
+                        if (isLoggedIn) {
+                            intent = new Intent(SplashActivity.this, HomeActivity.class);
+                        } else {
+                            intent = new Intent(SplashActivity.this, LoginActivity.class);
+                        }
                     }
 
                     startActivity(intent);

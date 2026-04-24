@@ -3,6 +3,7 @@ package com.dst.ayyapatelugu.Services;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -12,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import com.dst.ayyapatelugu.Activity.PanchagamActivity;
+import com.dst.ayyapatelugu.Activity.ViewAllNewsDetailsActivity;
 import com.dst.ayyapatelugu.Activity.ViewAllNewsListActivity;
 import com.dst.ayyapatelugu.Activity.ViewAllTemplesActivity;
 import com.dst.ayyapatelugu.R;
@@ -51,7 +53,17 @@ public class MyFirebaseService extends FirebaseMessagingService {
             switch (type) {
 
                 case "news":
-                    intent = new Intent(this, ViewAllNewsListActivity.class);
+                    intent = new Intent(this, ViewAllNewsDetailsActivity.class);
+                    String newsId = message.getData().get("newsId");
+
+                    if (newsId != null) {
+                        newsId = newsId.replace("'", "").trim(); // 🔥 fix here also
+                    }
+
+                    Log.d("FCM_DEBUG", "Clean NewsId: " + newsId);
+
+                    intent.putExtra("newsId", newsId);
+
 
                     break;
 
@@ -79,13 +91,15 @@ public class MyFirebaseService extends FirebaseMessagingService {
     }
 
     private void showNotification(String title, String body, Intent intent) {
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 this,
-                0,
+                (int) System.currentTimeMillis(),
                 intent,
-                PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
         NotificationManager manager =
@@ -108,7 +122,7 @@ public class MyFirebaseService extends FirebaseMessagingService {
                         .setContentText(body)
                         .setSmallIcon(R.drawable.applogo)
                         .setAutoCancel(true)
-                        .setContentIntent(pendingIntent) // 🔥 VERY IMPORTANT
+                        .setContentIntent(pendingIntent)
                         .setPriority(NotificationCompat.PRIORITY_HIGH);
 
         manager.notify(0, builder.build());

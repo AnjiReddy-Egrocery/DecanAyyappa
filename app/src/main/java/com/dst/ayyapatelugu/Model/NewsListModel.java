@@ -6,6 +6,16 @@ public class NewsListModel {
 
     private  String newsTitle;
 
+    private String newsId;
+
+    public String getNewsId() {
+        return newsId;
+    }
+
+    public void setNewsId(String newsId) {
+        this.newsId = newsId;
+    }
+
     private String newsDescription;
 
     private String image;

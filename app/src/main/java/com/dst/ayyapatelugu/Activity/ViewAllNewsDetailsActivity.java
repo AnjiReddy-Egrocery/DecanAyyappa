@@ -19,11 +19,28 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.dst.ayyapatelugu.DataBase.SharedPreferencesManager;
 import com.dst.ayyapatelugu.HomeActivity;
+import com.dst.ayyapatelugu.Model.NewsDetailsResponse;
+import com.dst.ayyapatelugu.Model.NewsList;
 import com.dst.ayyapatelugu.R;
+import com.dst.ayyapatelugu.Services.APiInterface;
+import com.dst.ayyapatelugu.Services.UnsafeTrustManager;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ViewAllNewsDetailsActivity extends AppCompatActivity {
 
@@ -48,6 +65,8 @@ public class ViewAllNewsDetailsActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private static final String PREF_NAME = "tts_prefs";
     private static final String KEY_INDEX = "current_index";
+    String newsId;
+    String imagePath;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -62,6 +81,12 @@ public class ViewAllNewsDetailsActivity extends AppCompatActivity {
 
         toolbar.setTitle("www.ayyappatelugu.com");
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));*/
+        newsId = getIntent().getStringExtra("newsId");
+        if (newsId != null) {
+            newsId = newsId.replace("'", "").trim(); // 🔥 remove quotes
+        }
+
+        Log.d("FCM_DEBUG", "Final: " + newsId);
 
 
         txtViewMore = findViewById(R.id.txt_view_more);
@@ -130,10 +155,10 @@ public class ViewAllNewsDetailsActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         String name = bundle.getString("Name");
-        String imagePath = bundle.getString("imagePath");
+        imagePath = bundle.getString("imagePath");
         String discription = bundle.getString("Discription");
 
-        txtName.setText(name);
+   /*     txtName.setText(name);*/
 
         txtViewMore.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,7 +168,7 @@ public class ViewAllNewsDetailsActivity extends AppCompatActivity {
             }
         });
 
-        Picasso.get().load(imagePath).into(imageView);
+       /* Picasso.get().load(imagePath).into(imageView);
         String htmlDescription = bundle.getString("Discription");
 
 // Render HTML tags & remove special characters like &zwnj; &lsquo;
@@ -153,7 +178,7 @@ public class ViewAllNewsDetailsActivity extends AppCompatActivity {
             } else {
                 textContent.setText(Html.fromHtml(htmlDescription));
             }
-        }
+        }*/
        // textContent.setText(discription);
 
         textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
@@ -215,6 +240,70 @@ public class ViewAllNewsDetailsActivity extends AppCompatActivity {
             isPlaying = true;
             speakNextChunk(); // start from beginning
             playAudioIcon.setImageResource(R.drawable.baseline_pause_24);
+        });
+
+        loadnews(newsId);
+    }
+
+    private void loadnews(String newsId) {
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .sslSocketFactory(UnsafeTrustManager.createTrustAllSslSocketFactory(), UnsafeTrustManager.createTrustAllTrustManager())
+                .hostnameVerifier((hostname, session) -> true) // Bypasses hostname verification
+                .addInterceptor(loggingInterceptor)
+                .build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://www.ayyappatelugu.com/") // Replace with your API URL
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+        APiInterface apiClient = retrofit.create(APiInterface.class);
+
+        Call<NewsDetailsResponse> call = apiClient.getNewsDetails(newsId);
+        call.enqueue(new Callback<NewsDetailsResponse>() {
+            @Override
+            public void onResponse(Call<NewsDetailsResponse> call, Response<NewsDetailsResponse> response) {
+                if (response.isSuccessful() && response.body() != null &&
+                        "200".equals(response.body().errorCode)) {
+
+                    NewsDetailsResponse data = response.body();
+
+                    if (data.result != null && !data.result.isEmpty()) {
+
+                        NewsDetailsResponse.NewsItem item = data.result.get(0);
+
+                        txtName.setText(item.newsTitle);
+
+
+                        String fullImageUrl = data.imageUrl + item.image;
+
+                        fullImageUrl = fullImageUrl.replace(
+                                "https://www.ayyappatelugu.com/",
+                                "https://www.ayyappatelugu.com/public/"
+                        );
+
+                        Log.d("IMAGE_DEBUG", "Final URL: " + fullImageUrl);
+
+                        Picasso.get()
+                                .load(fullImageUrl)
+
+                                .into(imageView);
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            textContent.setText(Html.fromHtml(item.newsDescription, Html.FROM_HTML_MODE_LEGACY));
+                        } else {
+                            textContent.setText(Html.fromHtml(item.newsDescription));
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<NewsDetailsResponse> call, Throwable t) {
+                Log.e("API_ERROR", t.getMessage());
+            }
         });
     }
 

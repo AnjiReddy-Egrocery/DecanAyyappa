@@ -393,6 +393,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View v) {
                 Intent intentnews=new Intent(HomeActivity.this,ViewAllNewsListActivity.class);
+
                 startActivity(intentnews);
             }
         });

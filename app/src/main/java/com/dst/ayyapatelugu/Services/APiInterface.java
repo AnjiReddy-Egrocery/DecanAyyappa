@@ -12,6 +12,7 @@ import com.dst.ayyapatelugu.Model.GuruSwamiList;
 import com.dst.ayyapatelugu.Model.KaryakarmamList;
 import com.dst.ayyapatelugu.Model.LoginDataResponse;
 import com.dst.ayyapatelugu.Model.MapDataResponse;
+import com.dst.ayyapatelugu.Model.NewsDetailsResponse;
 import com.dst.ayyapatelugu.Model.NewsList;
 import com.dst.ayyapatelugu.Model.NityaPoojaModel;
 import com.dst.ayyapatelugu.Model.ProductList;
@@ -32,6 +33,8 @@ import com.dst.ayyapatelugu.Model.panchagamModel;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -64,6 +67,11 @@ public interface APiInterface {
 
     @POST("APICalls/News/index")
     Call<NewsList> getNewsList();
+    @FormUrlEncoded
+    @POST("APICalls/News/info")
+    Call<NewsDetailsResponse> getNewsDetails(
+            @Field("newsId") String newsId
+    );
 
     @POST("APICalls/Activities/index")
     Call<KaryakarmamList> getKaryakaramamList();

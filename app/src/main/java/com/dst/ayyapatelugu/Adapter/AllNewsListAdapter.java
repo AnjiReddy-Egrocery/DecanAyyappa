@@ -55,6 +55,7 @@ public class AllNewsListAdapter extends RecyclerView.Adapter<AllNewsListAdapter.
         NewsListModel newsListModel = listModels.get(position);
 
 
+        String id = newsListModel.getNewsId();
 
         String profilepic = newsListModel.getImage();
         String imageUrl = "https://www.ayyappatelugu.com/public/assets/news_images/" + profilepic;
@@ -75,6 +76,7 @@ public class AllNewsListAdapter extends RecyclerView.Adapter<AllNewsListAdapter.
                 intent.putExtra("Name",name);
                 intent.putExtra("imagePath", imageUrl);
                 intent.putExtra("Discription",newsDiscription);
+                intent.putExtra("newsId",id);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(intent);
 
