@@ -69,7 +69,7 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.MyView
 
             headerRow.addView(createHeaderTextView("Month", 180));
             headerRow.addView(createHeaderTextView("Opening Date", 150));
-            headerRow.addView(createHeaderTextView("Closing Date", 150));
+            headerRow.addView(createHeaderTextView("Closing Date", 200));
             headerRow.addView(createHeaderTextView("Pooja Name", 300));
 
             tableLayout.addView(headerRow);

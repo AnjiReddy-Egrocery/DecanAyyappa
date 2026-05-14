@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Title with a close icon on the right side -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_dialog_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text=" అయ్యప్ప బ్లాగ్  సమాచారం"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingEnd="8dp" />
+
+        <!-- Close icon on the right side -->
+        <ImageButton
+            android:id="@+id/btn_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:contentDescription="Close"
+            android:background="?android:attr/selectableItemBackgroundBorderless" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="శబరిమల లేదా శబరిమలై, కేరళ రాష్ట్రంలోగల ఒక ప్రసిద్ధి గాంచిన పుణ్యక్షేత్రం. ఇక్కడ కొలువైన దేవుడు అయ్యప్ప, హిందువులు ఈయనను హరిహరసుతుడిగా భావించి పూజిస్తారు. ఈ ప్రదేశం పశ్చిమ కనుమల్లో నెలకొని ఉంది. కేరళ లోని పత్తినంతిట్ట జిల్లాలో సహ్యాద్రి పర్వత శ్రేణుల ప్రాంతం క్రిందకు వస్తుంది. గుడి సముద్ర మట్టం నుంచి సుమారు 3000 అడుగుల ఎత్తులో దట్టమైన అడవులు మరియు 18 కొండల మధ్య కేంద్రీకృతమై ఉంటుంది."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="అయ్యప్ప స్వామి చరిత్ర &amp; వ్రత విధానం"
+            android:textSize="16dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:textStyle="bold"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="అయ్యప్ప స్వామి జన్మ కథ, తత్వశాస్త్రం, మరియు పూజా విధానాలు."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="అయ్యప్ప వ్రత విధానం, నిత్య నియమాలు, మరియు మాలధారణ విధానం."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="అయ్యప్ప దీక్ష నియమాలు, ఉపవాసం, మరియు భక్తి పాటలు."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="అయ్యప్ప స్వామికి సంబంధించిన కీర్తనలు, సుప్రభాతం, మరియు స్తుతులు."
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="అయ్యప్ప స్వామి దర్శనం చేసుకునే ముందు పాటించాల్సిన నియమాలు, ప్రాముఖ్యత.
+
+"
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="#000"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -5,8 +5,12 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.dst.ayyapatelugu.Model.AyyaTempleListModel;
+import com.dst.ayyapatelugu.Model.BlogDetail;
+import com.dst.ayyapatelugu.Model.BlogResponse;
 import com.dst.ayyapatelugu.Model.BooksModelResult;
 import com.dst.ayyapatelugu.Model.NewsListModel;
+import com.dst.ayyapatelugu.Model.PadayatraBrundam;
+import com.dst.ayyapatelugu.Model.PadayatraResponse;
 import com.dst.ayyapatelugu.Model.TemplesListModel;
 import com.dst.ayyapatelugu.Model.YatraList;
 import com.google.gson.Gson;
@@ -34,6 +38,13 @@ public class SharedPreferencesManager {
     private static final String NEWS_LIST_KEY = "news_list_key";
 
 
+    private static final String Padayatr_PREFSSS_NAME = "AyyappaPadayatraPrefes";
+    private static final String PADAYATRA_LIST_KEY = "padayatra_list_key";
+
+
+    private static final String BLOG_PREFSSS_NAME = "AyyappaBlogPrefes";
+    private static final String BLOG_LIST_KEY = "blog_list_key";
+
 
 
 
@@ -55,6 +66,38 @@ public class SharedPreferencesManager {
         Gson gson = new Gson();
         String json = prefs.getString(KEY_BOOKS, null);
         Type type = new TypeToken<List<BooksModelResult>>() {}.getType();
+        return gson.fromJson(json, type);
+    }
+
+    public static void savepadayatraList(Context context, List<PadayatraBrundam> padayatraList) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(Padayatr_PREFSSS_NAME, Context.MODE_PRIVATE).edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(padayatraList);
+        editor.putString(PADAYATRA_LIST_KEY, json);
+        editor.apply();
+    }
+
+    public static List<PadayatraBrundam> getPadayatraList(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(Padayatr_PREFSSS_NAME, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = prefs.getString(PADAYATRA_LIST_KEY, null);
+        Type type = new TypeToken<List<PadayatraBrundam>>() {}.getType();
+        return gson.fromJson(json, type);
+    }
+
+    public static void saveBlogList(Context context, List<BlogDetail> blogResponseList) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(BLOG_PREFSSS_NAME, Context.MODE_PRIVATE).edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(blogResponseList);
+        editor.putString(BLOG_LIST_KEY, json);
+        editor.apply();
+    }
+
+    public static List<BlogDetail> getBlogList(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(BLOG_PREFSSS_NAME, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = prefs.getString(BLOG_LIST_KEY, null);
+        Type type = new TypeToken<List<BlogDetail>>() {}.getType();
         return gson.fromJson(json, type);
     }
 

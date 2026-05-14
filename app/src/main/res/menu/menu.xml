@@ -71,64 +71,85 @@
             android:title="@string/ayyappa_blogs"/>
     </group>
 
-
     <group android:id="@+id/group9"
+        >
+        <item
+            android:id="@+id/ayyappa_Padayatra"
+            android:icon="@drawable/baseline_fiber_manual_record_24"
+            android:title="@string/ayyappa_Padayatra"/>
+    </group>
+
+    <group android:id="@+id/group10"
         >
         <item
             android:id="@+id/ayyappa_books"
             android:icon="@drawable/baseline_fiber_manual_record_24"
             android:title="@string/ayyappa_books"/>
     </group>
-    <group android:id="@+id/group10"
+    <group android:id="@+id/group11"
         >
         <item
             android:id="@+id/ayyappa_tours"
             android:icon="@drawable/baseline_fiber_manual_record_24"
             android:title="@string/ayyappa_tours"/>
     </group>
-    <group android:id="@+id/group11"
+    <group android:id="@+id/group12"
         >
         <item
             android:id="@+id/ayyappa_decration"
             android:icon="@drawable/baseline_fiber_manual_record_24"
             android:title="@string/ayyappa_decration"/>
     </group>
-    <group android:id="@+id/group12"
+    <group android:id="@+id/group13"
         >
         <item
             android:id="@+id/ayyappa_anadanam"
             android:icon="@drawable/baseline_fiber_manual_record_24"
             android:title="@string/ayyappa_anadanam"/>
     </group>
-    <group android:id="@+id/group13"
+    <group android:id="@+id/group14"
         >
         <item
             android:id="@+id/ayyappa_devalyalu"
             android:icon="@drawable/baseline_fiber_manual_record_24"
             android:title="@string/ayyappa_devlyalu"/>
     </group>
-    <group android:id="@+id/group14"
+    <group android:id="@+id/group15"
         >
         <item
             android:id="@+id/ayyappa_ayyappadevlyalu"
             android:icon="@drawable/baseline_fiber_manual_record_24"
             android:title="@string/ayyappa_ayyappadevlyalu"/>
     </group>
-    <group android:id="@+id/group15"
+    <group android:id="@+id/group16"
         >
         <item
             android:id="@+id/ayyappa_details"
             android:icon="@drawable/baseline_fiber_manual_record_24"
             android:title="@string/ayyappa_details"/>
     </group>
-    <group android:id="@+id/group16"
+    <group android:id="@+id/group17"
+        >
+        <item
+            android:id="@+id/ayyappa_images"
+            android:icon="@drawable/baseline_fiber_manual_record_24"
+            android:title="@string/ayyappa_images"/>
+    </group>
+    <group android:id="@+id/group18"
+        >
+        <item
+            android:id="@+id/ayyappa_videos"
+            android:icon="@drawable/baseline_fiber_manual_record_24"
+            android:title="@string/ayyappa_videos"/>
+    </group>
+    <group android:id="@+id/group19"
         >
         <item
             android:id="@+id/ayyappa_policy"
             android:icon="@drawable/baseline_fiber_manual_record_24"
             android:title="@string/tayyappa_policy"/>
     </group>
-    <group android:id="@+id/group17"
+    <group android:id="@+id/group20"
         >
         <item
             android:id="@+id/log_out"

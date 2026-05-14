@@ -47,8 +47,11 @@ import com.dst.ayyapatelugu.Activity.BlogsActivity;
 import com.dst.ayyapatelugu.Activity.CalenderActivity;
 import com.dst.ayyapatelugu.Activity.DevlyaluActivity;
 import com.dst.ayyapatelugu.Activity.GuruSwamiListActivity;
+import com.dst.ayyapatelugu.Activity.ImagesListActivity;
 import com.dst.ayyapatelugu.Activity.NityaPoojaActivity;
+import com.dst.ayyapatelugu.Activity.PadayatraActivity;
 import com.dst.ayyapatelugu.Activity.PanchagamActivity;
+import com.dst.ayyapatelugu.Activity.PostVideosActivity;
 import com.dst.ayyapatelugu.Activity.ProductsListActivity;
 import com.dst.ayyapatelugu.Activity.SevaDetailsActivity;
 import com.dst.ayyapatelugu.Activity.SharanughoshaActivity;
@@ -946,6 +949,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             startActivity(intent);
 
 
+        }else if (action == R.id.ayyappa_Padayatra){
+
+            Intent intent=new Intent(HomeActivity.this, PadayatraActivity.class);
+            startActivity(intent);
+
+
         } else if (action == R.id.ayyappa_telugu_calender){
 
             Intent intent=new Intent(HomeActivity.this, TeluguCalenderActivity.class);
@@ -980,6 +989,16 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }else if(action == R.id.ayyappa_policy){
 
             Intent intent=new Intent(HomeActivity.this, PrivacyPolicyActivity.class);
+            startActivity(intent);
+
+        }else if(action == R.id.ayyappa_images){
+
+            Intent intent=new Intent(HomeActivity.this, ImagesListActivity.class);
+            startActivity(intent);
+
+        }else if(action == R.id.ayyappa_videos){
+
+            Intent intent=new Intent(HomeActivity.this, PostVideosActivity.class);
             startActivity(intent);
 
         }else if (action == R.id.log_out) {

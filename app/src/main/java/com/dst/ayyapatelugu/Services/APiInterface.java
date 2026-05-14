@@ -5,16 +5,21 @@ import com.dst.ayyapatelugu.Model.AyyappaTempleMapDataResponse;
 import com.dst.ayyapatelugu.Model.BajanaManadaliListModel;
 import com.dst.ayyapatelugu.Model.BajanaMandaliList;
 import com.dst.ayyapatelugu.Model.BajanaSongsList;
+import com.dst.ayyapatelugu.Model.BlogResponse;
 import com.dst.ayyapatelugu.Model.BooksListModel;
 import com.dst.ayyapatelugu.Model.CalenderDataResponse;
 import com.dst.ayyapatelugu.Model.ForgotDataResponse;
 import com.dst.ayyapatelugu.Model.GuruSwamiList;
+import com.dst.ayyapatelugu.Model.ImagesModel;
+import com.dst.ayyapatelugu.Model.ImagesResponse;
 import com.dst.ayyapatelugu.Model.KaryakarmamList;
 import com.dst.ayyapatelugu.Model.LoginDataResponse;
 import com.dst.ayyapatelugu.Model.MapDataResponse;
 import com.dst.ayyapatelugu.Model.NewsDetailsResponse;
 import com.dst.ayyapatelugu.Model.NewsList;
 import com.dst.ayyapatelugu.Model.NityaPoojaModel;
+import com.dst.ayyapatelugu.Model.PadayatraBrundam;
+import com.dst.ayyapatelugu.Model.PadayatraResponse;
 import com.dst.ayyapatelugu.Model.ProductList;
 import com.dst.ayyapatelugu.Model.ResetPasswordResponse;
 import com.dst.ayyapatelugu.Model.SevaList;
@@ -25,6 +30,7 @@ import com.dst.ayyapatelugu.Model.TempleMapDataResponse;
 import com.dst.ayyapatelugu.Model.TemplesList;
 import com.dst.ayyapatelugu.Model.UserDataResponse;
 import com.dst.ayyapatelugu.Model.VerifyUserDataResponse;
+import com.dst.ayyapatelugu.Model.VideoResponse;
 import com.dst.ayyapatelugu.Model.YatraList;
 import com.dst.ayyapatelugu.Model.decoratorListModel;
 import com.dst.ayyapatelugu.Model.panchagamModel;
@@ -48,6 +54,12 @@ public interface APiInterface {
 
     @POST("APICalls/Books/index")
     Call<BooksListModel> getBookList();
+
+    @POST("APICalls/Padayatrabrundams/index")
+    Call<PadayatraResponse> getPadayatraList();
+
+    @POST("APICalls/Blogs/index")
+    Call<BlogResponse> getBlogList();
 
     @POST("APICalls/Guruswami/index")
     Call<GuruSwamiList> getGuruSwamiList();
@@ -73,6 +85,22 @@ public interface APiInterface {
             @Field("newsId") String newsId
     );
 
+    @POST("APICalls/images")
+    Call<ImagesResponse> getImages();
+
+    @POST("APICalls/videos")
+    Call<VideoResponse> getVideos();
+
+    @FormUrlEncoded
+    @POST("APICalls/Padayatrabrundams/info")
+    Call<PadayatraResponse> getPadayatraDetails(
+            @Field("padayatrabrundamId") String padayatrabrundamId
+    );
+    @FormUrlEncoded
+    @POST("APICalls/Blogs/info")
+    Call<BlogResponse> getBlogDetails(
+            @Field("blogId") String blogId
+    );
     @POST("APICalls/Activities/index")
     Call<KaryakarmamList> getKaryakaramamList();
 
