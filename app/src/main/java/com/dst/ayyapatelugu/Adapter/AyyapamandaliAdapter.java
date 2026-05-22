@@ -61,7 +61,7 @@ public class AyyapamandaliAdapter extends RecyclerView.Adapter<AyyapamandaliAdap
         ImageLoader.loadImage(mContext, imgUrl, holder.image);
 
 
-
+        String id = modal.getBajanamandaliId();
         String name = modal.getBajanamandaliName();
         String GuruNme = modal.getNameOfGuru();
         String City = modal.getBajanamandaliCity();
@@ -78,6 +78,7 @@ public class AyyapamandaliAdapter extends RecyclerView.Adapter<AyyapamandaliAdap
             public void onClick(View view) {
 
                 Intent intent = new Intent(mContext, AyyapaMandaliDetailsActivity.class);
+                intent.putExtra("bajanamandaliId",id);
                 intent.putExtra("ItemName", name);
                 intent.putExtra("ItemGuruName", GuruNme);
                 intent.putExtra("ItemCity", City);

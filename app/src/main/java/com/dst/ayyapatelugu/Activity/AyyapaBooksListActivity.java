@@ -43,6 +43,7 @@ import com.dst.ayyapatelugu.Model.GuruSwamiModelList;
 import com.dst.ayyapatelugu.R;
 import com.dst.ayyapatelugu.Services.APiInterface;
 import com.dst.ayyapatelugu.Services.UnsafeTrustManager;
+import com.google.gson.Gson;
 import com.ibm.icu.text.Transliterator;
 
 
@@ -143,7 +144,7 @@ public class AyyapaBooksListActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        fetchDataFromSharedPreferences();
+        fetchDataFromDataBase();
 
         searchView = findViewById(R.id.searchView);
         searchView.setQueryHint("Search by BookName");
@@ -223,12 +224,23 @@ public class AyyapaBooksListActivity extends AppCompatActivity {
         call.enqueue(new Callback<BooksListModel>() {
             @Override
             public void onResponse(Call<BooksListModel> call, Response<BooksListModel> response) {
+                Log.d("BOOK_DEBUG",
+                        "RAW RESPONSE = " +
+                                new Gson().toJson(response.body()));
+
                 BooksListModel listModel = response.body();
+
+                if(listModel != null){
+
+                    for(BooksModelResult item : listModel.getResult()){
+
+                        Log.d("BOOK_DEBUG",
+                                "BOOK ID = " + item.getBookId()
+                                        + " NAME = " + item.getName());
+                    }
+                }
                 bookList.clear();
                 bookList = new ArrayList<>(Arrays.asList(listModel.getResult()));
-
-                SharedPreferencesManager.saveBookList(AyyapaBooksListActivity.this, bookList);
-
                 updateRecyclerView(bookList);
             }
 

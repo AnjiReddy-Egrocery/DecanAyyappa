@@ -1,7 +1,7 @@
 package com.dst.ayyapatelugu.Model;
 
 public class TemplesListModel {
-
+    private String templeId;
     private String templeName;
     private String templeNameTelugu;
     private String openingTime;
@@ -13,13 +13,22 @@ public class TemplesListModel {
 
     }
 
-    public TemplesListModel(String templeName, String templeNameTelugu, String openingTime, String closingTime, String location, String image) {
+    public TemplesListModel(String templeId, String templeName, String templeNameTelugu, String openingTime, String closingTime, String location, String image) {
+        this.templeId = templeId;
         this.templeName = templeName;
         this.templeNameTelugu = templeNameTelugu;
         this.openingTime = openingTime;
         this.closingTime = closingTime;
         this.location = location;
         this.image = image;
+    }
+
+    public String getTempleId() {
+        return templeId;
+    }
+
+    public void setTempleId(String templeId) {
+        this.templeId = templeId;
     }
 
     public String getTempleName() {

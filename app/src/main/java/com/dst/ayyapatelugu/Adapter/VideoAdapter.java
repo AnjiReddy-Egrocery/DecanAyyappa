@@ -150,30 +150,92 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
             playerView = itemView.findViewById(R.id.playerView);
             imageShare = itemView.findViewById(R.id.btnShare);
             imageDownload = itemView.findViewById(R.id.btnDownload);
+
+            playerView.setUseController(true);
+
+            playerView.setControllerAutoShow(true);
+
+            playerView.setControllerHideOnTouch(false);
+
+            playerView.setControllerShowTimeoutMs(3000);
         }
 
         void bind(String url) {
 
-            player = new ExoPlayer.Builder(context).build();
+            // RELEASE OLD PLAYER
+            if (player != null) {
+
+                player.release();
+            }
+
+            player =
+                    new ExoPlayer.Builder(context).build();
+
             playerView.setPlayer(player);
 
-            MediaItem mediaItem = MediaItem.fromUri(Uri.parse(url));
+            MediaItem mediaItem =
+                    MediaItem.fromUri(Uri.parse(url));
+
             player.setMediaItem(mediaItem);
 
+            // LOOP VIDEO
             player.setRepeatMode(Player.REPEAT_MODE_ONE);
+
+            // VOLUME
+            player.setVolume(1f);
+
+            // PREPARE
             player.prepare();
-            player.setPlayWhenReady(false);
+
+            // DON'T AUTO PLAY HERE
+            player.pause();
+
+            // KEEP LAST FRAME
+            playerView.setKeepContentOnPlayerReset(true);
+
+            // PLAYER LISTENER
+            player.addListener(new Player.Listener() {
+
+                @Override
+                public void onPlaybackStateChanged(
+                        int playbackState
+                ) {
+
+                    if (playbackState
+                            == Player.STATE_READY) {
+
+                        // READY
+                    }
+                }
+            });
         }
     }
 
     @Override
-    public void onViewRecycled(@NonNull MyViewHolder holder) {
+    public void onViewRecycled(
+            @NonNull MyViewHolder holder
+    ) {
+
         super.onViewRecycled(holder);
 
         if (holder.player != null) {
+
             holder.player.release();
+
             holder.player = null;
         }
     }
-}
 
+    @Override
+    public void onViewDetachedFromWindow(
+            @NonNull MyViewHolder holder
+    ) {
+
+        super.onViewDetachedFromWindow(holder);
+
+        if (holder.player != null) {
+
+            holder.player.pause();
+        }
+    }
+}

@@ -1,14 +1,22 @@
 package com.dst.ayyapatelugu.Services;
 
+import com.dst.ayyapatelugu.Model.ActivitiesDetailsResponse;
+import com.dst.ayyapatelugu.Model.AnadanamDetailResponse;
+import com.dst.ayyapatelugu.Model.AnadanamList;
 import com.dst.ayyapatelugu.Model.AyyappaTempleList;
 import com.dst.ayyapatelugu.Model.AyyappaTempleMapDataResponse;
 import com.dst.ayyapatelugu.Model.BajanaManadaliListModel;
+import com.dst.ayyapatelugu.Model.BajanaMandaliDetailsResponse;
 import com.dst.ayyapatelugu.Model.BajanaMandaliList;
+import com.dst.ayyapatelugu.Model.BajanaSongDetailsResponse;
 import com.dst.ayyapatelugu.Model.BajanaSongsList;
 import com.dst.ayyapatelugu.Model.BlogResponse;
+import com.dst.ayyapatelugu.Model.BookDetailsResponse;
 import com.dst.ayyapatelugu.Model.BooksListModel;
 import com.dst.ayyapatelugu.Model.CalenderDataResponse;
+import com.dst.ayyapatelugu.Model.DecaratorDetailsResponse;
 import com.dst.ayyapatelugu.Model.ForgotDataResponse;
+import com.dst.ayyapatelugu.Model.GuruSwamiDetailsResponse;
 import com.dst.ayyapatelugu.Model.GuruSwamiList;
 import com.dst.ayyapatelugu.Model.ImagesModel;
 import com.dst.ayyapatelugu.Model.ImagesResponse;
@@ -20,14 +28,17 @@ import com.dst.ayyapatelugu.Model.NewsList;
 import com.dst.ayyapatelugu.Model.NityaPoojaModel;
 import com.dst.ayyapatelugu.Model.PadayatraBrundam;
 import com.dst.ayyapatelugu.Model.PadayatraResponse;
+import com.dst.ayyapatelugu.Model.ProductDetailsResponse;
 import com.dst.ayyapatelugu.Model.ProductList;
 import com.dst.ayyapatelugu.Model.ResetPasswordResponse;
 import com.dst.ayyapatelugu.Model.SevaList;
 import com.dst.ayyapatelugu.Model.SharanughosaModel;
 import com.dst.ayyapatelugu.Model.SignUpWithGmail;
 import com.dst.ayyapatelugu.Model.TeluguCalenderDataResponse;
+import com.dst.ayyapatelugu.Model.TempleDetailsResponse;
 import com.dst.ayyapatelugu.Model.TempleMapDataResponse;
 import com.dst.ayyapatelugu.Model.TemplesList;
+import com.dst.ayyapatelugu.Model.TourseDetailsResponse;
 import com.dst.ayyapatelugu.Model.UserDataResponse;
 import com.dst.ayyapatelugu.Model.VerifyUserDataResponse;
 import com.dst.ayyapatelugu.Model.VideoResponse;
@@ -85,6 +96,63 @@ public interface APiInterface {
             @Field("newsId") String newsId
     );
 
+    @FormUrlEncoded
+    @POST("APICalls/Guruswami/info")
+    Call<GuruSwamiDetailsResponse> getGuruSwamiDetails(
+            @Field("guruswamiId") String guruswamiId
+    );
+
+    @FormUrlEncoded
+    @POST("APICalls/Bajanamandali/info")
+    Call<BajanaMandaliDetailsResponse> getBajanamandaliDetails(
+            @Field("bajanamandaliId") String bajanamandaliId
+    );
+
+    @FormUrlEncoded
+    @POST("APICalls/Yatralu/info")
+    Call<TourseDetailsResponse> getTourseDetails(
+            @Field("tourpackageId") String tourpackageId
+    );
+
+    @FormUrlEncoded
+    @POST("APICalls/Decorators/info")
+    Call<DecaratorDetailsResponse> getDecaratorDetails(
+            @Field("decoratorId") String decoratorId
+    );
+
+    @FormUrlEncoded
+    @POST("APICalls/Products/info")
+    Call<ProductDetailsResponse> getProductDetails(
+            @Field("productId") String productId
+    );
+
+    @FormUrlEncoded
+    @POST("APICalls/Books/info")
+    Call<BookDetailsResponse> getBookDetails(
+            @Field("bookId") String bookId
+    );
+
+    @FormUrlEncoded
+    @POST("APICalls/Activities/info")
+    Call<ActivitiesDetailsResponse> getActivitiesDetails(
+            @Field("activitiesId") String activitiesId
+    );
+
+    @FormUrlEncoded
+    @POST("APICalls/Bajanasongs/info")
+    Call<BajanaSongDetailsResponse> getBajanaSongDetails(
+            @Field("songId") String songId
+    );
+    @FormUrlEncoded
+    @POST("APICalls/Temples/info")
+    Call<TempleDetailsResponse> getTempleDetails(
+            @Field("templeId") String templeId
+    );
+    @FormUrlEncoded
+    @POST("APICalls/Annadhanams/info")
+    Call<AnadanamDetailResponse> getAnadanamDetails(
+            @Field("annadhanamId") String annadhanamId
+    );
     @POST("APICalls/images")
     Call<ImagesResponse> getImages();
 
@@ -110,6 +178,8 @@ public interface APiInterface {
     @POST("APICalls/Temples/index")
     Call<TemplesList> getTempleList();
 
+    @POST("APICalls/Annadhanams/index")
+    Call<AnadanamList> getAnadanam();
     @POST("APICalls/Temples/ayyappaTemples")
     Call<AyyappaTempleList> getAyyappaTempleList();
 
@@ -138,9 +208,11 @@ public interface APiInterface {
     Call<LoginDataResponse> LoginData(@Part("loginMobile") RequestBody loginMobile ,
                                       @Part("loginPassword") RequestBody loginPassword);
 
-    @Multipart
+    @FormUrlEncoded
     @POST("APICalls/Calendar/index")
-    Call<CalenderDataResponse> calenderData(@Part("year") RequestBody year);
+    Call<CalenderDataResponse> calenderData(
+            @Field("Year") RequestBody year
+    );
 
     @Multipart
     @POST("APICalls/panchangmonth")

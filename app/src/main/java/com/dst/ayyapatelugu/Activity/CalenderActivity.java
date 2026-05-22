@@ -84,6 +84,16 @@ public class CalenderActivity extends AppCompatActivity {
         imageRight=findViewById(R.id.image_right);
         /*toolbar.setTitle("www.ayyappatelugu.com");
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));*/
+        String intentYear = getIntent().getStringExtra("Year");
+
+        Log.d("FCM_DEBUG", "Raw intent year: " + getIntent().getStringExtra("Year"));
+
+        if (intentYear != null && !intentYear.isEmpty()) {
+            Calender = intentYear;
+        } else {
+            Calender = "";
+        }
+        Log.d("FCM_DEBUG", "Final Calendar Year: " + Calender);
         setSupportActionBar(toolbar);
         ;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -182,6 +192,7 @@ public class CalenderActivity extends AppCompatActivity {
     }
 
     private void VerifyMethod(String calender) {
+        Log.d("FCM_DEBUG", "VerifyMethod year: " + calender);
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -197,6 +208,7 @@ public class CalenderActivity extends AppCompatActivity {
                 .build();
         APiInterface apiClient = retrofit.create(APiInterface.class);
         RequestBody YearPart = RequestBody.create(MediaType.parse("text/plain"), calender);
+        Log.d("FCM_DEBUG", "API Request Year: " + calender);
         Call<CalenderDataResponse> call=apiClient.calenderData(YearPart);
         call.enqueue(new Callback<CalenderDataResponse>() {
             @Override

@@ -47,7 +47,7 @@
             <TextView
                 android:id="@+id/txt"
                 android:textSize="22sp"
-                android:text="Title"
+                android:text=""
                 android:gravity="center"
                 android:layout_marginTop="12dp"
                 android:layout_below="@+id/img"
@@ -63,7 +63,7 @@
                 <TextView
                     android:id="@+id/txt_add"
                     android:textSize="18dp"
-                    android:text="Title"
+                    android:text=""
                     android:textColor="#fff"
                     android:layout_marginTop="14dp"
                     android:layout_below="@+id/img"
@@ -127,7 +127,7 @@
                 <TextView
                     android:textSize="18dp"
                     android:id="@+id/txt_amount"
-                    android:text="   hhhhhhhhh "
+                    android:text="    "
                     android:layout_marginTop="14dp"
                     android:layout_marginBottom="14dp"
                     android:layout_below="@+id/img"

@@ -54,6 +54,8 @@ public class GuruSwamiListAdapter extends RecyclerView.Adapter<GuruSwamiListAdap
         String profilePic = modal.getProfilePic();
         String imgUrl = "https://www.ayyappatelugu.com/public/assets/user_images/"+profilePic ;
 
+        String id = modal.getGuruswamiId();
+
         String name = modal.getGuruswamiName();
      /*   String number = modal.getMobileNo();*/
         String temple = modal.getTempleName();
@@ -68,6 +70,7 @@ public class GuruSwamiListAdapter extends RecyclerView.Adapter<GuruSwamiListAdap
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, GuruSwamiDetailsActivity.class);
+                intent.putExtra("guruswamiId",id);
                 intent.putExtra("Name", name);
                /* intent.putExtra("Number", number);*/
                 intent.putExtra("Temple", temple);

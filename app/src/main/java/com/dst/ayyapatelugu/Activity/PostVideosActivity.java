@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -40,8 +41,8 @@ public class PostVideosActivity extends AppCompatActivity {
     Toolbar toolbar;
     RecyclerView recyclerView;
     VideoAdapter adapter;
-    ImageView imageAnadanam,imageNityaPooja;
-    TextView textAndanam,txtNityaPooja;
+    ImageView imageAnadanam, imageNityaPooja;
+    TextView textAndanam, txtNityaPooja;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,8 @@ public class PostVideosActivity extends AppCompatActivity {
         if (nav != null) {
             nav.setTint(getResources().getColor(R.color.white));
         }
+
+        Log.d("FCM_DEBUG", "PostVideosActivity Opened");
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,11 +91,11 @@ public class PostVideosActivity extends AppCompatActivity {
         });
 
 
-        imageAnadanam=findViewById(R.id.layout_image_anadanam);
+        imageAnadanam = findViewById(R.id.layout_image_anadanam);
         imageAnadanam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(PostVideosActivity.this,AnadanamActivity.class);
+                Intent intent = new Intent(PostVideosActivity.this, AnadanamActivity.class);
                 startActivity(intent);
             }
         });
@@ -101,7 +104,7 @@ public class PostVideosActivity extends AppCompatActivity {
         textAndanam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(PostVideosActivity.this,AnadanamActivity.class);
+                Intent intent = new Intent(PostVideosActivity.this, AnadanamActivity.class);
                 startActivity(intent);
             }
         });
@@ -111,7 +114,7 @@ public class PostVideosActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent intent=new Intent(PostVideosActivity.this, NityaPoojaActivity.class);
+                Intent intent = new Intent(PostVideosActivity.this, NityaPoojaActivity.class);
                 startActivity(intent);
 
             }
@@ -120,7 +123,7 @@ public class PostVideosActivity extends AppCompatActivity {
         imageNityaPooja.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(PostVideosActivity.this,NityaPoojaActivity.class);
+                Intent intent = new Intent(PostVideosActivity.this, NityaPoojaActivity.class);
                 startActivity(intent);
             }
         });
@@ -132,7 +135,9 @@ public class PostVideosActivity extends AppCompatActivity {
         });*/
 
     }
+
     private void fetchDataFromDataBase() {
+        Log.d("FCM_DEBUG", "Fetching Videos API");
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -174,25 +179,48 @@ public class PostVideosActivity extends AppCompatActivity {
 
     private void playVisibleVideo() {
 
-        LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        LinearLayoutManager layoutManager =
+                (LinearLayoutManager)
+                        recyclerView.getLayoutManager();
 
-        int first = layoutManager.findFirstVisibleItemPosition();
-        int last = layoutManager.findLastVisibleItemPosition();
+        int visiblePosition =
+                layoutManager
+                        .findFirstCompletelyVisibleItemPosition();
 
-        int target = first + 1;
+        if (visiblePosition ==
+                RecyclerView.NO_POSITION) {
 
-        for (int i = first; i <= last; i++) {
+            visiblePosition =
+                    layoutManager
+                            .findFirstVisibleItemPosition();
+        }
 
-            RecyclerView.ViewHolder holder = recyclerView.findViewHolderForAdapterPosition(i);
+        for (int i = 0;
+             i < recyclerView.getChildCount();
+             i++) {
 
-            if (holder instanceof VideoAdapter.MyViewHolder) {
+            View child =
+                    recyclerView.getChildAt(i);
 
-                VideoAdapter.MyViewHolder vh = (VideoAdapter.MyViewHolder) holder;
+            RecyclerView.ViewHolder holder =
+                    recyclerView.getChildViewHolder(child);
 
-                if (i == target) {
-                    vh.player.setPlayWhenReady(true);
+            if (holder instanceof
+                    VideoAdapter.MyViewHolder) {
+
+                VideoAdapter.MyViewHolder vh =
+                        (VideoAdapter.MyViewHolder) holder;
+
+                int position =
+                        holder.getAdapterPosition();
+
+                if (position == visiblePosition) {
+
+                    vh.player.play();
+
                 } else {
-                    vh.player.setPlayWhenReady(false);
+
+                    vh.player.pause();
                 }
             }
         }
@@ -201,21 +229,45 @@ public class PostVideosActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        pauseAll();
+
+        pauseAllVideos();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        recyclerView.post(() -> playVisibleVideo());
+
+        recyclerView.postDelayed(() -> {
+            playVisibleVideo();
+        }, 300);
     }
 
-    private void pauseAll() {
-        for (int i = 0; i < recyclerView.getChildCount(); i++) {
-            RecyclerView.ViewHolder holder = recyclerView.getChildViewHolder(recyclerView.getChildAt(i));
-            if (holder instanceof VideoAdapter.MyViewHolder) {
-                ((VideoAdapter.MyViewHolder) holder).player.setPlayWhenReady(false);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        pauseAllVideos();
+    }
+
+    private void pauseAllVideos() {
+
+        for (int i = 0;
+             i < recyclerView.getChildCount();
+             i++) {
+
+            RecyclerView.ViewHolder holder =
+                    recyclerView.getChildViewHolder(
+                            recyclerView.getChildAt(i)
+                    );
+
+            if (holder instanceof
+                    VideoAdapter.MyViewHolder) {
+
+                ((VideoAdapter.MyViewHolder) holder)
+                        .player
+                        .pause();
             }
         }
     }
+
 }

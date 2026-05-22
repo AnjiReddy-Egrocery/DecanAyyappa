@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -125,9 +126,39 @@ public class PanchagamActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
 
 // ✅ Set current date
-        txtCalender.setText(displayFormat.format(calendar.getTime()));
-        txtDate.setText(displayFormat.format(calendar.getTime()));
-        loadPanchang(apiFormat.format(calendar.getTime())); // initial load
+        String intentDate = getIntent().getStringExtra("date");
+
+        Log.d("FCM_DEBUG", "Intent Date: " + intentDate);
+
+        String finalDate;
+
+        if (intentDate != null && !intentDate.isEmpty()) {
+
+            finalDate = intentDate;
+
+            try {
+                Date parsedDate = apiFormat.parse(intentDate);
+
+                txtCalender.setText(displayFormat.format(parsedDate));
+                txtDate.setText(displayFormat.format(parsedDate));
+
+                calendar.setTime(parsedDate);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } else {
+
+            finalDate = apiFormat.format(calendar.getTime());
+
+            txtCalender.setText(displayFormat.format(calendar.getTime()));
+            txtDate.setText(displayFormat.format(calendar.getTime()));
+        }
+
+        Log.d("FCM_DEBUG", "Final Panchagam Date: " + finalDate);
+
+        loadPanchang(finalDate);
 
 // ⬅️ Previous date
         imageLeft.setOnClickListener(v -> {

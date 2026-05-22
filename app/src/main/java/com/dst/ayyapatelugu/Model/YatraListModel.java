@@ -3,6 +3,7 @@ package com.dst.ayyapatelugu.Model;
 public class YatraListModel {
 
     private String nameOfPlace;
+    private String tourpackageId;
     private String days;
     private String devotees;
     private String amount;
@@ -12,8 +13,9 @@ public class YatraListModel {
 
     }
 
-    public YatraListModel(String nameOfPlace, String days, String devotees, String amount, String image) {
+    public YatraListModel(String nameOfPlace, String tourpackageId, String days, String devotees, String amount, String image) {
         this.nameOfPlace = nameOfPlace;
+        this.tourpackageId = tourpackageId;
         this.days = days;
         this.devotees = devotees;
         this.amount = amount;
@@ -26,6 +28,14 @@ public class YatraListModel {
 
     public void setNameOfPlace(String nameOfPlace) {
         this.nameOfPlace = nameOfPlace;
+    }
+
+    public String getTourpackageId() {
+        return tourpackageId;
+    }
+
+    public void setTourpackageId(String tourpackageId) {
+        this.tourpackageId = tourpackageId;
     }
 
     public String getDays() {

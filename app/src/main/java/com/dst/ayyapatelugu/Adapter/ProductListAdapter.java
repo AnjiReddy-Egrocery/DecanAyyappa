@@ -58,6 +58,8 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
         // Load the image using the custom loader
         ImageLoader.loadImage(mContext, imgUrl, holder.image);
 
+        String id = modal.getProductId();
+
 
         String name = modal.getName();
         String price = modal.getPrice();
@@ -75,6 +77,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
                 intent.putExtra("Price", price);
                 intent.putExtra("imagePath", imgUrl);
                 intent.putExtra("Discription", discription);
+                intent.putExtra("productId",id);
                 mContext.startActivity(intent);
 
             }

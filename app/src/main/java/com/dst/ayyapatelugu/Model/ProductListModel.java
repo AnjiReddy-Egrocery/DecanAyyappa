@@ -3,6 +3,7 @@ package com.dst.ayyapatelugu.Model;
 public class ProductListModel {
 
     private String name;
+    private String productId;
     private String code;
     private String price;
     private String description;
@@ -13,13 +14,22 @@ public class ProductListModel {
 
     }
 
-    public ProductListModel(String name, String code, String price, String description, String specification, String image) {
+    public ProductListModel(String name, String productId, String code, String price, String description, String specification, String image) {
         this.name = name;
+        this.productId = productId;
         this.code = code;
         this.price = price;
         this.description = description;
         this.specification = specification;
         this.image = image;
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
     }
 
     public String getName() {

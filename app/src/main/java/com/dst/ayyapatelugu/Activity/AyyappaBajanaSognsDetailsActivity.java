@@ -8,13 +8,26 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.dst.ayyapatelugu.Model.BajanaSongDetailsResponse;
+import com.dst.ayyapatelugu.Model.GuruSwamiDetailsResponse;
 import com.dst.ayyapatelugu.R;
+import com.dst.ayyapatelugu.Services.APiInterface;
+import com.dst.ayyapatelugu.Services.UnsafeTrustManager;
 import com.squareup.picasso.Picasso;
+
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AyyappaBajanaSognsDetailsActivity extends AppCompatActivity {
 
@@ -27,6 +40,8 @@ public class AyyappaBajanaSognsDetailsActivity extends AppCompatActivity {
 
     ImageView imageAnadanam,imageNityaPooja;
     TextView textAndanam,txtNityaPooja;
+
+    String songId;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -41,6 +56,13 @@ public class AyyappaBajanaSognsDetailsActivity extends AppCompatActivity {
 
         toolbar.setTitle("www.ayyappatelugu.com");
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));*/
+
+        songId = getIntent().getStringExtra("songId");
+        if (songId != null) {
+            songId = songId.replace("'", "").trim(); // 🔥 remove quotes
+        }
+
+        Log.d("FCM_DEBUG", "Final: " + songId);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -109,18 +131,18 @@ public class AyyappaBajanaSognsDetailsActivity extends AppCompatActivity {
         String discription = bundle.getString("Discription");
 
 
-        txtName.setText(name);
-        txtSingerNamer.setText(singername);
-
-        String htmlContent = "<html><head>" +
-                "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>" +
-                "<style>" +
-                "body { background-color: transparent; color: white; font-size: 16px; line-height: 1.6; }" +
-                "* { color: white !important; }" +
-                "</style>" +
-                "</head><body>" + discription + "</body></html>";
-
-        webView.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null);
+//        txtName.setText(name);
+//        txtSingerNamer.setText(singername);
+//
+//        String htmlContent = "<html><head>" +
+//                "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>" +
+//                "<style>" +
+//                "body { background-color: transparent; color: white; font-size: 16px; line-height: 1.6; }" +
+//                "* { color: white !important; }" +
+//                "</style>" +
+//                "</head><body>" + discription + "</body></html>";
+//
+//        webView.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null);
        /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 
             WebSettings webSettings = webView.getSettings();
@@ -133,5 +155,60 @@ public class AyyappaBajanaSognsDetailsActivity extends AppCompatActivity {
 
         }*/
 
+        loadBajanaSongDetails(songId);
+
+    }
+
+    private void loadBajanaSongDetails(String songId) {
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .sslSocketFactory(UnsafeTrustManager.createTrustAllSslSocketFactory(), UnsafeTrustManager.createTrustAllTrustManager())
+                .hostnameVerifier((hostname, session) -> true) // Bypasses hostname verification
+                .addInterceptor(loggingInterceptor)
+                .build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://www.ayyappatelugu.com/") // Replace with your API URL
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+        APiInterface apiClient = retrofit.create(APiInterface.class);
+        Call<BajanaSongDetailsResponse> call = apiClient.getBajanaSongDetails(songId);
+        call.enqueue(new Callback<BajanaSongDetailsResponse>() {
+            @Override
+            public void onResponse(Call<BajanaSongDetailsResponse> call, Response<BajanaSongDetailsResponse> response) {
+                if (response.isSuccessful() && response.body() != null &&
+                        "200".equals(response.body().errorCode)) {
+
+                    BajanaSongDetailsResponse data = response.body();
+
+                    if (data.result != null && !data.result.isEmpty()) {
+
+                        BajanaSongDetailsResponse.BajanaSongItem item = data.result.get(0);
+
+                        txtName.setText(item.getSongTitle());
+                        txtSingerNamer.setText(item.getSingerName());
+
+                        String htmlContent = "<html><head>" +
+                                "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>" +
+                                "<style>" +
+                                "body { background-color: transparent; color: white; font-size: 16px; line-height: 1.6; }" +
+                                "* { color: white !important; }" +
+                                "</style>" +
+                                "</head><body>" + item.getSongDescription() + "</body></html>";
+
+                        webView.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null);
+
+
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BajanaSongDetailsResponse> call, Throwable t) {
+                Log.e("API_ERROR", t.getMessage());
+            }
+        });
     }
 }

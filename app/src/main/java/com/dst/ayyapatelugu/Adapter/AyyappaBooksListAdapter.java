@@ -2,6 +2,7 @@ package com.dst.ayyapatelugu.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +50,7 @@ public class AyyappaBooksListAdapter extends RecyclerView.Adapter<AyyappaBooksLi
     public void onBindViewHolder(AyyappaBooksListAdapter.MyviewHolder holder, int position) {
         BooksModelResult modal = bookList.get(position);
         String imgUrl = "https://www.ayyappatelugu.com/public/assets/bookimage/" + modal.getImage();
+        String id = modal.getBookId();
         String name = modal.getName();
         String price = modal.getPrice();
         String author = modal.getAuthor();
@@ -57,7 +59,7 @@ public class AyyappaBooksListAdapter extends RecyclerView.Adapter<AyyappaBooksLi
         holder.tvtitle.setText(name);
         //holder.tvprice.setText(price);
         Picasso.get().load(imgUrl).into(holder.image);
-
+        Log.d("FCM_DEBUG", "Final: " + id);
         holder.layoutBooksList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,7 +70,9 @@ public class AyyappaBooksListAdapter extends RecyclerView.Adapter<AyyappaBooksLi
                 intent.putExtra("Pages", pages);
                 intent.putExtra("Published", published);
                 intent.putExtra("ImageAuth", imgUrl);
+                intent.putExtra("bookId",id);
                 mContext.startActivity(intent);
+                Log.d("FCM_DEBUG", "Final: " + id);
             }
         });
 

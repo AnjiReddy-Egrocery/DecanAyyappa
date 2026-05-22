@@ -10,6 +10,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.GridView;
@@ -65,6 +66,8 @@ public class TeluguCalenderActivity extends AppCompatActivity {
         setContentView(R.layout.activity_telugu_calender);
 
         toolbar = findViewById(R.id.toolbar);
+
+
 
         setSupportActionBar(toolbar);
         ;
@@ -124,9 +127,9 @@ public class TeluguCalenderActivity extends AppCompatActivity {
         adapter = new MonthAdapter(this, days, this::showDayDialog);
         rv.setAdapter(adapter);
 
-       LocalDate now = LocalDate.now();
+     /*  LocalDate now = LocalDate.now();
         displayMonth = now.getMonthValue();
-        displayYear = now.getYear();
+        displayYear = now.getYear();*/
 
         findViewById(R.id.btnPrev).setOnClickListener(v -> {
             displayMonth--;
@@ -140,6 +143,27 @@ public class TeluguCalenderActivity extends AppCompatActivity {
             loadMonth(displayMonth, displayYear);
             updateMonthTitle();
         });
+
+        String intentMonth = getIntent().getStringExtra("month");
+        String intentYear = getIntent().getStringExtra("year");
+
+        Log.d("FCM_DEBUG", "Intent Month: " + intentMonth);
+        Log.d("FCM_DEBUG", "Intent Year: " + intentYear);
+
+        if (intentMonth != null && !intentMonth.isEmpty()) {
+            displayMonth = Integer.parseInt(intentMonth);
+        } else {
+            displayMonth = LocalDate.now().getMonthValue();
+        }
+
+        if (intentYear != null && !intentYear.isEmpty()) {
+            displayYear = Integer.parseInt(intentYear);
+        } else {
+            displayYear = LocalDate.now().getYear();
+        }
+
+        Log.d("FCM_DEBUG", "Final Month: " + displayMonth);
+        Log.d("FCM_DEBUG", "Final Year: " + displayYear);
 
         updateMonthTitle();
         loadMonth(displayMonth, displayYear);

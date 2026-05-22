@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.dst.ayyapatelugu.Model.AnadanamListModel;
 import com.dst.ayyapatelugu.Model.AyyaTempleListModel;
 import com.dst.ayyapatelugu.Model.BlogDetail;
 import com.dst.ayyapatelugu.Model.BlogResponse;
@@ -33,6 +34,9 @@ public class SharedPreferencesManager {
 
     private static final String PREFSS_NAME = "AyyappaTemplesPrefes";
     private static final String TEMPLES_LIST_KEY = "temples_list_key";
+
+    private static final String ANADANAM_PREFSS_NAME = "AyyappaAnadanamPrefes";
+    private static final String ANADANAM_LIST_KEY = "anadanam_list_key";
 
     private static final String PREFSSS_NAME = "AyyappaNewsPrefes";
     private static final String NEWS_LIST_KEY = "news_list_key";
@@ -147,6 +151,22 @@ public class SharedPreferencesManager {
         Gson gson = new Gson();
         String json = gson.toJson(ayyaTempleListModels);
         editor.putString(TEMPLES_LIST_KEY, json);
+        editor.apply();
+    }
+
+    public static List<AnadanamListModel> getAyyappaAnadanamList(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(ANADANAM_PREFSS_NAME, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = prefs.getString(ANADANAM_LIST_KEY, null);
+        Type type = new TypeToken<List<AnadanamListModel>>() {}.getType();
+        return gson.fromJson(json, type);
+    }
+
+    public static void saveAyyappaAnadanamList(Context context, List<AnadanamListModel> ayyaTempleListModels) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(ANADANAM_PREFSS_NAME, Context.MODE_PRIVATE).edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(ayyaTempleListModels);
+        editor.putString(ANADANAM_LIST_KEY, json);
         editor.apply();
     }
 

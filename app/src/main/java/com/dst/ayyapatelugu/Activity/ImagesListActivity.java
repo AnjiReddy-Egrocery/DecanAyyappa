@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -113,6 +114,7 @@ public class ImagesListActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        Log.d("FCM_DEBUG", "Fetching Images API");
         fetchDataFromDataBase();
        /* SwipeRefreshLayout swipeRefresh = findViewById(R.id.swipeRefresh);
         swipeRefresh.setOnRefreshListener(() -> {
@@ -125,6 +127,7 @@ public class ImagesListActivity extends AppCompatActivity {
 
 
     private void fetchDataFromDataBase() {
+        Log.d("FCM_DEBUG", "Fetching Images API");
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 

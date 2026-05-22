@@ -49,6 +49,7 @@ public class AyyappaPetamListAdapteer extends RecyclerView.Adapter<AyyappaPetamL
     public void onBindViewHolder(AyyappaPetamListAdapteer.MyviewHolder holder, int position) {
         decoratormodelResult modal = decoratorList.get(position);
         String imgUrl = "https://www.ayyappatelugu.com/public/assets/img/decorators/" + modal.getProfilePic();
+        String id = modal.getDecoratorId();
         String dname = modal.getDecoratorName();
         String fname = modal.getFullName();
         String city = modal.getCityName();
@@ -76,6 +77,7 @@ public class AyyappaPetamListAdapteer extends RecyclerView.Adapter<AyyappaPetamL
                 intent.putExtra("Email", email);
                 intent.putExtra("Discription", discription);
                 intent.putExtra("ImagePath", imgUrl);
+                intent.putExtra("decoratorId",id);
                 mContext.startActivity(intent);
             }
         });

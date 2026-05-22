@@ -41,7 +41,7 @@ public class AyyapaBajanaSongsListAdappter extends RecyclerView.Adapter<AyyapaBa
     @Override
     public void onBindViewHolder(AyyapaBajanaSongsListAdappter.MyviewHolder holder, int position) {
         BajanaSongsListModel modal = bajanaSongsList.get(position);
-
+        String id = modal.getSongId();
         String name = modal.getSongTitle();
         String discription = modal.getSongDescription();
         String singername = modal.getSingerName();
@@ -56,6 +56,7 @@ public class AyyapaBajanaSongsListAdappter extends RecyclerView.Adapter<AyyapaBa
                 intent.putExtra("Name", name);
                 intent.putExtra("Discription", discription);
                 intent.putExtra("SingerName",singername);
+                intent.putExtra("songId",id);
                 mContext.startActivity(intent);
             }
         });

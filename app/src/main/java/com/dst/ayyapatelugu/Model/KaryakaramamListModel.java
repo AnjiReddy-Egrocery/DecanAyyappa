@@ -2,6 +2,7 @@ package com.dst.ayyapatelugu.Model;
 
 public class KaryakaramamListModel {
 
+    private String activitiesId;
     private String title;
     private String smallDescription;
     private String image;
@@ -12,11 +13,20 @@ public class KaryakaramamListModel {
 
     }
 
-    public KaryakaramamListModel(String title, String smallDescription, String image, String description) {
+    public KaryakaramamListModel(String activitiesId, String title, String smallDescription, String image, String description) {
+        this.activitiesId = activitiesId;
         this.title = title;
         this.smallDescription = smallDescription;
         this.image = image;
         this.description = description;
+    }
+
+    public String getActivitiesId() {
+        return activitiesId;
+    }
+
+    public void setActivitiesId(String activitiesId) {
+        this.activitiesId = activitiesId;
     }
 
     public String getTitle() {

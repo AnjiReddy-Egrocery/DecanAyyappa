@@ -1,6 +1,9 @@
 package com.dst.ayyapatelugu.Model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class BooksModelResult {
+    private String bookId;
     private String name;
     private String price;
     private String image;
@@ -12,13 +15,22 @@ public class BooksModelResult {
 
     }
 
-    public BooksModelResult(String name, String price, String image, String author, String publishedOn, String pages) {
+    public BooksModelResult(String bookId, String name, String price, String image, String author, String publishedOn, String pages) {
+        this.bookId = bookId;
         this.name = name;
         this.price = price;
         this.image = image;
         this.author = author;
         this.publishedOn = publishedOn;
         this.pages = pages;
+    }
+
+    public String getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(String bookId) {
+        this.bookId = bookId;
     }
 
     public String getName() {

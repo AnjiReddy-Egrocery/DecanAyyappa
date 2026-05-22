@@ -43,6 +43,7 @@ public class AyyapakaryamListAdappter extends RecyclerView.Adapter<AyyapakaryamL
     public void onBindViewHolder(AyyapakaryamListAdappter.MyviewHolder holder, int position) {
         KaryakaramamListModel modal = listModels.get(position);
         String imgUrl = "https://www.ayyappatelugu.com/public/assets/img/activity/" + modal.getImage();
+        String id = modal.getActivitiesId();
         String name = modal.getTitle();
         String discription = modal.getDescription();
         holder.tvtitle.setText(name);
@@ -53,6 +54,7 @@ public class AyyapakaryamListAdappter extends RecyclerView.Adapter<AyyapakaryamL
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, AyyapaKarmaDetailsActivity.class);
+                intent.putExtra("activitiesId",id);
                 intent.putExtra("ImagePath", imgUrl);
                 intent.putExtra("Name", name);
                 intent.putExtra("Discription", discription);

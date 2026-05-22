@@ -49,6 +49,7 @@ public class ViewAllAyyappaTempleListAdapter extends RecyclerView.Adapter<ViewAl
         AyyaTempleListModel templesListModel = listModels.get(position);
         String profilepic = templesListModel.getImage();
         String imageUrl = "https://www.ayyappatelugu.com/public/assets/img/temple_images/" + profilepic;
+        String id = templesListModel.getTempleId();
         String name = templesListModel.getTempleName();
         String tName=templesListModel.getTempleNameTelugu();
         String open=templesListModel.getOpeningTime();
@@ -69,6 +70,7 @@ public class ViewAllAyyappaTempleListAdapter extends RecyclerView.Adapter<ViewAl
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, ViewTempleListDetailsActivity.class);
+                intent.putExtra("templeId",id);
                 intent.putExtra("Name",name);
                 intent.putExtra("TName",tName);
                 intent.putExtra("Open",open);

@@ -2,6 +2,7 @@ package com.dst.ayyapatelugu.Model;
 
 public class BajanaSongsListModel {
 
+    private String songId;
     private String songTitle;
     private String singerName;
     private String writerName;
@@ -12,11 +13,20 @@ public class BajanaSongsListModel {
 
     }
 
-    public BajanaSongsListModel(String songTitle, String singerName, String writerName, String songDescription) {
+    public BajanaSongsListModel(String songId, String songTitle, String singerName, String writerName, String songDescription) {
+        this.songId = songId;
         this.songTitle = songTitle;
         this.singerName = singerName;
         this.writerName = writerName;
         this.songDescription = songDescription;
+    }
+
+    public String getSongId() {
+        return songId;
+    }
+
+    public void setSongId(String songId) {
+        this.songId = songId;
     }
 
     public String getSongTitle() {
