@@ -90,6 +90,41 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     Button butNearsttemples;
     TemplesAdapter adapter;
 
+    private boolean showNearbyOnly = false;
+    private String selectedTempleId;
+    private String selectedLat;
+    private String selectedLng;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if(getArguments()!=null){
+
+            showNearbyOnly =
+                    getArguments().getBoolean(
+                            "OPEN_AYYAPPATEMPLE",
+                            false
+                    );
+
+            selectedTempleId =
+                    getArguments().getString(
+                            "TEMPLE_ID"
+                    );
+
+            selectedLat =
+                    getArguments().getString(
+                            "TEMPLE_LAT"
+                    );
+
+            selectedLng =
+                    getArguments().getString(
+                            "TEMPLE_LNG"
+                    );
+        }
+    }
+
+
     @SuppressLint("MissingInflatedId")
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Nullable
@@ -429,10 +464,32 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private void addMarkers(List<AyyappaTempleMapDataResponse.Result> ayyappatemples) {
         for (AyyappaTempleMapDataResponse.Result temple : ayyappatemples) {
             try {
-                LatLng position = new LatLng(Double.parseDouble(temple.getLatitude()), Double.parseDouble(temple.getLongitude()));
-                mMap.addMarker(new MarkerOptions().position(position)
-                        .title(temple.getTempleNameTelugu())
-                        .snippet(temple.getLocation()));
+
+                LatLng pos = new LatLng(
+                        Double.parseDouble(temple.getLatitude()),
+                        Double.parseDouble(temple.getLongitude())
+                );
+
+                Marker marker = mMap.addMarker(
+                        new MarkerOptions()
+                                .position(pos)
+                                .title(temple.getTempleNameTelugu())
+                                .snippet(temple.getLocation())
+                );
+
+                // ✅ AUTO FOCUS LOGIC (notification click)
+                if (selectedTempleId != null &&
+                        selectedTempleId.equals(temple.getTempleId())) {
+
+                    marker.showInfoWindow();
+
+                    mMap.animateCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                    pos,
+                                    18f
+                            )
+                    );
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

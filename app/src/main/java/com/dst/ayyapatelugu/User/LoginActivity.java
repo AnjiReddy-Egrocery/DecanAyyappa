@@ -2,12 +2,17 @@ package com.dst.ayyapatelugu.User;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -25,6 +30,7 @@ import com.dst.ayyapatelugu.HomeActivity;
 import com.dst.ayyapatelugu.Model.LoginDataResponse;
 import com.dst.ayyapatelugu.R;
 import com.dst.ayyapatelugu.Services.APiInterface;
+import com.dst.ayyapatelugu.Services.LocationForegroundService;
 import com.dst.ayyapatelugu.Services.UnsafeTrustManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -100,6 +106,12 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+
+
+
+
+        askLocationPermission();
+
         //linearAuth = findViewById(R.id.layout_auth);
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
@@ -136,6 +148,80 @@ public class LoginActivity extends AppCompatActivity {
 
         // Restore the cursor position
         edtPassword.setSelection(cursorPosition);
+    }
+
+
+    private void startLocationTracking() {
+
+        if(ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED){
+
+            return;
+        }
+
+        Intent serviceIntent =
+                new Intent(
+                        this,
+                        LocationForegroundService.class
+                );
+
+        ContextCompat.startForegroundService(
+                this,
+                serviceIntent
+        );
+    }
+
+    private void askLocationPermission() {
+
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                    },
+                    200
+            );
+
+        } else {
+
+            askBackgroundPermission();
+        }
+    }
+
+    private void askBackgroundPermission() {
+
+        if(Build.VERSION.SDK_INT
+                >= Build.VERSION_CODES.Q){
+
+            if(ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED){
+
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{
+                                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                        },
+                        101
+                );
+
+            } else {
+
+                startLocationTracking();
+            }
+
+        } else {
+
+            startLocationTracking();
+        }
     }
 
 
@@ -243,6 +329,34 @@ public class LoginActivity extends AppCompatActivity {
             } catch (ApiException e) {
                 Toast.makeText(LoginActivity.this, "Something went Wrong", Toast.LENGTH_LONG).show();
             }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode,
+            String[] permissions,
+            int[] grantResults) {
+
+        super.onRequestPermissionsResult(
+                requestCode,
+                permissions,
+                grantResults
+        );
+
+        if(requestCode == 200){
+
+            if(grantResults.length > 0
+                    && grantResults[0]
+                    == PackageManager.PERMISSION_GRANTED){
+
+                askBackgroundPermission();
+            }
+        }
+
+        if(requestCode == 101){
+
+            startLocationTracking();
         }
     }
 

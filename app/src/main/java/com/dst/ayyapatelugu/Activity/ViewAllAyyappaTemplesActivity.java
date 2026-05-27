@@ -87,7 +87,18 @@ public class ViewAllAyyappaTemplesActivity extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setText("అయ్యప్ప దేవాలయాల"));
         final AllAyyappaTemplesAdapter adapter = new AllAyyappaTemplesAdapter(ViewAllAyyappaTemplesActivity.this, getSupportFragmentManager(), tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        boolean openNearby =
+                getIntent().getBooleanExtra(
+                        "OPEN_AYYAPPATEMPLE",
+                        false
+                );
+
+        if(openNearby) {
+
+            viewPager.setCurrentItem(0);
+        }
+
+            viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {

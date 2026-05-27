@@ -1,12 +1,14 @@
 package com.dst.ayyapatelugu.Adapter;
 
 import android.content.Context;
+import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import com.dst.ayyapatelugu.Activity.AnadanamActivity;
 import com.dst.ayyapatelugu.Activity.ViewAllTemplesActivity;
 import com.dst.ayyapatelugu.Fragment.AllAyyappaTemplesFragment;
 import com.dst.ayyapatelugu.Fragment.MapsFragment;
@@ -28,6 +30,33 @@ public class AllTemplesAdapter extends FragmentPagerAdapter {
         switch (position) {
             case 0:
                 TemplesMapFragment mapsFragment = new TemplesMapFragment();
+                ViewAllTemplesActivity activity =
+                        (ViewAllTemplesActivity) myContext;
+
+                Bundle bundle = new Bundle();
+
+                bundle.putBoolean(
+                        "OPEN_TEMPLE",
+                        activity.getIntent().getBooleanExtra("OPEN_TEMPLE", false)
+                );
+
+                bundle.putString(
+                        "TEMPLE_ID",
+                        activity.getIntent().getStringExtra("TEMPLE_ID")
+                );
+
+                bundle.putString(
+                        "TEMPLE_LAT",
+                        activity.getIntent().getStringExtra("TEMPLE_LAT")
+                );
+
+                bundle.putString(
+                        "TEMPLE_LNG",
+                        activity.getIntent().getStringExtra("TEMPLE_LNG")
+                );
+
+                mapsFragment.setArguments(bundle);
+
                 return mapsFragment;
             case 1:
                 TemplesFragment templesFragment = new TemplesFragment();

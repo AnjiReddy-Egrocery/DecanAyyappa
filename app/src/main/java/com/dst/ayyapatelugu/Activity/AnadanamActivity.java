@@ -107,6 +107,17 @@ public class AnadanamActivity extends AppCompatActivity  {
         tabLayout.addTab(tabLayout.newTab().setText("అన్నదానం"));
         final AllAnadanamAdapter adapter = new AllAnadanamAdapter(AnadanamActivity.this, getSupportFragmentManager(), tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
+        boolean openNearby =
+                getIntent().getBooleanExtra(
+                        "OPEN_NEARBY",
+                        false
+                );
+
+        if(openNearby){
+
+            viewPager.setCurrentItem(0);
+
+        }
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override

@@ -1,6 +1,7 @@
 package com.dst.ayyapatelugu.Adapter;
 
 import android.content.Context;
+import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -30,6 +31,50 @@ public class AllAnadanamAdapter extends FragmentPagerAdapter {
         switch (position) {
             case 0:
                 AnadanamMapFragment mapsFragment = new AnadanamMapFragment();
+                Bundle bundle =
+                        new Bundle();
+
+                bundle.putBoolean(
+                        "OPEN_NEARBY",
+                        ((AnadanamActivity)myContext)
+                                .getIntent()
+                                .getBooleanExtra(
+                                        "OPEN_NEARBY",
+                                        false
+                                )
+                );
+
+                bundle.putString(
+                        "TEMPLE_ID",
+                        ((AnadanamActivity)myContext)
+                                .getIntent()
+                                .getStringExtra(
+                                        "TEMPLE_ID"
+                                )
+                );
+
+                bundle.putString(
+                        "TEMPLE_LAT",
+                        ((AnadanamActivity)myContext)
+                                .getIntent()
+                                .getStringExtra(
+                                        "TEMPLE_LAT"
+                                )
+                );
+
+                bundle.putString(
+                        "TEMPLE_LNG",
+                        ((AnadanamActivity)myContext)
+                                .getIntent()
+                                .getStringExtra(
+                                        "TEMPLE_LNG"
+                                )
+                );
+
+                mapsFragment.setArguments(
+                        bundle
+                );
+
                 return mapsFragment;
             case 1:
                 AnadanamTemplesFragment templesFragment = new AnadanamTemplesFragment();

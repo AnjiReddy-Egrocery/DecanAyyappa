@@ -1,5 +1,7 @@
 package com.dst.ayyapatelugu.Fragment;
 
+
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -28,6 +30,7 @@ import com.dst.ayyapatelugu.DataBase.SharedPreferenceHelper;
 import com.dst.ayyapatelugu.Model.MapDataResponse;
 import com.dst.ayyapatelugu.R;
 import com.dst.ayyapatelugu.Services.APiInterface;
+import com.dst.ayyapatelugu.Services.LocationForegroundService;
 import com.dst.ayyapatelugu.Services.UnsafeTrustManager;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -66,12 +69,49 @@ public class AnadanamMapFragment extends Fragment implements OnMapReadyCallback 
     private LatLng userLocation;
     private List<MapDataResponse.Result> mapList;
 
+    private boolean showNearbyOnly = false;
+    private String selectedTempleId;
+    private String selectedLat;
+    private String selectedLng;
+
+    // ================= ON CREATE =================
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if(getArguments()!=null){
+
+            showNearbyOnly =
+                    getArguments().getBoolean(
+                            "OPEN_NEARBY",
+                            false
+                    );
+
+            selectedTempleId =
+                    getArguments().getString(
+                            "TEMPLE_ID"
+                    );
+
+            selectedLat =
+                    getArguments().getString(
+                            "TEMPLE_LAT"
+                    );
+
+            selectedLng =
+                    getArguments().getString(
+                            "TEMPLE_LNG"
+                    );
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.anadanam_map,container,false);
         zoomInButton = view.findViewById(R.id.zoom_in_button);
         zoomOutButton = view.findViewById(R.id.zoom_out_button);
+
+
 
         // Permissions
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
@@ -145,6 +185,30 @@ public class AnadanamMapFragment extends Fragment implements OnMapReadyCallback 
         });
     }
 
+    private void getCurrentLocation() {
+
+        FusedLocationProviderClient client =
+                LocationServices.getFusedLocationProviderClient(requireContext());
+
+        client.getLastLocation()
+                .addOnSuccessListener(location -> {
+
+                    if (location != null) {
+
+                        userLocation = new LatLng(
+                                location.getLatitude(),
+                                location.getLongitude()
+                        );
+
+                        mMap.moveCamera(
+                                CameraUpdateFactory.newLatLngZoom(
+                                        userLocation, 14f
+                                )
+                        );
+                    }
+                });
+    }
+
     private void fetchLocationData() {
         mapList = SharedPreferenceHelper.getTempleData(getContext());
 
@@ -203,6 +267,20 @@ public class AnadanamMapFragment extends Fragment implements OnMapReadyCallback 
                 );
 
                 marker.setTag(new Object[]{ temple, isActive });
+                if(selectedTempleId != null &&
+                        selectedTempleId.equals(
+                                temple.getAnnadhanamId()
+                        )) {
+
+                    marker.showInfoWindow();
+
+                    mMap.animateCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                    pos,
+                                    18f
+                            )
+                    );
+                }
 
             } catch (Exception ignored) { }
         }

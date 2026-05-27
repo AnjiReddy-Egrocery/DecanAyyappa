@@ -28,8 +28,10 @@ import com.dst.ayyapatelugu.Activity.TeluguCalenderActivity;
 import com.dst.ayyapatelugu.Activity.ViewAllNewsDetailsActivity;
 import com.dst.ayyapatelugu.Activity.ViewAnadanamDetailsActivity;
 import com.dst.ayyapatelugu.Activity.ViewTempleListDetailsActivity;
+import com.dst.ayyapatelugu.Services.LocationForegroundService;
 import com.dst.ayyapatelugu.User.LoginActivity;
 import android.Manifest;
+import android.provider.Settings;
 import android.util.Log;
 
 
@@ -39,7 +41,9 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         askNotificationPermission();
+
         Thread loading = new Thread() {
             public void run() {
                 try {
@@ -218,5 +222,8 @@ public class SplashActivity extends AppCompatActivity {
             }
         }
     }
+
+
+
 }
 

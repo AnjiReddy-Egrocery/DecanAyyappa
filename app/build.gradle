@@ -12,8 +12,8 @@ android {
         minSdk 21
         //noinspection EditedTargetSdkVersion
         targetSdk 35
-        versionCode 68
-        versionName '1.69'
+        versionCode 70
+        versionName '1.71'
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {
@@ -100,6 +100,8 @@ dependencies {
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 
     implementation 'com.google.android.exoplayer:exoplayer:2.19.1'
+
+    implementation 'com.google.android.gms:play-services-location:21.3.0'
 
 
 

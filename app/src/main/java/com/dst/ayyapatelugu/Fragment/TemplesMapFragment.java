@@ -85,7 +85,42 @@ public class TemplesMapFragment extends Fragment implements OnMapReadyCallback {
 
     private List<TempleMapDataResponse.Result> templeList;
 
+    private boolean showNearbyOnly = false;
+    private String selectedTempleId;
+    private String selectedLat;
+    private String selectedLng;
+
     Button butNearsttemples;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if(getArguments()!=null){
+
+            showNearbyOnly =
+                    getArguments().getBoolean(
+                            "OPEN_TEMPLE",
+                            false
+                    );
+
+            selectedTempleId =
+                    getArguments().getString(
+                            "TEMPLE_ID"
+                    );
+
+            selectedLat =
+                    getArguments().getString(
+                            "TEMPLE_LAT"
+                    );
+
+            selectedLng =
+                    getArguments().getString(
+                            "TEMPLE_LNG"
+                    );
+        }
+    }
+
     @SuppressLint("MissingInflatedId")
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Nullable
@@ -318,11 +353,35 @@ public class TemplesMapFragment extends Fragment implements OnMapReadyCallback {
 
     private void addMarkers(List<TempleMapDataResponse.Result> temples) {
         for (TempleMapDataResponse.Result temple : temples) {
+
             try {
-                LatLng position = new LatLng(Double.parseDouble(temple.getLatitude()), Double.parseDouble(temple.getLongitude()));
-                mMap.addMarker(new MarkerOptions().position(position)
-                        .title(temple.getTempleNameTelugu())
-                        .snippet(temple.getLocation()));
+
+                LatLng pos = new LatLng(
+                        Double.parseDouble(temple.getLatitude()),
+                        Double.parseDouble(temple.getLongitude())
+                );
+
+                Marker marker = mMap.addMarker(
+                        new MarkerOptions()
+                                .position(pos)
+                                .title(temple.getTempleNameTelugu())
+                                .snippet(temple.getLocation())
+                );
+
+                // ✅ AUTO FOCUS LOGIC (notification click)
+                if (selectedTempleId != null &&
+                        selectedTempleId.equals(temple.getTempleId())) {
+
+                    marker.showInfoWindow();
+
+                    mMap.animateCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                    pos,
+                                    18f
+                            )
+                    );
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -453,6 +512,7 @@ public class TemplesMapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void fetchLocationDataAndAddMarkers() {
+
         templeList = SharedPreferenceManager.getTempleData(getContext());
 
         if (templeList != null && !templeList.isEmpty()) {

@@ -87,6 +87,17 @@ public class ViewAllTemplesActivity extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setText("దేవాలయాల"));
         final AllTemplesAdapter adapter = new AllTemplesAdapter(ViewAllTemplesActivity.this, getSupportFragmentManager(), tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
+        boolean openNearby =
+                getIntent().getBooleanExtra(
+                        "OPEN_TEMPLE",
+                        false
+                );
+
+        if(openNearby){
+
+            viewPager.setCurrentItem(0);
+
+        }
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
