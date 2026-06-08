@@ -29,23 +29,32 @@
                 android:textStyle="bold"
                 android:textColor="#fff"/>
 
-            <ImageView
-                android:layout_width="60dp"
-                android:layout_height="40dp"
-                android:layout_marginLeft="50dp"
-                android:src="@drawable/nearby"
-                android:layout_gravity="right"/>
         </LinearLayout>
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:iconifiedByDefault="false"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:clickable="true"
+            android:layout_marginTop="12dp"
+            android:queryHint="Search by BookName"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:textColorHint="#000"
+            android:background="@drawable/searchview_bg"/>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefresh"
             android:layout_width="match_parent"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="16dp"
             android:layout_height="match_parent">
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="12dp"
                 android:id="@+id/recycler_video_list"/>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </LinearLayout>

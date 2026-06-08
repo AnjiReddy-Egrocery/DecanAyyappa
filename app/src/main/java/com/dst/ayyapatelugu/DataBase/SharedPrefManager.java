@@ -1,74 +1,224 @@
 package com.dst.ayyapatelugu.DataBase;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 
 import com.dst.ayyapatelugu.Model.LoginDataResponse;
-import com.dst.ayyapatelugu.User.LoginActivity;
-
 
 public class SharedPrefManager {
 
-    static SharedPrefManager sharedPrefManager;
-    Context mContext;
+    private static SharedPrefManager sharedPrefManager;
+    private Context mContext;
+
     private static final String SHARED_PREF_NAME = "userProfile";
-    private static final String STUDENT_ID="userId ";
-    private static final String FIRST_NAME="userFirstName";
-    private static final String LAST_NAME="userLastName";
-    private static final String EMAIL_ID="userEmail";
-    private static final String FATHER_MOBILE="userMobile";
+
+    private static final String STUDENT_ID = "userId";
+    private static final String FIRST_NAME = "userFirstName";
+    private static final String LAST_NAME = "userLastName";
+    private static final String EMAIL_ID = "userEmail";
+    private static final String FATHER_MOBILE = "userMobile";
 
     private SharedPrefManager(Context context) {
-        mContext=context;
+        mContext = context;
     }
 
-    public static synchronized SharedPrefManager getInstance(Context context){
-        if (sharedPrefManager==null){
-            sharedPrefManager=new SharedPrefManager(context);
+    public static synchronized SharedPrefManager getInstance(Context context) {
+        if (sharedPrefManager == null) {
+            sharedPrefManager = new SharedPrefManager(context);
         }
         return sharedPrefManager;
     }
-    //insert user data
-    public void insertData(LoginDataResponse userInfo){
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(STUDENT_ID, userInfo.getResult().getUserId());
-        editor.putString(FIRST_NAME, userInfo.getResult().getUserFirstName());
-        editor.putString(LAST_NAME, userInfo.getResult().getUserLastName());
-        editor.putString(EMAIL_ID, userInfo.getResult().getUserEmail());
-        editor.putString(FATHER_MOBILE, userInfo.getResult().getUserMobile());
 
-        editor.commit();
+    // ================= LOGIN DATA =================
 
+    public void insertData(LoginDataResponse userInfo) {
 
+        SharedPreferences sharedPreferences =
+                mContext.getSharedPreferences(
+                        SHARED_PREF_NAME,
+                        Context.MODE_PRIVATE);
 
-    }
+        SharedPreferences.Editor editor =
+                sharedPreferences.edit();
 
-    public LoginDataResponse.Result getUserData(){
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        LoginDataResponse.Result userInfo=new LoginDataResponse.Result(
-                sharedPreferences.getString(STUDENT_ID,null),
-                sharedPreferences.getString(FIRST_NAME,null),
-                sharedPreferences.getString(LAST_NAME,null),
-                sharedPreferences.getString(EMAIL_ID,null),
-                sharedPreferences.getString(FATHER_MOBILE,null));
+        editor.putString(
+                STUDENT_ID,
+                userInfo.getResult().getUserId());
 
-        return userInfo;
-    }
+        editor.putString(
+                FIRST_NAME,
+                userInfo.getResult().getUserFirstName());
 
-    public boolean isLoggedIn(){
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        if (sharedPreferences.getString(STUDENT_ID, null) != null){
-            return true;
-        }
-        return false;
-    }
-    public void isLoggedOut(){
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor=sharedPreferences.edit();
-        editor.clear();
+        editor.putString(
+                LAST_NAME,
+                userInfo.getResult().getUserLastName());
+
+        editor.putString(
+                EMAIL_ID,
+                userInfo.getResult().getUserEmail());
+
+        editor.putString(
+                FATHER_MOBILE,
+                userInfo.getResult().getUserMobile());
+
         editor.apply();
+    }
 
+    public LoginDataResponse.Result getUserData() {
+
+        SharedPreferences sharedPreferences =
+                mContext.getSharedPreferences(
+                        SHARED_PREF_NAME,
+                        Context.MODE_PRIVATE);
+
+        return new LoginDataResponse.Result(
+                sharedPreferences.getString(STUDENT_ID, null),
+                sharedPreferences.getString(FIRST_NAME, null),
+                sharedPreferences.getString(LAST_NAME, null),
+                sharedPreferences.getString(EMAIL_ID, null),
+                sharedPreferences.getString(FATHER_MOBILE, null)
+        );
+    }
+
+    public String getUserId() {
+
+        SharedPreferences sharedPreferences =
+                mContext.getSharedPreferences(
+                        SHARED_PREF_NAME,
+                        Context.MODE_PRIVATE);
+
+        return sharedPreferences.getString(
+                STUDENT_ID,
+                "");
+    }
+
+    public boolean isLoggedIn() {
+
+        SharedPreferences sharedPreferences =
+                mContext.getSharedPreferences(
+                        SHARED_PREF_NAME,
+                        Context.MODE_PRIVATE);
+
+        return sharedPreferences.getString(
+                STUDENT_ID,
+                null) != null;
+    }
+
+    // ================= LOGOUT =================
+
+    public void logout() {
+
+        SharedPreferences sharedPreferences =
+                mContext.getSharedPreferences(
+                        SHARED_PREF_NAME,
+                        Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor =
+                sharedPreferences.edit();
+
+        editor.remove(STUDENT_ID);
+        editor.remove(FIRST_NAME);
+        editor.remove(LAST_NAME);
+        editor.remove(EMAIL_ID);
+        editor.remove(FATHER_MOBILE);
+
+        editor.apply();
+    }
+
+    // ================= FLYER DATA USER-WISE =================
+
+    public void saveFlyerData(
+            String flyerName,
+            String flyerDesignation,
+            String flyerPic) {
+
+        String userId = getUserId();
+
+        if (userId == null || userId.isEmpty()) {
+            return;
+        }
+
+        SharedPreferences sharedPreferences =
+                mContext.getSharedPreferences(
+                        SHARED_PREF_NAME,
+                        Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor =
+                sharedPreferences.edit();
+
+        editor.putString(
+                "flyer_name_" + userId,
+                flyerName);
+
+        editor.putString(
+                "flyer_designation_" + userId,
+                flyerDesignation);
+
+        editor.putString(
+                "flyer_pic_" + userId,
+                flyerPic);
+
+        editor.apply();
+    }
+
+    public String getFlyerName() {
+
+        String userId = getUserId();
+
+        SharedPreferences sharedPreferences =
+                mContext.getSharedPreferences(
+                        SHARED_PREF_NAME,
+                        Context.MODE_PRIVATE);
+
+        return sharedPreferences.getString(
+                "flyer_name_" + userId,
+                "");
+    }
+
+    public String getFlyerDesignation() {
+
+        String userId = getUserId();
+
+        SharedPreferences sharedPreferences =
+                mContext.getSharedPreferences(
+                        SHARED_PREF_NAME,
+                        Context.MODE_PRIVATE);
+
+        return sharedPreferences.getString(
+                "flyer_designation_" + userId,
+                "");
+    }
+
+    public String getFlyerPic() {
+
+        String userId = getUserId();
+
+        SharedPreferences sharedPreferences =
+                mContext.getSharedPreferences(
+                        SHARED_PREF_NAME,
+                        Context.MODE_PRIVATE);
+
+        return sharedPreferences.getString(
+                "flyer_pic_" + userId,
+                "");
+    }
+
+    public void clearFlyerData() {
+
+        String userId = getUserId();
+
+        SharedPreferences sharedPreferences =
+                mContext.getSharedPreferences(
+                        SHARED_PREF_NAME,
+                        Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor =
+                sharedPreferences.edit();
+
+        editor.remove("flyer_name_" + userId);
+        editor.remove("flyer_designation_" + userId);
+        editor.remove("flyer_pic_" + userId);
+
+        editor.apply();
     }
 }

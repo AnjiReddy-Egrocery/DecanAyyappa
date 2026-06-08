@@ -7,7 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -20,13 +22,18 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.dst.ayyapatelugu.Activity.FullImageActivity;
 import com.dst.ayyapatelugu.Activity.ImagesListActivity;
 import com.dst.ayyapatelugu.Model.ImagesModel;
 import com.dst.ayyapatelugu.R;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,10 +46,23 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
     List<ImagesModel> list;
     String baseUrl;
 
-    public ImageAdapter(ImagesListActivity imagesListActivity, List<ImagesModel> list, String baseUrl) {
-        this.context = imagesListActivity;
+    String flyerName;
+    String flyerDesignation;
+    String flyerPic;
+
+    public ImageAdapter(Context context,
+                        List<ImagesModel> list,
+                        String baseUrl,
+                        String flyerName,
+                        String flyerDesignation,
+                        String flyerPic) {
+
+        this.context = context;
         this.list = list;
         this.baseUrl = baseUrl;
+        this.flyerName = flyerName;
+        this.flyerDesignation = flyerDesignation;
+        this.flyerPic = flyerPic;
     }
 
     @NonNull
@@ -55,106 +75,258 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ImageAdapter.MyViewHolder holder, int position) {
+
         ImagesModel model = list.get(position);
-        String fullUrl = baseUrl + model.getImage();
-        Glide.with(context)
-                .load(fullUrl)
-                .into(holder.img);
 
-        holder.btnShare.setOnClickListener(v -> {
-            shareImage(fullUrl);
-        });
+        String imageUrl =
+                baseUrl + model.getImage();
 
-        // DOWNLOAD
-        holder.btnDownload.setOnClickListener(v -> {
-            downloadImage(fullUrl, model.getImage());
-        });
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(
+                        context,
+                        LinearLayoutManager.HORIZONTAL,
+                        false);
 
-     /*   holder.img.setOnClickListener(v -> {
+        holder.recyclerSlider.setLayoutManager(
+                layoutManager);
 
-            Intent intent = new Intent(context, FullImageActivity.class);
-            intent.putExtra("image", fullUrl); // full image URL
-            context.startActivity(intent);
-        });*/
+        PosterPagerAdapter sliderAdapter =
+                new PosterPagerAdapter(
+                        context,
+                        imageUrl,
+                        flyerName,
+                        flyerDesignation,
+                        flyerPic
+                );
+
+        holder.recyclerSlider.setAdapter(
+                sliderAdapter);
+
+        PagerSnapHelper snapHelper =
+                new PagerSnapHelper();
+
+        if (holder.recyclerSlider.getOnFlingListener() == null) {
+            snapHelper.attachToRecyclerView(
+                    holder.recyclerSlider
+            );
+        }
+
+        createDots(holder.layoutDots, 0);
+
+        holder.recyclerSlider.addOnScrollListener(
+                new RecyclerView.OnScrollListener() {
+
+                    @Override
+                    public void onScrollStateChanged(
+                            @NonNull RecyclerView recyclerView,
+                            int newState) {
+
+                        super.onScrollStateChanged(
+                                recyclerView,
+                                newState);
+
+                        if (newState ==
+                                RecyclerView.SCROLL_STATE_IDLE) {
+
+                            View centerView =
+                                    snapHelper.findSnapView(
+                                            layoutManager);
+
+                            if (centerView != null) {
+
+                                int pos =
+                                        layoutManager.getPosition(
+                                                centerView);
+
+                                createDots(
+                                        holder.layoutDots,
+                                        pos);
+                            }
+                        }
+                    }
+                });
     }
 
-    private void downloadImage(String fullUrl, String image) {
-        Toast.makeText(context, "Downloading...", Toast.LENGTH_SHORT).show();
+    private void createDots(
+            LinearLayout layoutDots,
+            int selectedPos){
 
-        new Thread(() -> {
-            try {
+        layoutDots.removeAllViews();
 
-                InputStream input = new java.net.URL(fullUrl).openStream();
-                Bitmap bitmap = BitmapFactory.decodeStream(input);
+        for(int i=0;i<3;i++){
 
-                saveToGallery(bitmap, image);
+            ImageView dot =
+                    new ImageView(context);
 
-            } catch (Exception e) {
-                e.printStackTrace();
+            LinearLayout.LayoutParams params =
+                    new LinearLayout.LayoutParams(
+                            25,
+                            25);
+
+            params.setMargins(
+                    8,
+                    0,
+                    8,
+                    0);
+
+            dot.setLayoutParams(params);
+
+            if(i==selectedPos){
+                dot.setImageResource(
+                        R.drawable.selected_dot);
+            }else{
+                dot.setImageResource(
+                        R.drawable.dot);
             }
-        }).start();
+
+            layoutDots.addView(dot);
+        }
     }
 
-    private void saveToGallery(Bitmap bitmap, String name) {
-        OutputStream fos;
+   /* private void downloadCard(MyViewHolder holder) {
 
+        holder.btnShare.setVisibility(View.GONE);
+        holder.btnDownload.setVisibility(View.GONE);
         try {
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            Bitmap bitmap = Bitmap.createBitmap(
+                    holder.itemView.getWidth(),
+                    holder.itemView.getHeight(),
+                    Bitmap.Config.ARGB_8888
+            );
 
-                ContentResolver resolver = context.getContentResolver();
-                ContentValues contentValues = new ContentValues();
+            Canvas canvas = new Canvas(bitmap);
 
-                contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, name);
-                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg");
-                contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, "DCIM/Ayyappa");
+            holder.itemView.draw(canvas);
 
-                Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-                fos = resolver.openOutputStream(imageUri);
+            saveToGallery(
+                    bitmap,
+                    "Ayyappa_" + System.currentTimeMillis() + ".jpg"
+            );
 
-            } else {
-                String imagesDir = Environment.getExternalStoragePublicDirectory(
-                        Environment.DIRECTORY_PICTURES).toString();
-
-                File image = new File(imagesDir, name);
-                fos = new FileOutputStream(image);
-            }
-
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.flush();
-            fos.close();
+            Toast.makeText(
+                    context,
+                    "Card Downloaded",
+                    Toast.LENGTH_SHORT
+            ).show();
 
         } catch (Exception e) {
+            holder.btnShare.setVisibility(View.VISIBLE);
+            holder.btnDownload.setVisibility(View.VISIBLE);
+
+            e.printStackTrace();
             e.printStackTrace();
         }
     }
 
+    private void saveToGallery(Bitmap bitmap, String name) {
 
-    private void shareImage(String fullUrl) {
-        new Thread(() -> {
-            try {
-                InputStream input = new java.net.URL(fullUrl).openStream();
-                Bitmap bitmap = BitmapFactory.decodeStream(input);
+        try {
 
-                Uri uri = saveImageAndGetUri(bitmap);
+            OutputStream fos;
 
-                ((Activity) context).runOnUiThread(() -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
 
-                    Intent intent = new Intent(Intent.ACTION_SEND);
-                    intent.setType("image/*");
-                    intent.putExtra(Intent.EXTRA_STREAM, uri);
-                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                ContentResolver resolver =
+                        context.getContentResolver();
 
-                    context.startActivity(Intent.createChooser(intent, "Share Image"));
-                });
+                ContentValues values =
+                        new ContentValues();
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                values.put(
+                        MediaStore.Images.Media.DISPLAY_NAME,
+                        name
+                );
+
+                values.put(
+                        MediaStore.Images.Media.MIME_TYPE,
+                        "image/jpeg"
+                );
+
+                values.put(
+                        MediaStore.Images.Media.RELATIVE_PATH,
+                        Environment.DIRECTORY_PICTURES + "/Ayyappa"
+                );
+
+                Uri uri = resolver.insert(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        values
+                );
+
+                fos = resolver.openOutputStream(uri);
+
+            } else {
+
+                File dir = new File(
+                        Environment.getExternalStoragePublicDirectory(
+                                Environment.DIRECTORY_PICTURES
+                        ),
+                        "Ayyappa"
+                );
+
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+
+                File file = new File(dir, name);
+
+                fos = new FileOutputStream(file);
             }
-        }).start();
+
+            bitmap.compress(
+                    Bitmap.CompressFormat.JPEG,
+                    100,
+                    fos
+            );
+
+            fos.flush();
+            fos.close();
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
     }
 
-    private Uri saveImageAndGetUri(Bitmap bitmap) {
+    private void shareCard(MyViewHolder holder) {
+        holder.btnShare.setVisibility(View.GONE);
+        holder.btnDownload.setVisibility(View.GONE);
+        try {
+
+            Bitmap bitmap = Bitmap.createBitmap(
+                    holder.itemView.getWidth(),
+                    holder.itemView.getHeight(),
+                    Bitmap.Config.ARGB_8888
+            );
+
+            Canvas canvas = new Canvas(bitmap);
+
+            holder.itemView.draw(canvas);
+
+            Uri uri = saveImageAndGetUri(bitmap);
+
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("image/*");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            context.startActivity(
+                    Intent.createChooser(intent, "Share")
+            );
+
+        } catch (Exception e) {
+            holder.btnShare.setVisibility(View.VISIBLE);
+            holder.btnDownload.setVisibility(View.VISIBLE);
+
+            e.printStackTrace();
+
+        }
+    }*/
+
+
+
+
+/*    private Uri saveImageAndGetUri(Bitmap bitmap) {
         File cachePath = new File(context.getCacheDir(), "images");
         cachePath.mkdirs();
 
@@ -173,7 +345,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
                 context.getPackageName() + ".provider",
                 file
         );
-    }
+    }*/
 
     @Override
     public int getItemCount() {
@@ -181,14 +353,15 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        ImageView img;
-        ImageView btnShare, btnDownload;
-
+        RecyclerView recyclerSlider;
+        LinearLayout layoutDots;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            img = itemView.findViewById(R.id.img);
-            btnShare = itemView.findViewById(R.id.btnShare);
-            btnDownload = itemView.findViewById(R.id.btnDownload);
+            recyclerSlider =
+                    itemView.findViewById(R.id.recyclerSlider);
+
+            layoutDots =
+                    itemView.findViewById(R.id.layoutDots);
         }
     }
 }

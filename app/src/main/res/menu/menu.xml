@@ -142,14 +142,15 @@
             android:icon="@drawable/baseline_fiber_manual_record_24"
             android:title="@string/ayyappa_videos"/>
     </group>
-    <group android:id="@+id/group19"
+
+    <group android:id="@+id/group20"
         >
         <item
             android:id="@+id/ayyappa_policy"
             android:icon="@drawable/baseline_fiber_manual_record_24"
             android:title="@string/tayyappa_policy"/>
     </group>
-    <group android:id="@+id/group20"
+    <group android:id="@+id/group21"
         >
         <item
             android:id="@+id/log_out"

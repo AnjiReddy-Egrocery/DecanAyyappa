@@ -34,6 +34,7 @@ import com.dst.ayyapatelugu.Model.ResetPasswordResponse;
 import com.dst.ayyapatelugu.Model.SevaList;
 import com.dst.ayyapatelugu.Model.SharanughosaModel;
 import com.dst.ayyapatelugu.Model.SignUpWithGmail;
+import com.dst.ayyapatelugu.Model.StudentUpdateProfile;
 import com.dst.ayyapatelugu.Model.TeluguCalenderDataResponse;
 import com.dst.ayyapatelugu.Model.TempleDetailsResponse;
 import com.dst.ayyapatelugu.Model.TempleMapDataResponse;
@@ -47,6 +48,7 @@ import com.dst.ayyapatelugu.Model.decoratorListModel;
 import com.dst.ayyapatelugu.Model.panchagamModel;
 
 
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -197,6 +199,13 @@ public interface APiInterface {
             @Part("pwd") RequestBody pwd,
             @Part("isIOS") RequestBody isIOS
     );
+
+    @Multipart
+    @POST("APICalls/Users/updateUserFlyerInfo")
+    Call<StudentUpdateProfile> studentUpdatePost(@Part("userId") RequestBody studentId,
+                                                 @Part("nameOnFlyer") RequestBody firstName,
+                                                 @Part("designationOnFlyer") RequestBody middleName,
+                                                 @Part MultipartBody.Part profilePic); // Image name as part);
 
     @Multipart
     @POST("APICalls/Users/verifyUserAccount")

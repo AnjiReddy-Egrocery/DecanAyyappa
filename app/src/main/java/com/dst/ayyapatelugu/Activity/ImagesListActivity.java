@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.dst.ayyapatelugu.Adapter.AyyappaPadayatraListAdapter;
 import com.dst.ayyapatelugu.Adapter.ImageAdapter;
+import com.dst.ayyapatelugu.DataBase.SharedPrefManager;
 import com.dst.ayyapatelugu.DataBase.SharedPreferencesManager;
 import com.dst.ayyapatelugu.Model.ImagesModel;
 import com.dst.ayyapatelugu.Model.ImagesResponse;
@@ -49,6 +50,13 @@ public class ImagesListActivity extends AppCompatActivity {
     ImageView imageAnadanam,imageNityaPooja;
     TextView textAndanam,txtNityaPooja;
 
+    String flyerName;
+    String flyerDesignation;
+    String flyerPic;
+
+
+    String userId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +74,15 @@ public class ImagesListActivity extends AppCompatActivity {
         if (nav != null) {
             nav.setTint(getResources().getColor(R.color.white));
         }
+
+
+
+        SharedPrefManager sp = SharedPrefManager.getInstance(this);
+
+        flyerName = sp.getFlyerName();
+        flyerDesignation = sp.getFlyerDesignation();
+        flyerPic = sp.getFlyerPic();
+
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,11 +133,6 @@ public class ImagesListActivity extends AppCompatActivity {
         });
         Log.d("FCM_DEBUG", "Fetching Images API");
         fetchDataFromDataBase();
-       /* SwipeRefreshLayout swipeRefresh = findViewById(R.id.swipeRefresh);
-        swipeRefresh.setOnRefreshListener(() -> {
-
-            swipeRefresh.setRefreshing(false);
-        });*/
 
     }
 
@@ -154,7 +166,9 @@ public class ImagesListActivity extends AppCompatActivity {
                     String baseUrl = data.getImageUrl();
                     List<ImagesModel> list = data.getResult();
 
-                    adapter = new ImageAdapter(ImagesListActivity.this, list, baseUrl);
+                    adapter = new ImageAdapter(ImagesListActivity.this, list, baseUrl,flyerName,
+                            flyerDesignation,
+                            flyerPic);
                     recyclerView.setAdapter(adapter);
 
                 }
@@ -165,5 +179,25 @@ public class ImagesListActivity extends AppCompatActivity {
                 Toast.makeText(ImagesListActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode,
+                                    int resultCode,
+                                    Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1001
+                && resultCode == RESULT_OK
+                && data != null) {
+
+            flyerName = data.getStringExtra("flyer_name");
+            flyerDesignation = data.getStringExtra("flyer_designation");
+            flyerPic = data.getStringExtra("flyer_pic");
+
+            if (adapter != null) {
+                adapter.notifyDataSetChanged();
+            }
+        }
     }
 }

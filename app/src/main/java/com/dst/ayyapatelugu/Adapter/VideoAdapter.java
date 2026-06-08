@@ -9,7 +9,9 @@ import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -19,6 +21,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.dst.ayyapatelugu.Activity.PostVideosActivity;
+import com.dst.ayyapatelugu.Activity.UploadDetailsActivity;
+import com.dst.ayyapatelugu.DataBase.SharedPrefManager;
 import com.dst.ayyapatelugu.Model.ImagesModel;
 import com.dst.ayyapatelugu.Model.VideoModel;
 import com.dst.ayyapatelugu.R;
@@ -33,6 +37,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder>{
     Context context;
@@ -111,6 +117,10 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
 
 
 
+
+
+
+
      /*   holder.img.setOnClickListener(v -> {
 
             Intent intent = new Intent(context, FullImageActivity.class);
@@ -145,11 +155,16 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
         PlayerView playerView;
         public ExoPlayer player;
         ImageView imageShare,imageDownload;
+
+
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             playerView = itemView.findViewById(R.id.playerView);
             imageShare = itemView.findViewById(R.id.btnShare);
             imageDownload = itemView.findViewById(R.id.btnDownload);
+
+
+
 
             playerView.setUseController(true);
 
@@ -157,7 +172,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
 
             playerView.setControllerHideOnTouch(false);
 
-            playerView.setControllerShowTimeoutMs(3000);
+            playerView.setControllerShowTimeoutMs(1000);
         }
 
         void bind(String url) {

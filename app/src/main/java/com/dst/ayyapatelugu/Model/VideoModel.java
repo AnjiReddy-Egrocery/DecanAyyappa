@@ -4,6 +4,25 @@ public class VideoModel {
     private String videoId;
     private String video;
 
+    private  String title;
+    private String titleTelugu;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getTitleTelugu() {
+        return titleTelugu;
+    }
+
+    public void setTitleTelugu(String titleTelugu) {
+        this.titleTelugu = titleTelugu;
+    }
+
     public String getVideoId() {
         return videoId;
     }

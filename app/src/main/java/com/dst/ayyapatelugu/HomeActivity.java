@@ -176,6 +176,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     List<NewsListModel> newsList;
     AllNewsListAdapter viewAllNewsListAdapter;
 
+    LoginDataResponse.Result result;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -340,8 +342,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             Picasso.get().load(image).into(imageView);
         }else {
 
-            LoginDataResponse.Result result= SharedPrefManager.getInstance(getApplicationContext()).getUserData();
-            name=result.getUserFirstName();
+            result = SharedPrefManager.getInstance(getApplicationContext()).getUserData();
+
+            String firstName = result.getUserFirstName();
+            String lastname = result.getUserLastName();
+            name = firstName + lastname;
+
             email=result.getUserEmail();
 
         }
@@ -994,6 +1000,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }else if(action == R.id.ayyappa_images){
 
             Intent intent=new Intent(HomeActivity.this, ImagesListActivity.class);
+            intent.putExtra("userId",result.getUserId());
             startActivity(intent);
 
         }else if(action == R.id.ayyappa_videos){
@@ -1005,7 +1012,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                    SharedPrefManager.getInstance(getApplicationContext()).isLoggedOut();
+                    SharedPrefManager.getInstance(getApplicationContext()).logout();
                     finish();
                     Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
                     startActivity(intent);
