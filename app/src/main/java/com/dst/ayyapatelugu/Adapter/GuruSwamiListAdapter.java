@@ -54,6 +54,8 @@ public class GuruSwamiListAdapter extends RecyclerView.Adapter<GuruSwamiListAdap
         String profilePic = modal.getProfilePic();
         String imgUrl = "https://www.ayyappatelugu.com/public/assets/user_images/"+profilePic ;
 
+        Log.d("Reddy","Image"+imgUrl);
+
         String id = modal.getGuruswamiId();
 
         String name = modal.getGuruswamiName();
@@ -64,7 +66,9 @@ public class GuruSwamiListAdapter extends RecyclerView.Adapter<GuruSwamiListAdap
         holder.tvaddress.setText(cityName);
       /*  holder.tvmobile.setText(number);*/
 
-        ImageLoader.loadImage(mContext, imgUrl, holder.image);
+        Glide.with(mContext)
+                .load(imgUrl)
+                .into(holder.image);
 
         holder.layoutGuruSwamiAdapter.setOnClickListener(new View.OnClickListener() {
             @Override

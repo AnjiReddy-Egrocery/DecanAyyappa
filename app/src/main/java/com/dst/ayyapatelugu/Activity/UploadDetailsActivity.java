@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -51,7 +52,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class UploadDetailsActivity extends AppCompatActivity {
 
-    ImageView imageView;
+    ImageView imageProfile;
+    ImageButton btnCamera;
 
     EditText edtName, edtDesigination;
     private static final int CAMERA_REQUEST = 100;
@@ -71,10 +73,12 @@ public class UploadDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_upload_details);
 
 
-        imageView = findViewById(R.id.image_profile);
+        imageProfile = findViewById(R.id.image_profile);
         edtName = findViewById(R.id.edt_first_name);
         edtDesigination = findViewById(R.id.edt_desigination);
         butUpload = findViewById(R.id.but_update_profile);
+        btnCamera = findViewById(R.id.btn_camera);
+
 
         LoginDataResponse.Result result = SharedPrefManager.getInstance(getApplicationContext()).getUserData();
         userId = result.getUserId();
@@ -95,13 +99,20 @@ public class UploadDetailsActivity extends AppCompatActivity {
             }
         });
 
-        imageView.setOnClickListener(new View.OnClickListener() {
+        imageProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Show a dialog or a menu to choose between camera or gallery
                 showImagePickerDialog();
             }
         });
+
+       btnCamera.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               showImagePickerDialog();
+           }
+       });
 
 
     }
@@ -231,8 +242,18 @@ public class UploadDetailsActivity extends AppCompatActivity {
                 }
 
                 if (originalBitmap != null) {
-                    Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, originalBitmap.getWidth(), originalBitmap.getHeight(), true);
+                    int maxWidth = 1024;
+                    int maxHeight = 1024;
 
+                    float ratio = Math.min(
+                            (float) maxWidth / originalBitmap.getWidth(),
+                            (float) maxHeight / originalBitmap.getHeight()
+                    );
+
+                    int width = Math.round(ratio * originalBitmap.getWidth());
+                    int height = Math.round(ratio * originalBitmap.getHeight());
+
+                    Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, width, height, true);
                     Glide.with(this)
                             .load(resizedBitmap)
                             .placeholder(R.drawable.ayyapa_image) // loading time lo
@@ -240,12 +261,12 @@ public class UploadDetailsActivity extends AppCompatActivity {
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .signature(new ObjectKey(System.currentTimeMillis())) // forces fresh load
                             .circleCrop()
-                            .into(imageView);
+                            .into(imageProfile);
 
                     imageFile = new File(getCacheDir(), "resized_image.jpg");
 
                     try (FileOutputStream fos = new FileOutputStream(imageFile)) {
-                        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 50, fos);
                         fos.flush();
                         Log.d("ImagePicker", "Image resized and saved: " + imageFile.getAbsolutePath());
                     }
@@ -264,38 +285,16 @@ public class UploadDetailsActivity extends AppCompatActivity {
 
 
     private void updateMethod(String userId, String name, String desigination, File imageFile) {
-        if (imageFile != null && imageFile.exists()) {
-
-            Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getPath());
-
-            if (bitmap != null) {
-                Bitmap scaledBitmap = Bitmap.createScaledBitmap(
-                        bitmap,
-                        bitmap.getWidth(),
-                        bitmap.getHeight(),
-                        true
-                );
-
-                File resizedFile = new File(getCacheDir(), "resized_image.jpg");
-
-                try (FileOutputStream out = new FileOutputStream(resizedFile)) {
-                    scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                imageFile = resizedFile;
-            }
-        }
 
 
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient client = new OkHttpClient.Builder()
-                .sslSocketFactory(UnsafeTrustManager.createTrustAllSslSocketFactory(), UnsafeTrustManager.createTrustAllTrustManager())
-                .hostnameVerifier((hostname, session) -> true) // Bypasses hostname verification
-                .addInterceptor(loggingInterceptor)
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(15, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
                 .build();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://www.ayyappatelugu.com/") // Replace with your API URL
@@ -357,8 +356,7 @@ public class UploadDetailsActivity extends AppCompatActivity {
                             flyerDesignation);
 
                     intent.putExtra("flyer_pic",
-                            response.body().getImageUrl()
-                                    + flyerPic);
+                            flyerPic);
 
                     startActivity(intent);
                     finish();

@@ -352,6 +352,12 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
         return list.size();
     }
 
+    public void addData(List<ImagesModel> newList) {
+        int start = list.size();
+        list.addAll(newList);
+        notifyItemRangeInserted(start, newList.size());
+    }
+
     public class MyViewHolder extends RecyclerView.ViewHolder {
         RecyclerView recyclerSlider;
         LinearLayout layoutDots;

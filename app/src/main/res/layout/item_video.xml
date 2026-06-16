@@ -9,9 +9,10 @@
         android:id="@+id/playerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:show_next_button="true"
-        app:show_previous_button="true"
-        android:keepScreenOn="true" />
+        app:show_next_button="false"
+        app:show_previous_button="false"
+        android:keepScreenOn="true"
+        app:use_controller="true"/>
 
     <LinearLayout
         android:layout_width="wrap_content"

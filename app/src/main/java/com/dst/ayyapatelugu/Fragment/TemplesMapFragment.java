@@ -41,6 +41,7 @@ import com.dst.ayyapatelugu.DataBase.SharedPreferenceManager;
 import com.dst.ayyapatelugu.Model.TempleMapDataResponse;
 import com.dst.ayyapatelugu.R;
 import com.dst.ayyapatelugu.Services.APiInterface;
+import com.dst.ayyapatelugu.Services.LocationForegroundService;
 import com.dst.ayyapatelugu.Services.UnsafeTrustManager;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -628,5 +629,22 @@ public class TemplesMapFragment extends Fragment implements OnMapReadyCallback {
         } else {
             Toast.makeText(requireContext(), "No navigation app installed.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Intent i = new Intent(getActivity(), LocationForegroundService.class);
+        i.setAction("ANNADANAM_ON");
+        requireActivity().startService(i);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        Intent i = new Intent(getActivity(), LocationForegroundService.class);
+        requireActivity().stopService(i);
     }
 }

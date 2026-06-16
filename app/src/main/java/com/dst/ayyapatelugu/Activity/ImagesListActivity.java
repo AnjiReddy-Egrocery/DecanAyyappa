@@ -1,5 +1,6 @@
 package com.dst.ayyapatelugu.Activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -56,6 +57,10 @@ public class ImagesListActivity extends AppCompatActivity {
 
 
     String userId;
+
+    private int currentIndex = 0;
+    private boolean isLoading = false;
+    private boolean hasMoreData = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,11 +139,35 @@ public class ImagesListActivity extends AppCompatActivity {
         Log.d("FCM_DEBUG", "Fetching Images API");
         fetchDataFromDataBase();
 
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+
+                LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
+
+                int visibleItemCount = lm.getChildCount();
+                int totalItemCount = lm.getItemCount();
+                int firstVisibleItem = lm.findFirstVisibleItemPosition();
+
+                if (!isLoading && hasMoreData) {
+
+                    if ((visibleItemCount + firstVisibleItem) >= totalItemCount - 1) {
+
+                        currentIndex++;   // 👈 0 → 1 → 2 → 3
+
+                        fetchDataFromDataBase();
+                    }
+                }
+            }
+        });
+
     }
 
 
 
     private void fetchDataFromDataBase() {
+        Log.d("INDEX", String.valueOf(currentIndex)); // 👈 HERE (BEST PLACE)
+
         Log.d("FCM_DEBUG", "Fetching Images API");
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -154,7 +183,7 @@ public class ImagesListActivity extends AppCompatActivity {
                 .client(client)
                 .build();
         APiInterface apiClient = retrofit.create(APiInterface.class);
-        Call<ImagesResponse> call = apiClient.getImages();
+        Call<ImagesResponse> call = apiClient.getImages(currentIndex);
         call.enqueue(new Callback<ImagesResponse>() {
             @Override
             public void onResponse(Call<ImagesResponse> call, Response<ImagesResponse> response) {
@@ -165,11 +194,15 @@ public class ImagesListActivity extends AppCompatActivity {
 
                     String baseUrl = data.getImageUrl();
                     List<ImagesModel> list = data.getResult();
+                    if (adapter == null) {
+                        adapter = new ImageAdapter(ImagesListActivity.this, list, baseUrl, flyerName,
+                                flyerDesignation,
+                                flyerPic);
+                        recyclerView.setAdapter(adapter);
+                    }else {
 
-                    adapter = new ImageAdapter(ImagesListActivity.this, list, baseUrl,flyerName,
-                            flyerDesignation,
-                            flyerPic);
-                    recyclerView.setAdapter(adapter);
+                        adapter.addData(list);
+                    }
 
                 }
             }

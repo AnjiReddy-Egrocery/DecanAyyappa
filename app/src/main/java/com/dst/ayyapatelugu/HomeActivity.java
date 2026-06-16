@@ -34,6 +34,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
+import com.bumptech.glide.Glide;
 import com.dst.ayyapatelugu.Activity.AboutActivity;
 import com.dst.ayyapatelugu.Activity.AnadanamActivity;
 import com.dst.ayyapatelugu.Activity.AyyaappaDevlyaluActivity;
@@ -53,6 +54,7 @@ import com.dst.ayyapatelugu.Activity.PadayatraActivity;
 import com.dst.ayyapatelugu.Activity.PanchagamActivity;
 import com.dst.ayyapatelugu.Activity.PostVideosActivity;
 import com.dst.ayyapatelugu.Activity.ProductsListActivity;
+import com.dst.ayyapatelugu.Activity.ProfileActivity;
 import com.dst.ayyapatelugu.Activity.SevaDetailsActivity;
 import com.dst.ayyapatelugu.Activity.SharanughoshaActivity;
 import com.dst.ayyapatelugu.Activity.TeluguCalenderActivity;
@@ -346,14 +348,44 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
             String firstName = result.getUserFirstName();
             String lastname = result.getUserLastName();
-            name = firstName + lastname;
 
-            email=result.getUserEmail();
+            name = firstName + " " + lastname; // space add చేయండి
+
+            email = result.getUserEmail();
+
+            txtName.setText(name);
+            txtEmail.setText(email);
 
         }
 
         txtName.setText(name);
         txtEmail.setText(email);
+
+
+
+
+        String profilePic =
+                SharedPrefManager.getInstance(this)
+                        .getProfilePic();
+
+        Log.d("HEADER_PROFILE", profilePic);
+
+        if (profilePic != null
+                && !profilePic.isEmpty()
+                && !profilePic.startsWith("http")) {
+
+            profilePic = "https://www.ayyappatelugu.com/public/assets/user_images/"
+                    + profilePic;
+        }
+
+
+        Log.d("HEADER_PROFILE", "profilePic = " + profilePic);
+
+        Glide.with(this)
+                .load(profilePic)
+
+                .circleCrop()
+                .into(imageView);
 
 
         checkAndRequestPermissions();
@@ -995,6 +1027,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }else if(action == R.id.ayyappa_policy){
 
             Intent intent=new Intent(HomeActivity.this, PrivacyPolicyActivity.class);
+            startActivity(intent);
+
+        }else if(action == R.id.ayyappa_profile){
+
+            Intent intent=new Intent(HomeActivity.this, ProfileActivity.class);
             startActivity(intent);
 
         }else if(action == R.id.ayyappa_images){

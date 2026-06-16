@@ -9,21 +9,14 @@ import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.dst.ayyapatelugu.Activity.PostVideosActivity;
-import com.dst.ayyapatelugu.Activity.UploadDetailsActivity;
-import com.dst.ayyapatelugu.DataBase.SharedPrefManager;
-import com.dst.ayyapatelugu.Model.ImagesModel;
 import com.dst.ayyapatelugu.Model.VideoModel;
 import com.dst.ayyapatelugu.R;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -38,12 +31,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder>{
     Context context;
     List<VideoModel> list;
     String baseUrl;
+
+
 
     public VideoAdapter(PostVideosActivity imagesListActivity, List<VideoModel> list, String baseUrl) {
         this.context = imagesListActivity;
@@ -127,6 +120,12 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
             intent.putExtra("image", fullUrl); // full image URL
             context.startActivity(intent);
         });*/
+    }
+
+    public void addData(List<VideoModel> newList) {
+        int start = list.size();
+        list.addAll(newList);
+        notifyItemRangeInserted(start, newList.size());
     }
 
     private void downloadVideo(String url) {

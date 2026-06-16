@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -43,6 +44,10 @@ public class PostVideosActivity extends AppCompatActivity {
     VideoAdapter adapter;
     ImageView imageAnadanam, imageNityaPooja;
     TextView textAndanam, txtNityaPooja;
+
+    private int currentIndex = 0;
+    private boolean isLoading = false;
+    private boolean hasMoreData = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,12 +132,35 @@ public class PostVideosActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
+
+                int visibleItemCount = lm.getChildCount();
+                int totalItemCount = lm.getItemCount();
+                int firstVisibleItem = lm.findFirstVisibleItemPosition();
+
+                if (!isLoading && hasMoreData) {
+
+                    if ((visibleItemCount + firstVisibleItem) >= totalItemCount - 1) {
+
+                        currentIndex++;   // 0 → 1 → 2 → 3
+
+                        fetchDataFromDataBase();
+                    }
+                }
+            }
+        });
+
         fetchDataFromDataBase();
-       /* SwipeRefreshLayout swipeRefresh = findViewById(R.id.swipeRefresh);
+        SwipeRefreshLayout swipeRefresh = findViewById(R.id.swipeRefresh);
         swipeRefresh.setOnRefreshListener(() -> {
 
             swipeRefresh.setRefreshing(false);
-        });*/
+        });
 
     }
 
@@ -152,7 +180,7 @@ public class PostVideosActivity extends AppCompatActivity {
                 .client(client)
                 .build();
         APiInterface apiClient = retrofit.create(APiInterface.class);
-        Call<VideoResponse> call = apiClient.getVideos();
+        Call<VideoResponse> call = apiClient.getVideos(currentIndex);
         call.enqueue(new Callback<VideoResponse>() {
             @Override
             public void onResponse(Call<VideoResponse> call, Response<VideoResponse> response) {
@@ -164,10 +192,18 @@ public class PostVideosActivity extends AppCompatActivity {
                     String baseUrl = data.getVideoUrl();
                     List<VideoModel> list = data.getResult();
 
-                    adapter = new VideoAdapter(PostVideosActivity.this, list, baseUrl);
-                    recyclerView.setAdapter(adapter);
+                    if (adapter == null) {
 
+                        adapter = new VideoAdapter(PostVideosActivity.this, list, baseUrl);
+                        recyclerView.setAdapter(adapter);
+
+                    } else {
+
+                        adapter.addData(list);   // 👈 THIS IS THE MAIN PLACE
+                    }
                 }
+
+
             }
 
             @Override

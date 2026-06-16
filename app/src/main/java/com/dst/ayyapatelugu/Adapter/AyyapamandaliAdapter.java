@@ -58,7 +58,9 @@ public class AyyapamandaliAdapter extends RecyclerView.Adapter<AyyapamandaliAdap
         Log.d("Image URL", "Image URL: " + imgUrl);
 
         // Load the image using the custom loader
-        ImageLoader.loadImage(mContext, imgUrl, holder.image);
+        Glide.with(mContext)
+                .load(imgUrl)
+                .into(holder.image);
 
 
         String id = modal.getBajanamandaliId();

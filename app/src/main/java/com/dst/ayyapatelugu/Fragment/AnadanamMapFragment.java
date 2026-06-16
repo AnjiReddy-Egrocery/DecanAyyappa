@@ -503,5 +503,22 @@ public class AnadanamMapFragment extends Fragment implements OnMapReadyCallback 
             return new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(d);
         } catch (Exception e) { return t; }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Intent i = new Intent(getActivity(), LocationForegroundService.class);
+        i.setAction("ANNADANAM_ON");
+        requireActivity().startService(i);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        Intent i = new Intent(getActivity(), LocationForegroundService.class);
+        requireActivity().stopService(i);
+    }
 }
 

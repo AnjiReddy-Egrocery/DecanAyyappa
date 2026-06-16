@@ -41,6 +41,7 @@ import com.dst.ayyapatelugu.Model.TempleMapDataResponse;
 import com.dst.ayyapatelugu.Model.TemplesList;
 import com.dst.ayyapatelugu.Model.TourseDetailsResponse;
 import com.dst.ayyapatelugu.Model.UserDataResponse;
+import com.dst.ayyapatelugu.Model.UserUpdateProfile;
 import com.dst.ayyapatelugu.Model.VerifyUserDataResponse;
 import com.dst.ayyapatelugu.Model.VideoResponse;
 import com.dst.ayyapatelugu.Model.YatraList;
@@ -50,6 +51,7 @@ import com.dst.ayyapatelugu.Model.panchagamModel;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
@@ -155,11 +157,18 @@ public interface APiInterface {
     Call<AnadanamDetailResponse> getAnadanamDetails(
             @Field("annadhanamId") String annadhanamId
     );
-    @POST("APICalls/images")
-    Call<ImagesResponse> getImages();
+    @FormUrlEncoded
+    @POST("APICalls/imagesOneByOne")
+    Call<ImagesResponse> getImages(
+            @Field("startIndex") int startIndex
+    );
 
-    @POST("APICalls/videos")
-    Call<VideoResponse> getVideos();
+    @FormUrlEncoded
+    @POST("APICalls/videosOneByOne")
+    Call<VideoResponse> getVideos(
+            @Field("startIndex") int startIndex
+    );
+
 
     @FormUrlEncoded
     @POST("APICalls/Padayatrabrundams/info")
@@ -207,6 +216,17 @@ public interface APiInterface {
                                                  @Part("designationOnFlyer") RequestBody middleName,
                                                  @Part MultipartBody.Part profilePic); // Image name as part);
 
+    @Multipart
+    @POST("APICalls/updateProfileInfo")
+    Call<UserUpdateProfile> userUpdatePost(@Part("registerId") RequestBody studentId,
+                                           @Part("firstName") RequestBody firstName,
+                                           @Part("lastName") RequestBody lastName,
+                                           @Part("mobileNumber") RequestBody mobileNumber,
+                                           @Part("emailId") RequestBody emailId,
+                                           @Part("nameOnFlyer") RequestBody nameOnFlyer,
+                                           @Part("designationOnFlyer") RequestBody designationOnFlyer,
+                                           @Part MultipartBody.Part profilePic,
+                                           @Part MultipartBody.Part picOnFlyer); // Image name as part);
     @Multipart
     @POST("APICalls/Users/verifyUserAccount")
     Call<VerifyUserDataResponse> verifyData(@Part("registerId") RequestBody registerId,
@@ -264,6 +284,21 @@ public interface APiInterface {
     @Multipart
     @POST("APICalls/panchang")
     Call<panchagamModel> getPanchaamData(@Part("date") RequestBody date );
+
+    @Multipart
+    @POST("APICalls/updateProfileInfo")
+    Call<ResponseBody> updateProfile(
+            @Part("registerId") RequestBody registerId,
+            @Part("firstName") RequestBody firstName,
+            @Part("lastName") RequestBody lastName,
+            @Part("mobileNumber") RequestBody mobileNumber,
+            @Part("emailId") RequestBody emailId,
+            @Part("nameOnFlyer") RequestBody nameOnFlyer,
+            @Part("designationOnFlyer") RequestBody designationOnFlyer,
+
+            @Part MultipartBody.Part profilePic,
+            @Part MultipartBody.Part picOnFlyer
+    );
 
 
 

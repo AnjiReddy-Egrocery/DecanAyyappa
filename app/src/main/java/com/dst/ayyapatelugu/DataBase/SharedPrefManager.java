@@ -2,6 +2,7 @@ package com.dst.ayyapatelugu.DataBase;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.dst.ayyapatelugu.Model.LoginDataResponse;
 
@@ -17,6 +18,7 @@ public class SharedPrefManager {
     private static final String LAST_NAME = "userLastName";
     private static final String EMAIL_ID = "userEmail";
     private static final String FATHER_MOBILE = "userMobile";
+    private static final String KEY_PROFILE_PIC = "profile_pic";
 
     private SharedPrefManager(Context context) {
         mContext = context;
@@ -60,6 +62,63 @@ public class SharedPrefManager {
         editor.putString(
                 FATHER_MOBILE,
                 userInfo.getResult().getUserMobile());
+
+        editor.apply();
+    }
+
+    public void saveProfilePic(String profilePic) {
+
+        String userId = getUserId();
+
+        SharedPreferences sharedPreferences =
+                mContext.getSharedPreferences(
+                        SHARED_PREF_NAME,
+                        Context.MODE_PRIVATE);
+
+        sharedPreferences.edit()
+                .putString("profile_pic_" + userId,
+                        profilePic)
+                .apply();
+
+        Log.d("SP_SAVE",
+                "Saved = " + profilePic);
+    }
+
+    public String getProfilePic() {
+
+        String userId = getUserId();
+
+        SharedPreferences sharedPreferences =
+                mContext.getSharedPreferences(
+                        SHARED_PREF_NAME,
+                        Context.MODE_PRIVATE);
+
+        String pic = sharedPreferences.getString(
+                "profile_pic_" + userId,
+                "");
+
+        Log.d("SP_GET", "Get = " + pic);
+
+        return pic;
+    }
+
+    public void updateUserData(String firstName,
+                               String lastName,
+                               String email,
+                               String mobile) {
+
+        SharedPreferences sharedPreferences =
+                mContext.getSharedPreferences(
+                        SHARED_PREF_NAME,
+                        Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor =
+                sharedPreferences.edit();
+
+        editor.putString(FIRST_NAME, firstName);
+        editor.putString(LAST_NAME, lastName);
+        editor.putString(EMAIL_ID, email);
+        editor.putString(FATHER_MOBILE, mobile);
 
         editor.apply();
     }
@@ -154,9 +213,7 @@ public class SharedPrefManager {
                 "flyer_designation_" + userId,
                 flyerDesignation);
 
-        editor.putString(
-                "flyer_pic_" + userId,
-                flyerPic);
+        editor.putString("flyer_pic_" + userId, flyerPic);
 
         editor.apply();
     }
