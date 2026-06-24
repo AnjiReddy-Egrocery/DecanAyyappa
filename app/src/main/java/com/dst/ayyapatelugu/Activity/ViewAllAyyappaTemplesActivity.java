@@ -83,10 +83,6 @@ public class ViewAllAyyappaTemplesActivity extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
 
-        tabLayout.addTab(tabLayout.newTab().setText("మ్యాప్"));
-        tabLayout.addTab(tabLayout.newTab().setText("అయ్యప్ప దేవాలయాల"));
-        final AllAyyappaTemplesAdapter adapter = new AllAyyappaTemplesAdapter(ViewAllAyyappaTemplesActivity.this, getSupportFragmentManager(), tabLayout.getTabCount());
-        viewPager.setAdapter(adapter);
         boolean openNearby =
                 getIntent().getBooleanExtra(
                         "OPEN_AYYAPPATEMPLE",
@@ -97,6 +93,20 @@ public class ViewAllAyyappaTemplesActivity extends AppCompatActivity {
 
             viewPager.setCurrentItem(0);
         }
+        String templeId =
+                getIntent().getStringExtra("TEMPLE_ID");
+
+        String lat =
+                getIntent().getStringExtra("TEMPLE_LAT");
+
+        String lng =
+                getIntent().getStringExtra("TEMPLE_LNG");
+
+        tabLayout.addTab(tabLayout.newTab().setText("మ్యాప్"));
+        tabLayout.addTab(tabLayout.newTab().setText("అయ్యప్ప దేవాలయాల"));
+        final AllAyyappaTemplesAdapter adapter = new AllAyyappaTemplesAdapter(ViewAllAyyappaTemplesActivity.this, getSupportFragmentManager(), tabLayout.getTabCount(),templeId,lat,lng);
+        viewPager.setAdapter(adapter);
+
 
             viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

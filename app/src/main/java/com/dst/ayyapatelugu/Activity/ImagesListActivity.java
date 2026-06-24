@@ -6,6 +6,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -14,6 +15,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -58,14 +60,19 @@ public class ImagesListActivity extends AppCompatActivity {
 
     String userId;
 
-    private int currentIndex = 0;
+    private int  currentIndex = 0;
     private boolean isLoading = false;
     private boolean hasMoreData = true;
+    private boolean userScrolled = false;
+
+    private float startY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_images_list);
+
+        Log.d("CHECK", "onCreate");
 
         toolbar = findViewById(R.id.toolbar);
         /*toolbar.setLogo(R.drawable.user_profile_background);
@@ -97,7 +104,18 @@ public class ImagesListActivity extends AppCompatActivity {
         });
         recyclerView = findViewById(R.id.recycler_images_list);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager manager =
+                new LinearLayoutManager(
+                        this,
+                        LinearLayoutManager.VERTICAL,
+                        false);
+
+        recyclerView.setLayoutManager(manager);
+
+        PagerSnapHelper pagerSnapHelper =
+                new PagerSnapHelper();
+
+        pagerSnapHelper.attachToRecyclerView(recyclerView);
 
 
         imageAnadanam=findViewById(R.id.layout_image_anadanam);
@@ -137,83 +155,183 @@ public class ImagesListActivity extends AppCompatActivity {
             }
         });
         Log.d("FCM_DEBUG", "Fetching Images API");
-        fetchDataFromDataBase();
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
 
-                LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
+              fetchDataFromDataBase();
 
-                int visibleItemCount = lm.getChildCount();
-                int totalItemCount = lm.getItemCount();
-                int firstVisibleItem = lm.findFirstVisibleItemPosition();
+        recyclerView.addOnScrollListener(
+                new RecyclerView.OnScrollListener() {
 
-                if (!isLoading && hasMoreData) {
+                    @Override
+                    public void onScrollStateChanged(
+                            @NonNull RecyclerView recyclerView,
+                            int newState) {
 
-                    if ((visibleItemCount + firstVisibleItem) >= totalItemCount - 1) {
+                        super.onScrollStateChanged(
+                                recyclerView,
+                                newState);
 
-                        currentIndex++;   // 👈 0 → 1 → 2 → 3
+                        if (newState ==
+                                RecyclerView.SCROLL_STATE_IDLE) {
 
-                        fetchDataFromDataBase();
+                            View snapView =
+                                    pagerSnapHelper.findSnapView(
+                                            manager);
+
+                            if (snapView != null
+                                    && adapter != null) {
+
+                                int position =
+                                        manager.getPosition(
+                                                snapView);
+
+                                Log.d("VERTICAL_PAGE",
+                                        "position = " + position);
+
+                                if (position >=
+                                        adapter.getItemCount() - 1
+                                        && !isLoading) {
+
+                                    currentIndex++;
+
+                                    Log.d("INDEX",
+                                            "NEXT API = " + currentIndex);
+
+                                    fetchDataFromDataBase();
+                                }
+                            }
+                        }
                     }
-                }
-            }
-        });
-
+                });
     }
 
 
 
     private void fetchDataFromDataBase() {
-        Log.d("INDEX", String.valueOf(currentIndex)); // 👈 HERE (BEST PLACE)
+        Log.d("PAGINATION",
+                "fetchDataFromDataBase Entered");
 
-        Log.d("FCM_DEBUG", "Fetching Images API");
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        if (isLoading) {
+            Log.d("PAGINATION",
+                    "RETURNED because isLoading true");
+            return;
+        }
 
-        OkHttpClient client = new OkHttpClient.Builder()
-                .sslSocketFactory(UnsafeTrustManager.createTrustAllSslSocketFactory(), UnsafeTrustManager.createTrustAllTrustManager())
-                .hostnameVerifier((hostname, session) -> true) // Bypasses hostname verification
-                .addInterceptor(loggingInterceptor)
-                .build();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://www.ayyappatelugu.com/") // Replace with your API URL
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
-                .build();
-        APiInterface apiClient = retrofit.create(APiInterface.class);
-        Call<ImagesResponse> call = apiClient.getImages(currentIndex);
+        isLoading = true;
+
+        Log.d("PAGINATION",
+                "API CALL => " + currentIndex);
+        HttpLoggingInterceptor loggingInterceptor =
+                new HttpLoggingInterceptor();
+
+        loggingInterceptor.setLevel(
+                HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient client =
+                new OkHttpClient.Builder()
+                        .sslSocketFactory(
+                                UnsafeTrustManager.createTrustAllSslSocketFactory(),
+                                UnsafeTrustManager.createTrustAllTrustManager())
+                        .hostnameVerifier((hostname, session) -> true)
+                        .addInterceptor(loggingInterceptor)
+                        .build();
+
+        Retrofit retrofit =
+                new Retrofit.Builder()
+                        .baseUrl("https://www.ayyappatelugu.com/")
+                        .addConverterFactory(
+                                GsonConverterFactory.create())
+                        .client(client)
+                        .build();
+
+        APiInterface apiClient =
+                retrofit.create(APiInterface.class);
+
+        Call<ImagesResponse> call =
+                apiClient.getImages(currentIndex);
+
         call.enqueue(new Callback<ImagesResponse>() {
             @Override
-            public void onResponse(Call<ImagesResponse> call, Response<ImagesResponse> response) {
+            public void onResponse(
+                    Call<ImagesResponse> call,
+                    Response<ImagesResponse> response) {
 
-                if (response.isSuccessful() && response.body() != null) {
+                Log.d("CHECK",
+                        "RESPONSE RECEIVED currentIndex="
+                                + currentIndex);
 
-                    ImagesResponse data = response.body();
+                isLoading = false;
 
-                    String baseUrl = data.getImageUrl();
-                    List<ImagesModel> list = data.getResult();
+                if (response.isSuccessful()
+                        && response.body() != null) {
+
+                    ImagesResponse data =
+                            response.body();
+
+                    List<ImagesModel> list =
+                            data.getResult();
+
+                    if (list == null || list.isEmpty()) {
+
+                        hasMoreData = false;
+
+                        Log.d("PAGINATION",
+                                "NO MORE DATA");
+
+                        return;
+                    }
+
+                    Log.d("PAGINATION",
+                            "RECEIVED SIZE = "
+                                    + list.size());
+
                     if (adapter == null) {
-                        adapter = new ImageAdapter(ImagesListActivity.this, list, baseUrl, flyerName,
+
+                        Log.d("CHECK",
+                                "adapter NULL");
+
+                        adapter = new ImageAdapter(
+                                ImagesListActivity.this,
+                                new ArrayList<>(list),
+                                data.getImageUrl(),
+                                flyerName,
                                 flyerDesignation,
-                                flyerPic);
+                                flyerPic
+                        );
+
                         recyclerView.setAdapter(adapter);
-                    }else {
+
+                    } else {
+
+                        Log.d("CHECK",
+                                "adapter NOT NULL");
 
                         adapter.addData(list);
                     }
+
+
 
                 }
             }
 
             @Override
-            public void onFailure(Call<ImagesResponse> call, Throwable t) {
-                Toast.makeText(ImagesListActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
+            public void onFailure(
+                    Call<ImagesResponse> call,
+                    Throwable t) {
+
+                isLoading = false;
+
+                Log.e("API_DEBUG",
+                        t.getMessage());
+
+                Toast.makeText(
+                        ImagesListActivity.this,
+                        t.getMessage(),
+                        Toast.LENGTH_LONG
+                ).show();
             }
         });
     }
-
     @Override
     protected void onActivityResult(int requestCode,
                                     int resultCode,

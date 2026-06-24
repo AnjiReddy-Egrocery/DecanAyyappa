@@ -1,24 +1,16 @@
 package com.dst.ayyapatelugu.User;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.IntentSenderRequest;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,7 +18,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
-import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -38,10 +29,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.dst.ayyapatelugu.HomeActivity;
 import com.dst.ayyapatelugu.Model.SignUpWithGmail;
 import com.dst.ayyapatelugu.Model.UserDataResponse;
 import com.dst.ayyapatelugu.Model.VerifyUserDataResponse;
@@ -50,23 +39,10 @@ import com.dst.ayyapatelugu.Services.APiInterface;
 import com.dst.ayyapatelugu.Services.UnsafeTrustManager;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.credentials.Credential;
-import com.google.android.gms.auth.api.credentials.Credentials;
-import com.google.android.gms.auth.api.credentials.CredentialsApi;
-import com.google.android.gms.auth.api.credentials.CredentialsClient;
-import com.google.android.gms.auth.api.credentials.HintRequest;
-import com.google.android.gms.auth.api.identity.BeginSignInRequest;
-import com.google.android.gms.auth.api.identity.Identity;
-import com.google.android.gms.auth.api.identity.SignInClient;
-import com.google.android.gms.auth.api.identity.SignInCredential;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.tasks.Task;
 
 
 import java.util.ArrayList;
@@ -86,7 +62,7 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
 
 
     LinearLayout layoutLogin;
-    EditText edtFirstName, edtLastName, edtNumber, edtEmail, edtPassword, edtReenterPassword;
+    EditText edtFirstName, edtLastName, edtNumber, edtEmail;
     Button butRegister;
 
 
@@ -106,6 +82,9 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
     private static final int REQUEST_CODE_EMAIL_PICKER = 2001;
     private static final String GOOGLE_ACCOUNT_TYPE = "com.google";
 
+    final String isIOS = "0";
+
+
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -119,8 +98,7 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
         edtLastName = findViewById(R.id.edt_last_name);
         edtNumber = findViewById(R.id.edt_number);
         edtEmail = findViewById(R.id.edt_mail);
-        edtPassword = findViewById(R.id.edt_password);
-        edtReenterPassword = findViewById(R.id.edt_reenter_password);
+
         layoutLogin = findViewById(R.id.layout_login);
         butRegister = findViewById(R.id.but_register);
         //linearSignUpWithGmail=findViewById(R.id.layout_signup_gmail);
@@ -177,23 +155,18 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
                 String lastname = edtLastName.getText().toString().trim();
                 String number = edtNumber.getText().toString().trim();
                 String email = edtEmail.getText().toString().trim();
-                String password = edtPassword.getText().toString().trim();
-                String reEnterPassword = edtReenterPassword.getText().toString().trim();
 
 
-                if (!doPasswordsMatch(password, reEnterPassword)) {
-                    Toast.makeText(RegisterActivity.this, "Password and ConfirmPassword do not match", Toast.LENGTH_SHORT).show();
 
-                }
+
 
                 if (isValidFirstName(name)
                         && isValidLastName(lastname)
                         && isValidEmail(email)
                         && isValidMobileNumber(number)
-                        && isValidPassword(password)
-                        && doPasswordsMatch(password, reEnterPassword)) {
+                       ) {
 
-                    validationMethod(name, lastname, number, email, password);
+                    validationMethod(name, lastname, number, email,isIOS);
                     //Toast.makeText(RegisterActivity.this,"Data is Saved",Toast.LENGTH_LONG).show();
                 }
             }
@@ -420,37 +393,37 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
 
 
 
-    public void ShowHidePass(View view) {
+//    public void ShowHidePass(View view) {
+//
+//        if(view.getId()==R.id.show_pass_btn){
+//            if(edtPassword.getTransformationMethod().equals(PasswordTransformationMethod.getInstance())){
+//                ((ImageView)(view)).setImageResource(R.drawable.visiablityoff);
+//                //Show Password
+//                edtPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+//            }
+//            else{
+//                ((ImageView)(view)).setImageResource(R.drawable.visiablity);
+//                //Hide Password
+//                edtPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+//            }
+//        }
+//    }
 
-        if(view.getId()==R.id.show_pass_btn){
-            if(edtPassword.getTransformationMethod().equals(PasswordTransformationMethod.getInstance())){
-                ((ImageView)(view)).setImageResource(R.drawable.visiablityoff);
-                //Show Password
-                edtPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-            }
-            else{
-                ((ImageView)(view)).setImageResource(R.drawable.visiablity);
-                //Hide Password
-                edtPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
-            }
-        }
-    }
-
-    public void ShowHideConfirmPass(View view) {
-
-        if(view.getId()==R.id.show_Confirmpass_btn){
-            if(edtReenterPassword.getTransformationMethod().equals(PasswordTransformationMethod.getInstance())){
-                ((ImageView)(view)).setImageResource(R.drawable.visiablityoff);
-                //Show Password
-                edtReenterPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-            }
-            else{
-                ((ImageView)(view)).setImageResource(R.drawable.visiablity);
-                //Hide Password
-                edtReenterPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
-            }
-        }
-    }
+//    public void ShowHideConfirmPass(View view) {
+//
+//        if(view.getId()==R.id.show_Confirmpass_btn){
+//            if(edtReenterPassword.getTransformationMethod().equals(PasswordTransformationMethod.getInstance())){
+//                ((ImageView)(view)).setImageResource(R.drawable.visiablityoff);
+//                //Show Password
+//                edtReenterPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+//            }
+//            else{
+//                ((ImageView)(view)).setImageResource(R.drawable.visiablity);
+//                //Hide Password
+//                edtReenterPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+//            }
+//        }
+//    }
 
     private void signUpWithGoogle(boolean isSignUp) {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
@@ -504,13 +477,12 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
         return email.matches(emailPattern);
     }
 
-    private void validationMethod(String name, String lastname, String number, String email, String password) {
-        Log.d("RegisterActivity", "Validation method called with: " +
-                "Name: " + name +
-                ", Lastname: " + lastname +
-                ", Number: " + number +
-                ", Email: " + email +
-                ", Password: " + password);
+    private void validationMethod(String name, String lastname, String number, String email, String isIOS) {
+        Log.d("API_REQUEST", "name = " + name);
+        Log.d("API_REQUEST", "lastname = " + lastname);
+        Log.d("API_REQUEST", "number = " + number);
+        Log.d("API_REQUEST", "email = " + email);
+        Log.d("API_REQUEST", "isIOS = " + isIOS);
         //progressBar.setVisibility(View.VISIBLE);
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -530,10 +502,15 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
         RequestBody lastnamePart = RequestBody.create(MediaType.parse("text/plain"), lastname);
         RequestBody emailPart = RequestBody.create(MediaType.parse("text/plain"), email);
         RequestBody mobileNumberPart = RequestBody.create(MediaType.parse("text/plain"), number);
-        RequestBody pwdPart = RequestBody.create(MediaType.parse("text/plain"), password);
-        RequestBody isIOSPart = RequestBody.create(MediaType.parse("text/plain"), "0");
-        Log.d("RegisterActivity", "Prepared request body for API call.");
-        Call<UserDataResponse> call = apiClient.postData(firstnamePart, lastnamePart, emailPart, mobileNumberPart, pwdPart, isIOSPart);
+
+        RequestBody isIOSPart = RequestBody.create(MediaType.parse("text/plain"), isIOS);
+        Log.d("API_REQUEST",
+                "Sending -> name=" + name +
+                        ", lastname=" + lastname +
+                        ", mobile=" + number +
+                        ", email=" + email +
+                        ", isIOS=" + isIOS);
+        Call<UserDataResponse> call = apiClient.postData(firstnamePart, lastnamePart, emailPart, mobileNumberPart, isIOSPart);
         call.enqueue(new Callback<UserDataResponse>() {
             @Override
             public void onResponse(Call<UserDataResponse> call, Response<UserDataResponse> response) {

@@ -104,10 +104,6 @@ public class AnadanamActivity extends AppCompatActivity  {
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
 
-        tabLayout.addTab(tabLayout.newTab().setText("మ్యాప్"));
-        tabLayout.addTab(tabLayout.newTab().setText("అన్నదానం"));
-        final AllAnadanamAdapter adapter = new AllAnadanamAdapter(AnadanamActivity.this, getSupportFragmentManager(), tabLayout.getTabCount());
-        viewPager.setAdapter(adapter);
         boolean openNearby =
                 getIntent().getBooleanExtra(
                         "OPEN_NEARBY",
@@ -119,6 +115,22 @@ public class AnadanamActivity extends AppCompatActivity  {
             viewPager.setCurrentItem(0);
 
         }
+        String templeId =
+                getIntent().getStringExtra("TEMPLE_ID");
+
+        String templeLat =
+                getIntent().getStringExtra("TEMPLE_LAT");
+
+        String templeLng =
+                getIntent().getStringExtra("TEMPLE_LNG");
+
+        tabLayout.addTab(tabLayout.newTab().setText("మ్యాప్"));
+        tabLayout.addTab(tabLayout.newTab().setText("అన్నదానం"));
+        final AllAnadanamAdapter adapter = new AllAnadanamAdapter(AnadanamActivity.this, getSupportFragmentManager(), tabLayout.getTabCount(), templeId,
+                templeLat,
+                templeLng);
+        viewPager.setAdapter(adapter);
+
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override

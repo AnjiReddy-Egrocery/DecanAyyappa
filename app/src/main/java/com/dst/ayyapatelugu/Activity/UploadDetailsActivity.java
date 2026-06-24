@@ -3,6 +3,7 @@ package com.dst.ayyapatelugu.Activity;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
@@ -12,6 +13,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -67,10 +69,32 @@ public class UploadDetailsActivity extends AppCompatActivity {
 
     String userId;
 
+    Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_details);
+
+        toolbar = findViewById(R.id.toolbar);
+       /* toolbar.setLogo(R.drawable.user_profile_background);
+        toolbar.setTitle("  మా గురించి ");
+        toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));*/
+        setSupportActionBar(toolbar);
+        ;
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        Drawable nav = toolbar.getNavigationIcon();
+        if (nav != null) {
+            nav.setTint(getResources().getColor(R.color.white));
+        }
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
 
         imageProfile = findViewById(R.id.image_profile);

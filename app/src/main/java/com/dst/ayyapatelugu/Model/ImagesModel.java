@@ -1,15 +1,16 @@
 package com.dst.ayyapatelugu.Model;
 
 public class ImagesModel {
-    private String id;
+    private String imageId;
+
     private String image;
 
-    public String getId() {
-        return id;
+    public String getImageId() {
+        return imageId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setImageId(String imageId) {
+        this.imageId = imageId;
     }
 
     public String getImage() {

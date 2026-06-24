@@ -18,10 +18,18 @@ import com.dst.ayyapatelugu.Fragment.TemplesMapFragment;
 public class AllTemplesAdapter extends FragmentPagerAdapter {
     private Context myContext;
     int totalTabs;
-    public AllTemplesAdapter(ViewAllTemplesActivity viewAllTemplesActivity, FragmentManager supportFragmentManager, int tabCount) {
+    String templeId;
+    String lat;
+    String lng;
+    public AllTemplesAdapter(ViewAllTemplesActivity viewAllTemplesActivity, FragmentManager supportFragmentManager, int tabCount, String templeId,
+                             String lat,
+                             String lng) {
         super(supportFragmentManager);
         myContext = viewAllTemplesActivity;
         this.totalTabs = tabCount;
+        this.templeId = templeId;
+        this.lat = lat;
+        this.lng = lng;
     }
 
     @NonNull

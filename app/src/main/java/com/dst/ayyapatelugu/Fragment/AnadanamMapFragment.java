@@ -223,8 +223,13 @@ public class AnadanamMapFragment extends Fragment implements OnMapReadyCallback 
                             "200".equals(response.body().getErrorCode())) {
 
                         List<MapDataResponse.Result> data = response.body().getResult();
-                        SharedPreferenceHelper.saveTempleData(getContext(), data);
                         new Handler().postDelayed(() -> addMarkers(data), 200);
+                        SharedPreferenceHelper.saveTempleData(getContext(), data);
+                        Intent i = new Intent(getActivity(),
+                                LocationForegroundService.class);
+                        i.setAction("ANNADANAM_ON");
+                        requireActivity().startService(i);
+
                     }
                 }
 
@@ -517,8 +522,7 @@ public class AnadanamMapFragment extends Fragment implements OnMapReadyCallback 
     public void onPause() {
         super.onPause();
 
-        Intent i = new Intent(getActivity(), LocationForegroundService.class);
-        requireActivity().stopService(i);
+        Log.d("TempleService", "TEMPLE_OFF sending");
     }
 }
 

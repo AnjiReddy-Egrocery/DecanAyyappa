@@ -1,90 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fff"
-    android:orientation="vertical"
-    android:padding="12dp"
-    tools:context=".Activity.UploadDetailsActivity">
-
-    <ScrollView
+    android:background="@drawable/bg_logo"
+    android:fitsSystemWindows="true"
+    tools:context=".HomeActivity">
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
+        android:layout_height="wrap_content"
+        android:background="#BC0F0F">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:background="#BC0F0F">
+            <include
+                layout="@layout/headr_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
 
-            <!-- IMAGE + CAMERA ICON -->
-            <FrameLayout
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_gravity="center">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginLeft="14dp"
+        android:layout_marginBottom="14dp"
+        android:layout_marginRight="14dp"
+        android:layout_marginTop="70dp">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-                <ImageView
-                    android:id="@+id/image_profile"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- IMAGE + CAMERA ICON -->
+                <FrameLayout
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center">
+
+                    <ImageView
+                        android:id="@+id/image_profile"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ayyappaphome"
+                        android:scaleType="centerCrop"
+                        android:background="@drawable/circle_bg" />
+
+                    <ImageButton
+                        android:id="@+id/btn_camera"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:layout_gravity="bottom|end"
+                        android:layout_margin="8dp"
+                        android:background="@drawable/circle_button"
+                        android:src="@android:drawable/ic_menu_camera"
+                        android:contentDescription="upload" />
+                </FrameLayout>
+
+                <!-- NAME -->
+                <EditText
+                    android:id="@+id/edt_first_name"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/ayyappaphome"
-                    android:scaleType="centerCrop"
-                    android:background="@drawable/circle_bg" />
+                    android:layout_height="50dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/back_ground"
+                    android:hint="First Name"
+                    android:paddingLeft="12dp"
+                    android:textColor="#000"
+                    android:textColorHint="#fff"
+                    android:inputType="textPersonName" />
 
-                <ImageButton
-                    android:id="@+id/btn_camera"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:layout_gravity="bottom|end"
-                    android:layout_margin="8dp"
-                    android:background="@drawable/circle_button"
-                    android:src="@android:drawable/ic_menu_camera"
-                    android:contentDescription="upload" />
-            </FrameLayout>
+                <!-- DESIGNATION -->
+                <EditText
+                    android:id="@+id/edt_desigination"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/back_ground"
+                    android:hint="Designation"
+                    android:paddingLeft="12dp"
+                    android:textColor="#fff"
+                    android:textColorHint="#000"
+                    android:inputType="text" />
 
-            <!-- NAME -->
-            <EditText
-                android:id="@+id/edt_first_name"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/back_ground"
-                android:hint="First Name"
-                android:paddingLeft="12dp"
-                android:textColor="#000"
-                android:textColorHint="#000"
-                android:inputType="textPersonName" />
+                <!-- BUTTON -->
+                <Button
+                    android:id="@+id/but_update_profile"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="10dp"
+                    android:backgroundTint="#FD6801"
+                    android:text="Update Profile"
+                    android:textColor="#FFF"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-            <!-- DESIGNATION -->
-            <EditText
-                android:id="@+id/edt_desigination"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/back_ground"
-                android:hint="Designation"
-                android:paddingLeft="12dp"
-                android:textColor="#000"
-                android:textColorHint="#000"
-                android:inputType="text" />
+            </LinearLayout>
 
-            <!-- BUTTON -->
-            <Button
-                android:id="@+id/but_update_profile"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="10dp"
-                android:backgroundTint="#FD6801"
-                android:text="Update Profile"
-                android:textColor="#FFF"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+        </ScrollView>
 
-        </LinearLayout>
 
-    </ScrollView>
+    </LinearLayout>
 
-</LinearLayout>
+
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

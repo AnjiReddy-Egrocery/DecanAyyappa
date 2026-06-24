@@ -1,7 +1,10 @@
 package com.dst.ayyapatelugu.Activity;
 
+import static com.ibm.icu.impl.duration.impl.XMLRecordWriter.normalize;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
@@ -19,6 +22,7 @@ import android.widget.Toast;
 
 import com.dst.ayyapatelugu.Adapter.ImageAdapter;
 import com.dst.ayyapatelugu.Adapter.VideoAdapter;
+import com.dst.ayyapatelugu.Model.GuruSwamiModelList;
 import com.dst.ayyapatelugu.Model.ImagesModel;
 import com.dst.ayyapatelugu.Model.ImagesResponse;
 import com.dst.ayyapatelugu.Model.VideoModel;
@@ -26,8 +30,12 @@ import com.dst.ayyapatelugu.Model.VideoResponse;
 import com.dst.ayyapatelugu.R;
 import com.dst.ayyapatelugu.Services.APiInterface;
 import com.dst.ayyapatelugu.Services.UnsafeTrustManager;
+import com.ibm.icu.text.Transliterator;
 
+import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -48,6 +56,12 @@ public class PostVideosActivity extends AppCompatActivity {
     private int currentIndex = 0;
     private boolean isLoading = false;
     private boolean hasMoreData = true;
+
+
+    private int lastDy = 0;
+    SearchView searchView;
+    List<VideoModel> videoList = new ArrayList<>();
+    List<VideoModel> filteredList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +94,13 @@ public class PostVideosActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
 
+        searchView = findViewById(R.id.searchView);
+        searchView.setQueryHint("Search by title");
+        searchView.setIconifiedByDefault(false); // Keep it expanded
+        searchView.setFocusable(true);
+        searchView.setFocusableInTouchMode(true);
+        searchView.setClickable(true);
+
 // SNAP (important for reels effect)
         PagerSnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
@@ -92,6 +113,20 @@ public class PostVideosActivity extends AppCompatActivity {
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     playVisibleVideo();
                 }
+            }
+        });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //filterResults(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterResults(newText);
+                return false;
             }
         });
 
@@ -164,6 +199,42 @@ public class PostVideosActivity extends AppCompatActivity {
 
     }
 
+    private void filterResults(String query) {
+
+        filteredList.clear();
+
+
+        if(query == null || query.trim().isEmpty()){
+
+            filteredList.addAll(videoList);
+
+        }else{
+
+
+            String search = query.toLowerCase().trim();
+
+
+            for(VideoModel item : videoList){
+
+
+                String title = item.getTitle(); // API model field
+
+
+                if(title != null &&
+                        title.toLowerCase().contains(search)){
+
+                    filteredList.add(item);
+                }
+
+
+            }
+
+        }
+
+
+        adapter.updateList(filteredList);
+
+    }
     private void fetchDataFromDataBase() {
         Log.d("FCM_DEBUG", "Fetching Videos API");
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
@@ -192,6 +263,9 @@ public class PostVideosActivity extends AppCompatActivity {
                     String baseUrl = data.getVideoUrl();
                     List<VideoModel> list = data.getResult();
 
+                    videoList.addAll(list);
+                    filteredList.addAll(videoList);
+
                     if (adapter == null) {
 
                         adapter = new VideoAdapter(PostVideosActivity.this, list, baseUrl);
@@ -212,6 +286,24 @@ public class PostVideosActivity extends AppCompatActivity {
             }
         });
     }
+
+    private String transliterateToEnglish(String input) {
+        Transliterator transliterator = Transliterator.getInstance("Telugu-Latin");
+        return transliterator.transliterate(input);
+    }
+
+    private String transliterateToTelugu(String input) {
+        Transliterator transliterator = Transliterator.getInstance("Latin-Telugu");
+        return transliterator.transliterate(input);
+    }
+
+    private String removeDiacritics(String input) {
+        return Normalizer.normalize(input, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "") // Removes all marks/diacritics
+                .toLowerCase(Locale.getDefault())
+                .trim();
+    }
+
 
     private void playVisibleVideo() {
 

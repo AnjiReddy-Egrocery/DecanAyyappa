@@ -437,14 +437,23 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                             templeList = ayyappaTempleMapDataResponse.getResult();
 
                             // Save data to SharedManager
-                            SharedManager.saveTempleData(getContext(), templeList);
-
-                            Log.d("TempleDebug", "Temple List Fetched from API: " + templeList.size());
 
                             // ✅ Add markers & update UI
                             new Handler().postDelayed(() -> {
                                 addMarkers(templeList);
                             }, 200); // Delay marker loading
+
+                            SharedManager.saveTempleData(getContext(), templeList);
+
+                            Log.d("TempleDebug", "Temple List Fetched from API: " + templeList.size());
+
+
+
+                            Intent i = new Intent(getActivity(),
+                                    LocationForegroundService.class);
+                            i.setAction("AYYAPPA_ON");
+                            requireActivity().startService(i);
+
 
                             // displayNearByTemples(); // ✅ Force UI refresh
                         } else {
@@ -660,16 +669,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     public void onResume() {
         super.onResume();
 
-        Intent i = new Intent(getActivity(), LocationForegroundService.class);
-        i.setAction("ANNADANAM_ON");
-        requireActivity().startService(i);
+        Intent i = new Intent(requireContext(),
+                LocationForegroundService.class);
+        i.setAction("AYYAPPA_ON");
+        requireContext().startService(i);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
-        Intent i = new Intent(getActivity(), LocationForegroundService.class);
-        requireActivity().stopService(i);
+        Log.d("TempleService", "TEMPLE_OFF sending");
     }
 }

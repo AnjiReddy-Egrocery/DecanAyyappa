@@ -191,10 +191,12 @@
             android:exported="false" />
         <activity
             android:name=".User.RegisterActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
         <activity
             android:name=".User.LoginActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
         <activity
             android:name=".SplashActivity"
             android:exported="true">

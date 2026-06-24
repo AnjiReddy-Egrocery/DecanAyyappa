@@ -15,6 +15,7 @@ import com.dst.ayyapatelugu.Model.*;
 import com.dst.ayyapatelugu.R;
 import com.google.android.gms.location.*;
 import android.app.Service;
+import android.util.Log;
 
 import java.util.*;
 
@@ -27,8 +28,8 @@ public class LocationForegroundService extends Service {
 
     // Distance limits
     private static final float ANNADANAM_DISTANCE = 5000f;
-    private static final float TEMPLE_DISTANCE = 4000f;
-    private static final float AYYAPPA_DISTANCE = 4000f;
+    private static final float TEMPLE_DISTANCE = 5000f;
+    private static final float AYYAPPA_DISTANCE = 5000f;
 
     private FusedLocationProviderClient client;
     private LocationCallback locationCallback;
@@ -67,20 +68,98 @@ public class LocationForegroundService extends Service {
 
                 case "ANNADANAM_ON":
                     isAnnadanamMapActive = true;
-                    isTempleMapActive = false;
-                    isAyyappaMapActive = false;
+
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+
+
+                        client.getCurrentLocation(
+                                Priority.PRIORITY_HIGH_ACCURACY,
+                                null
+                        ).addOnSuccessListener(location -> {
+
+
+                            if(location != null){
+
+                                Log.d(
+                                        "TempleService",
+                                        "Checking nearby Annadanam"
+                                );
+
+
+                                checkAnnadanam(location);
+
+                            }
+
+
+                        });
+
+
+                    },1000);
+
+
                     break;
 
                 case "TEMPLE_ON":
-                    isAnnadanamMapActive = false;
+
                     isTempleMapActive = true;
-                    isAyyappaMapActive = false;
+
+                    Log.d("TempleService", "TEMPLE_ON received");
+
+
+                    client.getCurrentLocation(
+                            Priority.PRIORITY_HIGH_ACCURACY,
+                            null
+                    ).addOnSuccessListener(location -> {
+
+
+                        if(location != null){
+
+                            checkTemples(location);
+
+                        }
+
+                    });
+
+
                     break;
 
                 case "AYYAPPA_ON":
-                    isAnnadanamMapActive = false;
-                    isTempleMapActive = false;
+
                     isAyyappaMapActive = true;
+
+
+                    Log.d(
+                            "TempleService",
+                            "AYYAPPA_ON received"
+                    );
+
+
+                    client.getCurrentLocation(
+                            Priority.PRIORITY_HIGH_ACCURACY,
+                            null
+                    ).addOnSuccessListener(location -> {
+
+
+                        if(location != null){
+
+                            checkAyyappa(location);
+
+                        }
+
+                    });
+
+
+                    break;
+                case "ANNADANAM_OFF":
+                    isAnnadanamMapActive = false;
+                    break;
+
+                case "TEMPLE_OFF":
+                    isTempleMapActive = false;
+                    break;
+
+                case "AYYAPPA_OFF":
+                    isAyyappaMapActive = false;
                     break;
             }
         }
@@ -149,26 +228,48 @@ public class LocationForegroundService extends Service {
         List<MapDataResponse.Result> list =
                 SharedPreferenceHelper.getTempleData(this);
 
-        if (list == null) return;
+        if (list == null || list.isEmpty()) {
+
+            Log.d("TempleService",
+                    "Annadanam data not available. Retry after 5 sec.");
+
+            new Handler(Looper.getMainLooper())
+                    .postDelayed(() -> {
+
+                        client.getCurrentLocation(
+                                Priority.PRIORITY_HIGH_ACCURACY,
+                                null
+                        ).addOnSuccessListener(location -> {
+
+                            if (location != null) {
+                                checkAnnadanam(location);
+                            }
+                        });
+
+                    }, 5000);
+
+            return;
+        }
 
         for (MapDataResponse.Result item : list) {
 
             String key = "A_" + item.getAnnadhanamId();
 
-            if (notified.contains(key)) continue;
+            if (notified.contains(key))
+                continue;
 
             try {
                 float[] res = new float[1];
 
                 Location.distanceBetween(
-                        loc.getLatitude(), loc.getLongitude(),
+                        loc.getLatitude(),
+                        loc.getLongitude(),
                         Double.parseDouble(item.getLatitude()),
                         Double.parseDouble(item.getLongitude()),
                         res
                 );
 
                 if (res[0] <= ANNADANAM_DISTANCE) {
-
                     sendAnnadanam(item, res[0]);
                     notified.add(key);
                 }
@@ -182,30 +283,71 @@ public class LocationForegroundService extends Service {
     // ================= TEMPLE =================
     private void checkTemples(Location loc) {
 
+        Log.d("TempleService",
+                "isTempleMapActive = " + isTempleMapActive);
+
         if (!isTempleMapActive) return;
 
         List<TempleMapDataResponse.Result> list =
                 SharedPreferenceManager.getTempleData(this);
 
-        if (list == null) return;
+        Log.d("TempleService",
+                "Temple List Size = " +
+                        (list == null ? "NULL" : list.size()));
+
+        // 👇 Ee block ikkada pettali
+        if (list == null || list.isEmpty()) {
+
+            Log.d("TempleService",
+                    "Temple data not available. Retry after 5 sec.");
+
+            new Handler(Looper.getMainLooper())
+                    .postDelayed(() -> {
+
+                        client.getCurrentLocation(
+                                Priority.PRIORITY_HIGH_ACCURACY,
+                                null
+                        ).addOnSuccessListener(location -> {
+
+                            if (location != null) {
+                                checkTemples(location);
+                            }
+                        });
+
+                    }, 5000);
+
+            return;
+        }
 
         for (TempleMapDataResponse.Result item : list) {
 
             String key = "T_" + item.getTempleId();
 
-            if (notified.contains(key)) continue;
+            if (notified.contains(key))
+                continue;
 
             try {
+
                 float[] res = new float[1];
 
                 Location.distanceBetween(
-                        loc.getLatitude(), loc.getLongitude(),
+                        loc.getLatitude(),
+                        loc.getLongitude(),
                         Double.parseDouble(item.getLatitude()),
                         Double.parseDouble(item.getLongitude()),
                         res
                 );
 
+                Log.d("TempleService",
+                        item.getTempleNameTelugu()
+                                + " distance = "
+                                + res[0]);
+
                 if (res[0] <= TEMPLE_DISTANCE) {
+
+                    Log.d("TempleService",
+                            "Sending notification : "
+                                    + item.getTempleNameTelugu());
 
                     sendTemple(item, res[0]);
                     notified.add(key);
@@ -225,26 +367,48 @@ public class LocationForegroundService extends Service {
         List<AyyappaTempleMapDataResponse.Result> list =
                 SharedManager.getTempleData(this);
 
-        if (list == null) return;
+        if (list == null || list.isEmpty()) {
+
+            Log.d("TempleService",
+                    "Ayyappa temple data not available. Retry after 5 sec.");
+
+            new Handler(Looper.getMainLooper())
+                    .postDelayed(() -> {
+
+                        client.getCurrentLocation(
+                                Priority.PRIORITY_HIGH_ACCURACY,
+                                null
+                        ).addOnSuccessListener(location -> {
+
+                            if (location != null) {
+                                checkAyyappa(location);
+                            }
+                        });
+
+                    }, 5000);
+
+            return;
+        }
 
         for (AyyappaTempleMapDataResponse.Result item : list) {
 
             String key = "Y_" + item.getTempleId();
 
-            if (notified.contains(key)) continue;
+            if (notified.contains(key))
+                continue;
 
             try {
                 float[] res = new float[1];
 
                 Location.distanceBetween(
-                        loc.getLatitude(), loc.getLongitude(),
+                        loc.getLatitude(),
+                        loc.getLongitude(),
                         Double.parseDouble(item.getLatitude()),
                         Double.parseDouble(item.getLongitude()),
                         res
                 );
 
                 if (res[0] <= AYYAPPA_DISTANCE) {
-
                     sendAyyappa(item, res[0]);
                     notified.add(key);
                 }
@@ -258,24 +422,102 @@ public class LocationForegroundService extends Service {
     // ================= NOTIFICATIONS =================
 
     private void sendAnnadanam(MapDataResponse.Result item, float dist) {
-        sendBase(CHANNEL_ANNADANAM,
+        Intent intent =
+                new Intent(this, AnadanamActivity.class);
+
+
+        intent.putExtra(
+                "TEMPLE_ID",
+                item.getAnnadhanamId()
+        );
+
+
+        intent.putExtra(
+                "TEMPLE_LAT",
+                item.getLatitude()
+        );
+
+
+        intent.putExtra(
+                "TEMPLE_LNG",
+                item.getLongitude()
+        );
+
+
+        sendBase(
+                CHANNEL_ANNADANAM,
                 item.getAnnadhanamNameTelugu(),
                 dist,
-                new Intent(this, AnadanamActivity.class));
+                intent
+        );
     }
 
     private void sendTemple(TempleMapDataResponse.Result item, float dist) {
-        sendBase(CHANNEL_TEMPLE,
+
+
+        Intent intent =
+                new Intent(this, ViewAllTemplesActivity.class);
+
+
+        intent.putExtra(
+                "TEMPLE_ID",
+                item.getTempleId()
+        );
+
+
+        intent.putExtra(
+                "TEMPLE_LAT",
+                item.getLatitude()
+        );
+
+
+        intent.putExtra(
+                "TEMPLE_LNG",
+                item.getLongitude()
+        );
+
+
+        sendBase(
+                CHANNEL_TEMPLE,
                 item.getTempleNameTelugu(),
                 dist,
-                new Intent(this, ViewAllTemplesActivity.class));
+                intent
+        );
     }
 
-    private void sendAyyappa(AyyappaTempleMapDataResponse.Result item, float dist) {
-        sendBase(CHANNEL_AYYAPPA,
+    private void sendAyyappa(
+            AyyappaTempleMapDataResponse.Result item,
+            float dist) {
+
+
+        Intent intent =
+                new Intent(this, ViewAllAyyappaTemplesActivity.class);
+
+
+        intent.putExtra(
+                "TEMPLE_ID",
+                item.getTempleId()
+        );
+
+
+        intent.putExtra(
+                "TEMPLE_LAT",
+                item.getLatitude()
+        );
+
+
+        intent.putExtra(
+                "TEMPLE_LNG",
+                item.getLongitude()
+        );
+
+
+        sendBase(
+                CHANNEL_AYYAPPA,
                 item.getTempleNameTelugu(),
                 dist,
-                new Intent(this, ViewAllAyyappaTemplesActivity.class));
+                intent
+        );
     }
 
     private void sendBase(String channel, String title, float dist, Intent intent) {
@@ -301,6 +543,9 @@ public class LocationForegroundService extends Service {
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.POST_NOTIFICATIONS)
                 != PackageManager.PERMISSION_GRANTED) return;
+
+        Log.d("TempleService",
+                "POST_NOTIFICATIONS not granted");
 
         NotificationManagerCompat.from(this)
                 .notify((int) System.currentTimeMillis(), builder.build());

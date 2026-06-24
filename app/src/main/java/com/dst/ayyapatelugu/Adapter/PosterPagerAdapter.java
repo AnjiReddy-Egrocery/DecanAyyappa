@@ -54,6 +54,7 @@ public class PosterPagerAdapter  extends RecyclerView.Adapter<PosterPagerAdapter
 
     @Override
     public int getItemCount() {
+        Log.d("POSTER", "getItemCount");
         return 3;
     }
 
@@ -83,6 +84,7 @@ public class PosterPagerAdapter  extends RecyclerView.Adapter<PosterPagerAdapter
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Log.d("POSTER", "onBindViewHolder = " + position);
 
         ImageView img = holder.itemView.findViewById(R.id.img);
 
@@ -204,6 +206,14 @@ public class PosterPagerAdapter  extends RecyclerView.Adapter<PosterPagerAdapter
 
         try {
 
+            ImageView btnShare = itemView.findViewById(R.id.btnShare);
+            ImageView btnDownload = itemView.findViewById(R.id.btnDownload);
+
+            // hide icons
+            btnShare.setVisibility(View.GONE);
+            btnDownload.setVisibility(View.GONE);
+
+
             Bitmap bitmap = Bitmap.createBitmap(
                     itemView.getWidth(),
                     itemView.getHeight(),
@@ -213,16 +223,25 @@ public class PosterPagerAdapter  extends RecyclerView.Adapter<PosterPagerAdapter
             Canvas canvas = new Canvas(bitmap);
             itemView.draw(canvas);
 
+
+            // show icons back
+            btnShare.setVisibility(View.VISIBLE);
+            btnDownload.setVisibility(View.VISIBLE);
+
+
             File cachePath =
                     new File(context.getCacheDir(), "images");
 
             cachePath.mkdirs();
 
+
             File file =
                     new File(cachePath, "shared_poster.png");
 
+
             FileOutputStream stream =
                     new FileOutputStream(file);
+
 
             bitmap.compress(
                     Bitmap.CompressFormat.PNG,
@@ -232,11 +251,13 @@ public class PosterPagerAdapter  extends RecyclerView.Adapter<PosterPagerAdapter
 
             stream.close();
 
+
             Uri uri = FileProvider.getUriForFile(
                     context,
                     context.getPackageName() + ".provider",
                     file
             );
+
 
             Intent shareIntent =
                     new Intent(Intent.ACTION_SEND);
@@ -252,6 +273,7 @@ public class PosterPagerAdapter  extends RecyclerView.Adapter<PosterPagerAdapter
                     Intent.FLAG_GRANT_READ_URI_PERMISSION
             );
 
+
             context.startActivity(
                     Intent.createChooser(
                             shareIntent,
@@ -259,7 +281,8 @@ public class PosterPagerAdapter  extends RecyclerView.Adapter<PosterPagerAdapter
                     )
             );
 
-        } catch (Exception e) {
+
+        } catch(Exception e){
 
             e.printStackTrace();
 
@@ -274,14 +297,33 @@ public class PosterPagerAdapter  extends RecyclerView.Adapter<PosterPagerAdapter
     private void downloadPoster(View itemView) {
         try {
 
+            ImageView btnShare = itemView.findViewById(R.id.btnShare);
+            ImageView btnDownload = itemView.findViewById(R.id.btnDownload);
+
+
+            // hide icons
+            btnShare.setVisibility(View.GONE);
+            btnDownload.setVisibility(View.GONE);
+
+
+
             Bitmap bitmap = Bitmap.createBitmap(
                     itemView.getWidth(),
                     itemView.getHeight(),
                     Bitmap.Config.ARGB_8888
             );
 
+
             Canvas canvas = new Canvas(bitmap);
             itemView.draw(canvas);
+
+
+
+            // show icons back
+            btnShare.setVisibility(View.VISIBLE);
+            btnDownload.setVisibility(View.VISIBLE);
+
+
 
             MediaStore.Images.Media.insertImage(
                     context.getContentResolver(),
@@ -290,13 +332,15 @@ public class PosterPagerAdapter  extends RecyclerView.Adapter<PosterPagerAdapter
                     "Ayyappa Poster"
             );
 
+
             Toast.makeText(
                     context,
                     "Poster Downloaded Successfully",
                     Toast.LENGTH_SHORT
             ).show();
 
-        } catch (Exception e) {
+
+        } catch(Exception e){
 
             e.printStackTrace();
 

@@ -7,4 +7,6 @@
     <external-files-path
         name="pictures"
         path="Pictures/" />
+
+    <cache-path name="shared_videos" path="shared_videos/" />
 </paths>

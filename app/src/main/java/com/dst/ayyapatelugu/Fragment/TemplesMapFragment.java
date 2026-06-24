@@ -536,6 +536,13 @@ public class TemplesMapFragment extends Fragment implements OnMapReadyCallback {
 
                             // Save data to SharedPreferences for future use
                             SharedPreferenceManager.saveTempleData(getContext(), templeList);
+                            Intent i = new Intent(getActivity(),
+                                    LocationForegroundService.class);
+                            i.setAction("TEMPLE_ON");
+                            requireActivity().startService(i);
+                            Log.d("TempleService",
+                                    "Saved Temple Count = "
+                                            + templeList.size());
                         } else {
                             // Handle error
                         }
@@ -634,17 +641,15 @@ public class TemplesMapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onResume() {
         super.onResume();
-
+        Log.d("TempleService", "TEMPLE_ON sending");
         Intent i = new Intent(getActivity(), LocationForegroundService.class);
-        i.setAction("ANNADANAM_ON");
+        i.setAction("TEMPLE_ON");
         requireActivity().startService(i);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
-        Intent i = new Intent(getActivity(), LocationForegroundService.class);
-        requireActivity().stopService(i);
+        Log.d("TempleService", "TEMPLE_OFF sending");
     }
 }

@@ -18,11 +18,19 @@ import com.dst.ayyapatelugu.Fragment.TemplesMapFragment;
 public class AllAnadanamAdapter extends FragmentPagerAdapter {
     private Context myContext;
     int totalTabs;
+    String templeId;
+    String templeLat;
+    String templeLng;
 
-  public AllAnadanamAdapter(AnadanamActivity anadanamActivity, FragmentManager supportFragmentManager, int tabCount) {
+  public AllAnadanamAdapter(AnadanamActivity anadanamActivity, FragmentManager supportFragmentManager, int tabCount,  String templeId,
+                            String templeLat,
+                            String templeLng) {
         super(supportFragmentManager);
         myContext = anadanamActivity;
         this.totalTabs = tabCount;
+      this.templeId = templeId;
+      this.templeLat = templeLat;
+      this.templeLng = templeLng;
     }
 
     @NonNull

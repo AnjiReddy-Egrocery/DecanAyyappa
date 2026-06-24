@@ -21,6 +21,7 @@ import com.dst.ayyapatelugu.Model.VideoModel;
 import com.dst.ayyapatelugu.R;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
+
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.PlayerView;
 
@@ -35,6 +36,8 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
     Context context;
     List<VideoModel> list;
     String baseUrl;
+
+
 
 
 
@@ -145,9 +148,20 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
     }
 
 
+
     @Override
     public int getItemCount() {
         return list.size();
+    }
+
+    public void updateList(List<VideoModel> list){
+
+        this.list.clear();
+
+        this.list.addAll(list);
+
+        notifyDataSetChanged();
+
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -172,6 +186,9 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
             playerView.setControllerHideOnTouch(false);
 
             playerView.setControllerShowTimeoutMs(1000);
+            playerView.setShowFastForwardButton(true);
+            playerView.setShowRewindButton(true);
+
         }
 
         void bind(String url) {

@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,6 +76,10 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ImageAdapter.MyViewHolder holder, int position) {
+
+
+        Log.d("CHECK",
+                "POSITION=" + position);
 
         ImagesModel model = list.get(position);
 
@@ -349,13 +354,19 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
 
     @Override
     public int getItemCount() {
+        Log.d("ADAPTER_COUNT",
+                "COUNT = " + list.size());
         return list.size();
     }
 
     public void addData(List<ImagesModel> newList) {
         int start = list.size();
+
         list.addAll(newList);
-        notifyItemRangeInserted(start, newList.size());
+
+        notifyItemRangeInserted(
+                start,
+                newList.size());
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {

@@ -20,12 +20,20 @@ public class AllAyyappaTemplesAdapter extends FragmentPagerAdapter {
 
     private Context myContext;
     int totalTabs;
+    String templeId;
+    String lat;
+    String lng;
 
 
-    public AllAyyappaTemplesAdapter(ViewAllAyyappaTemplesActivity viewAllAyyappaTemplesActivity, FragmentManager supportFragmentManager, int tabCount) {
+    public AllAyyappaTemplesAdapter(ViewAllAyyappaTemplesActivity viewAllAyyappaTemplesActivity, FragmentManager supportFragmentManager, int tabCount,String templeId,
+                                    String lat,
+                                    String lng) {
         super(supportFragmentManager);
         myContext = viewAllAyyappaTemplesActivity;
         this.totalTabs = tabCount;
+        this.templeId = templeId;
+        this.lat = lat;
+        this.lng = lng;
     }
 
     @NonNull

@@ -205,7 +205,6 @@ public interface APiInterface {
             @Part("lastName") RequestBody lastName,
             @Part("emailId") RequestBody emailId,
             @Part("mobileNumber") RequestBody mobileNumber,
-            @Part("pwd") RequestBody pwd,
             @Part("isIOS") RequestBody isIOS
     );
 
@@ -233,9 +232,8 @@ public interface APiInterface {
                                             @Part("otp") RequestBody otp);
 
     @Multipart
-    @POST("APICalls/Users/userLogin")
-    Call<LoginDataResponse> LoginData(@Part("loginMobile") RequestBody loginMobile ,
-                                      @Part("loginPassword") RequestBody loginPassword);
+    @POST("APICalls/Users/userLoginWithoutPassword")
+    Call<LoginDataResponse> LoginData(@Part("loginMobile") RequestBody loginMobile );
 
     @FormUrlEncoded
     @POST("APICalls/Calendar/index")

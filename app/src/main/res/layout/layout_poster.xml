@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="1080dp"
+    android:layout_height="1920dp"
+    android:background="@android:color/transparent">
+
+    <RelativeLayout
+        android:id="@+id/bottomCard"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_gravity="bottom"
+        android:background="#FFFFFFFF">
+
+        <TextView
+            android:id="@+id/txtName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="40dp"
+            android:text="Anji Reddy"
+            android:textSize="32sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/txtDesignation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtName"
+            android:layout_marginStart="40dp"
+            android:text="Software Engineer"
+            android:textSize="20sp"/>
+
+        <ImageView
+            android:id="@+id/profileImage"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="40dp"
+            android:src="@drawable/userimage"
+            android:scaleType="centerCrop"/>
+    </RelativeLayout>
+
+</FrameLayout>

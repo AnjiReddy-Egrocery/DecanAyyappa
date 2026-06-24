@@ -3,7 +3,6 @@ package com.dst.ayyapatelugu.Model;
 public class VideoModel {
     private String videoId;
     private String video;
-
     private  String title;
     private String titleTelugu;
 

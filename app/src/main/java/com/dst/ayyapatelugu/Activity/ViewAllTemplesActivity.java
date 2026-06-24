@@ -82,11 +82,6 @@ public class ViewAllTemplesActivity extends AppCompatActivity {
 
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
-
-        tabLayout.addTab(tabLayout.newTab().setText("మ్యాప్"));
-        tabLayout.addTab(tabLayout.newTab().setText("దేవాలయాల"));
-        final AllTemplesAdapter adapter = new AllTemplesAdapter(ViewAllTemplesActivity.this, getSupportFragmentManager(), tabLayout.getTabCount());
-        viewPager.setAdapter(adapter);
         boolean openNearby =
                 getIntent().getBooleanExtra(
                         "OPEN_TEMPLE",
@@ -98,6 +93,22 @@ public class ViewAllTemplesActivity extends AppCompatActivity {
             viewPager.setCurrentItem(0);
 
         }
+        String templeId =
+                getIntent().getStringExtra("TEMPLE_ID");
+
+        String lat =
+                getIntent().getStringExtra("TEMPLE_LAT");
+
+        String lng =
+                getIntent().getStringExtra("TEMPLE_LNG");
+
+        tabLayout.addTab(tabLayout.newTab().setText("మ్యాప్"));
+        tabLayout.addTab(tabLayout.newTab().setText("దేవాలయాల"));
+        final AllTemplesAdapter adapter = new AllTemplesAdapter(ViewAllTemplesActivity.this, getSupportFragmentManager(), tabLayout.getTabCount(), templeId,
+                lat,
+                lng);
+        viewPager.setAdapter(adapter);
+
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
