@@ -5,15 +5,15 @@ plugins {
 }
 android {
     namespace 'com.dst.ayyapatelugu'
-    compileSdk 34
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.dst.ayyapatelugu"
-        minSdk 21
+        minSdk 23
         //noinspection EditedTargetSdkVersion
         targetSdk 35
-        versionCode 76
-        versionName '1.77'
+        versionCode 78
+        versionName '1.79'
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {
@@ -48,6 +48,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.7.6'
     implementation 'androidx.navigation:navigation-ui-ktx:2.7.6'
+    implementation 'androidx.media3:media3-ui:1.10.1'
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
 
@@ -109,8 +110,16 @@ dependencies {
 
     implementation 'com.github.sparrow007:CarouselRecyclerview:1.2.6'
 
+    implementation "androidx.media3:media3-common:1.4.1"
+    implementation "androidx.media3:media3-exoplayer:1.4.1"
     implementation "androidx.media3:media3-transformer:1.4.1"
     implementation "androidx.media3:media3-effect:1.4.1"
+    implementation "androidx.media3:media3-muxer:1.4.1"
+
+    // ఒకవేళ కింద ఉన్నవి కూడా ఉంటే వాటిని కూడా 1.4.1 కి మార్చండి
+    implementation "androidx.media3:media3-ui:1.4.1"
+
+
 
 }
 

@@ -197,6 +197,7 @@ public class PosterPagerAdapter  extends RecyclerView.Adapter<PosterPagerAdapter
         if (btnUploadDetails != null) {
             btnUploadDetails.setOnClickListener(v -> {
                 Intent intent = new Intent(context, UploadDetailsActivity.class);
+                intent.putExtra("from_activity", "images_list"); // 🛑 ఇది పెట్టాలి
                 context.startActivity(intent);
             });
         }

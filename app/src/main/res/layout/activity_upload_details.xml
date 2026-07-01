@@ -88,8 +88,8 @@
                     android:background="@drawable/back_ground"
                     android:hint="Designation"
                     android:paddingLeft="12dp"
-                    android:textColor="#fff"
-                    android:textColorHint="#000"
+                    android:textColor="#000"
+                    android:textColorHint="#fff"
                     android:inputType="text" />
 
                 <!-- BUTTON -->

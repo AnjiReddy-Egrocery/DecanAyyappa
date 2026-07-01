@@ -371,7 +371,21 @@ public class UploadDetailsActivity extends AppCompatActivity {
                             );
 
                     // Images API already loaded ayyaka adapter ki pampandi
-                    Intent intent = new Intent(UploadDetailsActivity.this,ImagesListActivity.class);
+                    String fromActivity = getIntent().getStringExtra("from_activity");
+
+                    Intent intent;
+                    if (fromActivity != null && fromActivity.equals("post_videos")) {
+                        // ఒకవేళ PostVideosActivity నుండి వస్తే అక్కడికే వెళ్తుంది (మీ క్లాస్ పేరు PostVideosActivity కాకపోతే మార్చుకోండి)
+                        try {
+                            intent = new Intent(UploadDetailsActivity.this, Class.forName("com.dst.ayyapatelugu.Activity.PostVideosActivity"));
+                        } catch (ClassNotFoundException e) {
+                            // క్లాస్ దొరకకపోతే సేఫ్ సైడ్ ImagesListActivity కి పంపుతుంది
+                            intent = new Intent(UploadDetailsActivity.this, ImagesListActivity.class);
+                        }
+                    } else {
+                        // డెఫాల్ట్ గా లేదా ImagesListActivity నుండి వస్తే ఇక్కడికి వెళ్తుంది
+                        intent = new Intent(UploadDetailsActivity.this, ImagesListActivity.class);
+                    }
 
                     intent.putExtra("flyer_name",
                            flyerName);
