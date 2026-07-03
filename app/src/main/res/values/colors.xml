@@ -5,4 +5,7 @@
     <color name="row_even">#333333</color>  <!-- Dark Grey -->
     <color name="row_odd">#444444</color>   <!-- Slightly Lighter Grey -->
     <color name="row_light_transparent">#30FFFFFF</color>  <!-- 40% transparent white -->
+
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
 </resources>

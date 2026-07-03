@@ -75,6 +75,7 @@ public class ProfileActivity extends AppCompatActivity {
     String firstname, lastname, email,mobile,flyername,flyerdesigination;
 
     String userId;
+    private static final int UCROP_REQUEST_CODE = 102;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -241,154 +242,74 @@ public class ProfileActivity extends AppCompatActivity {
 
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode != Activity.RESULT_OK) {
-            return;
+        if (resultCode == Activity.RESULT_OK) {
+            // కెమెరా లేదా గ్యాలరీ నుండి వచ్చినప్పుడు క్రాపింగ్ స్టార్ట్ చేయండి
+            if (requestCode == CAMERA_REQUEST || requestCode == GALLERY_REQUEST) {
+                Uri sourceUri = (requestCode == CAMERA_REQUEST) ? imageUri : data.getData();
+                startCrop(sourceUri);
+            }
+            // క్రాపింగ్ పూర్తయ్యాక రిజల్ట్ తీసుకోవడం
+            else if (requestCode == UCROP_REQUEST_CODE) {
+                final Uri resultUri = com.yalantis.ucrop.UCrop.getOutput(data);
+                if (resultUri != null) {
+                    handleCroppedImage(resultUri);
+                }
+            }
         }
+    }
 
+    private void startCrop(Uri uri) {
+        // 1. అవుట్‌పుట్ ఫైల్ నేమ్ క్రియేట్ చేయడం
+        String destinationFileName = "cropped_" + System.currentTimeMillis() + ".jpg";
+
+        // 2. UCrop ఇన్‌స్టాన్స్ క్రియేట్ చేయడం
+        com.yalantis.ucrop.UCrop uCrop = com.yalantis.ucrop.UCrop.of(uri, Uri.fromFile(new File(getCacheDir(), destinationFileName)));
+
+        // 3. UCrop ఆప్షన్స్ సెట్ చేయడం
+        com.yalantis.ucrop.UCrop.Options options = new com.yalantis.ucrop.UCrop.Options();
+
+        // థీమ్ మరియు రంగులు
+        options.setToolbarColor(android.graphics.Color.parseColor("#FF6600")); // టూల్ బార్ కలర్
+        options.setStatusBarColor(android.graphics.Color.parseColor("#E65100")); // స్టేటస్ బార్ కలర్
+        options.setActiveControlsWidgetColor(android.graphics.Color.parseColor("#FF6600")); // బటన్స్ హైలైట్ కలర్
+        options.setToolbarWidgetColor(android.graphics.Color.WHITE); // టూల్ బార్ ఐకాన్స్ కలర్
+
+        // క్రాపింగ్ సెట్టింగ్స్
+        options.setCircleDimmedLayer(true); // రౌండ్ క్రాపింగ్ కోసం
+        options.setShowCropGrid(true);      // గ్రిడ్ లైన్స్ చూపించడానికి
+        options.setFreeStyleCropEnabled(true); // యూజర్ ఫ్రీగా క్రాప్ చేయడానికి
+
+        // ఫుల్ స్క్రీన్ కోసం లేదా క్రాపింగ్ స్పేస్ కోసం
+        options.setHideBottomControls(false); // కింది ఆప్షన్స్ (Rotate/Crop) చూపించడానికి
+
+        // 4. యాస్పెక్ట్ రేషియో సెట్ చేయడం (స్క్వేర్ కోసం 1:1)
+        uCrop.withAspectRatio(1, 1);
+
+        // 5. ఆప్షన్స్ అప్లై చేసి స్టార్ట్ చేయడం
+        uCrop.withOptions(options);
+        uCrop.start(this, UCROP_REQUEST_CODE);
+    }
+    private void handleCroppedImage(Uri resultUri) {
         try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
+            File file = new File(getCacheDir(), (isFlyerImage ? "flyer_" : "profile_") + System.currentTimeMillis() + ".jpg");
 
-            Bitmap originalBitmap = null;
-
-            if (requestCode == CAMERA_REQUEST) {
-
-                if (imageUri != null) {
-
-                    originalBitmap =
-                            MediaStore.Images.Media.getBitmap(
-                                    getContentResolver(),
-                                    imageUri
-                            );
-
-                    Log.d("ImagePicker",
-                            "Camera Image Selected");
-                }
-
-            } else if (requestCode == GALLERY_REQUEST
-                    && data != null) {
-
-                imageUri = data.getData();
-
-                if (imageUri != null) {
-
-                    originalBitmap =
-                            MediaStore.Images.Media.getBitmap(
-                                    getContentResolver(),
-                                    imageUri
-                            );
-
-                    Log.d("ImagePicker",
-                            "Gallery Image Selected");
-                }
+            try (FileOutputStream fos = new FileOutputStream(file)) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fos);
+                fos.flush();
             }
 
-            if (originalBitmap == null) {
-
-                Toast.makeText(
-                        this,
-                        "Image load failed",
-                        Toast.LENGTH_SHORT
-                ).show();
-
-                return;
-            }
-
-            // Resize image
-            int maxWidth = 1024;
-            int maxHeight = 1024;
-
-            float ratio = Math.min(
-                    (float) maxWidth / originalBitmap.getWidth(),
-                    (float) maxHeight / originalBitmap.getHeight()
-            );
-
-            int width =
-                    Math.round(originalBitmap.getWidth() * ratio);
-
-            int height =
-                    Math.round(originalBitmap.getHeight() * ratio);
-
-            Bitmap resizedBitmap =
-                    Bitmap.createScaledBitmap(
-                            originalBitmap,
-                            width,
-                            height,
-                            true
-                    );
-
-            // Preview image
+            // ఇమేజ్ ప్రివ్యూ మరియు ఫైల్ సేవ్
             if (isFlyerImage) {
-
-                Glide.with(this)
-                        .load(resizedBitmap)
-                        .circleCrop()
-                        .into(imageFlyer);
-
-            } else {
-
-                Glide.with(this)
-                        .load(resizedBitmap)
-                        .circleCrop()
-                        .into(imageProfile);
-            }
-
-            // IMPORTANT: create different file names
-            File file;
-
-            if (isFlyerImage) {
-
-                file = new File(
-                        getCacheDir(),
-                        "flyer_" +
-                                System.currentTimeMillis()
-                                + ".jpg"
-                );
-
-            } else {
-
-                file = new File(
-                        getCacheDir(),
-                        "profile_" +
-                                System.currentTimeMillis()
-                                + ".jpg"
-                );
-            }
-
-            FileOutputStream fos =
-                    new FileOutputStream(file);
-
-            resizedBitmap.compress(
-                    Bitmap.CompressFormat.JPEG,
-                    70,
-                    fos
-            );
-
-            fos.flush();
-            fos.close();
-
-            if (isFlyerImage) {
-
                 flyerImageFile = file;
-
-                Log.d("FLYER_FILE",
-                        flyerImageFile.getAbsolutePath());
-
+                Glide.with(this).load(resultUri).circleCrop().into(imageFlyer);
             } else {
-
                 profileImageFile = file;
-
-                Log.d("PROFILE_FILE",
-                        profileImageFile.getAbsolutePath());
+                Glide.with(this).load(resultUri).circleCrop().into(imageProfile);
             }
 
-        } catch (Exception e) {
-
+        } catch (IOException e) {
             e.printStackTrace();
-
-            Toast.makeText(
-                    this,
-                    "Image processing failed",
-                    Toast.LENGTH_SHORT
-            ).show();
         }
     }
 

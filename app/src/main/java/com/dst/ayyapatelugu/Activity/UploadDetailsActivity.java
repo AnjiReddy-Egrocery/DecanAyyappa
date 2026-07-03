@@ -70,6 +70,7 @@ public class UploadDetailsActivity extends AppCompatActivity {
     String userId;
 
     Toolbar toolbar;
+    private static final int UCROP_REQUEST_CODE = 102;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -249,6 +250,35 @@ public class UploadDetailsActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == Activity.RESULT_OK) {
+            // 1. కెమెరా లేదా గ్యాలరీ నుండి ఇమేజ్ వచ్చినప్పుడు - క్రాపింగ్ స్టార్ట్ చేయండి
+            if (requestCode == CAMERA_REQUEST || requestCode == GALLERY_REQUEST) {
+                Uri sourceUri = (requestCode == CAMERA_REQUEST) ? imageUri : data.getData();
+                startCrop(sourceUri);
+            }
+            // 2. క్రాపింగ్ పూర్తయ్యాక వచ్చే రిజల్ట్
+            else if (requestCode == UCROP_REQUEST_CODE) {
+                final Uri resultUri = com.yalantis.ucrop.UCrop.getOutput(data);
+                if (resultUri != null) {
+                    // ఇమేజ్ ని Glide తో డిస్‌ప్లే చేయడం
+                    Glide.with(this)
+                            .load(resultUri)
+                            .placeholder(R.drawable.ayyapa_image)
+                            .error(R.drawable.ayyapa_image)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .signature(new ObjectKey(System.currentTimeMillis()))
+                            .circleCrop()
+                            .into(imageProfile);
+
+                    // ఫైల్‌గా సేవ్ చేయడం (సర్వర్‌కి పంపడానికి)
+                    saveCroppedImageToFile(resultUri);
+                }
+            }
+        } else if (resultCode == com.yalantis.ucrop.UCrop.RESULT_ERROR) {
+            final Throwable cropError = com.yalantis.ucrop.UCrop.getError(data);
+            Toast.makeText(this, "Cropping Failed: " + cropError.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
+       /* if (resultCode == Activity.RESULT_OK) {
             try {
                 Bitmap originalBitmap = null;
 
@@ -304,9 +334,52 @@ public class UploadDetailsActivity extends AppCompatActivity {
                 e.printStackTrace();
                 Toast.makeText(UploadDetailsActivity.this, "Image processing failed", Toast.LENGTH_SHORT).show();
             }
-        }
+        }*/
     }
 
+    private void startCrop(Uri uri) {
+        // 1. అవుట్‌పుట్ ఫైల్ నేమ్ క్రియేట్ చేయడం
+        String destinationFileName = "cropped_" + System.currentTimeMillis() + ".jpg";
+
+        // 2. UCrop ఇన్‌స్టాన్స్ క్రియేట్ చేయడం
+        com.yalantis.ucrop.UCrop uCrop = com.yalantis.ucrop.UCrop.of(uri, Uri.fromFile(new File(getCacheDir(), destinationFileName)));
+
+        // 3. UCrop ఆప్షన్స్ సెట్ చేయడం
+        com.yalantis.ucrop.UCrop.Options options = new com.yalantis.ucrop.UCrop.Options();
+
+        // థీమ్ మరియు రంగులు
+        options.setToolbarColor(android.graphics.Color.parseColor("#FF6600")); // టూల్ బార్ కలర్
+        options.setStatusBarColor(android.graphics.Color.parseColor("#E65100")); // స్టేటస్ బార్ కలర్
+        options.setActiveControlsWidgetColor(android.graphics.Color.parseColor("#FF6600")); // బటన్స్ హైలైట్ కలర్
+        options.setToolbarWidgetColor(android.graphics.Color.WHITE); // టూల్ బార్ ఐకాన్స్ కలర్
+
+        // క్రాపింగ్ సెట్టింగ్స్
+        options.setCircleDimmedLayer(true); // రౌండ్ క్రాపింగ్ కోసం
+        options.setShowCropGrid(true);      // గ్రిడ్ లైన్స్ చూపించడానికి
+        options.setFreeStyleCropEnabled(true); // యూజర్ ఫ్రీగా క్రాప్ చేయడానికి
+
+        // ఫుల్ స్క్రీన్ కోసం లేదా క్రాపింగ్ స్పేస్ కోసం
+        options.setHideBottomControls(false); // కింది ఆప్షన్స్ (Rotate/Crop) చూపించడానికి
+
+        // 4. యాస్పెక్ట్ రేషియో సెట్ చేయడం (స్క్వేర్ కోసం 1:1)
+        uCrop.withAspectRatio(1, 1);
+
+        // 5. ఆప్షన్స్ అప్లై చేసి స్టార్ట్ చేయడం
+        uCrop.withOptions(options);
+        uCrop.start(this, UCROP_REQUEST_CODE);
+    }
+    private void saveCroppedImageToFile(Uri uri) {
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+            imageFile = new File(getCacheDir(), "final_image.jpg");
+            try (FileOutputStream fos = new FileOutputStream(imageFile)) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fos);
+                fos.flush();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void updateMethod(String userId, String name, String desigination, File imageFile) {
 

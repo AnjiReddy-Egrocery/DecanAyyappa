@@ -12,8 +12,8 @@ android {
         minSdk 23
         //noinspection EditedTargetSdkVersion
         targetSdk 35
-        versionCode 78
-        versionName '1.79'
+        versionCode 79
+        versionName '1.80'
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {
@@ -118,6 +118,8 @@ dependencies {
 
     // ఒకవేళ కింద ఉన్నవి కూడా ఉంటే వాటిని కూడా 1.4.1 కి మార్చండి
     implementation "androidx.media3:media3-ui:1.4.1"
+
+    implementation 'com.github.yalantis:ucrop:2.2.8'
 
 
 

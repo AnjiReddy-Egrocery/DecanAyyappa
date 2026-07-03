@@ -1,152 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#000000">
 
-    <!-- 1 & 2. వీడియో మరియు పోస్టర్ ఉండే మెయిన్ బాడీ (కార్డు పోగా మిగిలిన స్పేస్ మొత్తం తీసుకుంటుంది) -->
-    <FrameLayout
+    <!-- వీడియో మరియు కార్డును సెంటర్‌లో ఉంచడానికి మెయిన్ కంటైనర్ -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:orientation="vertical">
 
-        <!-- ExoPlayer View (ఫుల్ స్క్రీన్ వీడియో) -->
+        <!-- 1. Full Screen Video Player -->
         <androidx.media3.ui.PlayerView
             android:id="@+id/playerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            app:resize_mode="fit"
             app:show_next_button="false"
             app:show_previous_button="false"
             android:keepScreenOn="true"
-            app:use_controller="true"
-            app:resize_mode="zoom"/>
+            app:use_controller="true" />
 
-        <!-- వీడియో ప్లే అయ్యే వరకు కనిపించే పోస్టర్ ఇమేజ్ -->
-        <ImageView
-            android:id="@+id/imgPoster"
+        <!-- 2. Profile Card (Bottom Layout) -->
+        <RelativeLayout
+            android:id="@+id/layoutBrandingCard"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:visibility="visible" />
+            android:layout_height="110dp"
+            android:background="#FFFFFF"
+            android:padding="12dp"
+            android:elevation="15dp">
 
-        <!-- 3. కుడి వైపు ఉండే బటన్స్ (షేర్ & డౌన్‌లోడ్) -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="end|bottom"
-            android:layout_marginEnd="12dp"
-            android:layout_marginBottom="20dp"
-            android:elevation="5dp">
+            <!-- Orange Top Line -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:layout_alignParentTop="true"
+                android:background="#FF6600"/>
 
-            <!-- SHARE -->
-            <ImageView
-                android:id="@+id/btnShare"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_marginBottom="15dp"
-                android:background="@drawable/circle_bg"
-                android:padding="10dp"
-                android:src="@drawable/baseline_share_24"/>
-
-            <!-- DOWNLOAD -->
-            <ImageView
-                android:id="@+id/btnDownload"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:background="@drawable/circle_bg"
-                android:padding="10dp"
-                android:src="@drawable/baseline_download_24"/>
-
-        </LinearLayout>
-
-    </FrameLayout>
-
-    <!-- 4. వీడియో కింద వచ్చే ప్రొఫైల్/బిజినెస్ కార్డ్ డిజైన్ (ఎక్కడా ఓవర్‌లాప్ అవ్వదు) -->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:background="#FFFFFF"
-        android:elevation="4dp"
-        android:padding="12dp">
-
-        <!-- Orange Top Line -->
-        <View
-            android:layout_width="120dp"
-            android:layout_height="5dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:background="#FF6600"/>
-
-        <!-- Orange Bottom Line -->
-        <View
-            android:layout_width="100dp"
-            android:layout_height="5dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:background="#FF6600"/>
-
-        <!-- Name & Designation -->
-        <LinearLayout
-            android:id="@+id/layoutText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_centerVertical="true"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/txtName"
+            <!-- Text Section -->
+            <LinearLayout
+                android:id="@+id/layoutText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:textStyle="bold"
-                android:textSize="22sp"
-                android:textColor="#222222"/>
+                android:layout_centerVertical="true"
+                android:layout_marginStart="15dp"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/txtDesignation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text=""
-                android:textSize="15sp"
-                android:textColor="#666666"/>
-            <Button
-                android:id="@+id/btnUploadDetails"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Upload Details Here"
-                android:layout_gravity="center"
-                android:textAllCaps="false"
-                android:textColor="#FFFFFF"
-                android:layout_marginBottom="12dp"
-                android:textSize="12sp"
-                android:backgroundTint="#FF6600"/>
+                <TextView
+                    android:id="@+id/txtName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="#222222"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
+                <TextView
+                    android:id="@+id/txtDesignation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text=""
+                    android:textColor="#666666"
+                    android:textSize="12sp" />
 
-        </LinearLayout>
+                <Button
+                    android:id="@+id/btnUploadDetails"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="5dp"
+                    android:backgroundTint="#FF6600"
+                    android:text="Upload Details"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="10sp" />
+            </LinearLayout>
 
-        <!-- Profile Circle -->
-        <FrameLayout
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="15dp">
-
+            <!-- Profile Image -->
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profileImage"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:layout_gravity="center"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="15dp"
                 android:src="@drawable/userimage" />
 
-        </FrameLayout>
+            <!-- Orange Bottom Line -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:layout_alignParentBottom="true"
+                android:background="#FF6600"/>
 
-    </RelativeLayout>
+        </RelativeLayout>
+    </LinearLayout>
 
-</LinearLayout>
+    <!-- 3. Right Side Buttons (Video పైన ఓవర్లే) -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="10dp"
+        android:orientation="vertical"
+        android:elevation="10dp">
+
+        <ImageView
+            android:id="@+id/btnShare"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginBottom="15dp"
+            android:background="@drawable/circle_bg"
+            android:padding="10dp"
+            android:src="@drawable/baseline_share_24"/>
+
+        <ImageView
+            android:id="@+id/btnDownload"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="@drawable/circle_bg"
+            android:padding="10dp"
+            android:src="@drawable/baseline_download_24"/>
+    </LinearLayout>
+
+</RelativeLayout>

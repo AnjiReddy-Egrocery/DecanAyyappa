@@ -41,6 +41,10 @@
             android:name=".Activity.UploadDetailsActivity"
             android:exported="false" />
         <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MyUCropTheme" />
+        <activity
             android:name=".Activity.SettingsActivity"
             android:exported="false" />
         <activity

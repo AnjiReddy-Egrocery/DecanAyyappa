@@ -342,7 +342,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         PlayerView playerView;
         public ExoPlayer player; //  androidx.media3.exoplayer.ExoPlayer గా మార్చబడింది
-        ImageView imageShare, imageDownload, imgPoster;
+        ImageView imageShare, imageDownload;
         TextView txtName, txtDesignation;
         CircleImageView profileImage;
         Button btnUploadDetails;
@@ -353,7 +353,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
             playerView = itemView.findViewById(R.id.playerView);
             imageShare = itemView.findViewById(R.id.btnShare);
             imageDownload = itemView.findViewById(R.id.btnDownload);
-            imgPoster = itemView.findViewById(R.id.imgPoster);
+
 
             txtName = itemView.findViewById(R.id.txtName);
             txtDesignation = itemView.findViewById(R.id.txtDesignation);
@@ -372,11 +372,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
                     player = null;
                 }
 
-                imgPoster.setVisibility(View.VISIBLE);
 
-                Glide.with(itemView.getContext())
-                        .load(videoUrl)
-                        .into(imgPoster);
 
                 // 🛑 ఇక్కడ మార్చాము: flyerPic ఖాళీగా ఉంటే బటన్ రాకుండా డిఫాల్ట్ ఇమేజ్ సెట్ అవుతుంది
                 if (hasData) {
@@ -427,7 +423,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
                     @Override
                     public void onIsPlayingChanged(boolean isPlaying) {
                         if (isPlaying) {
-                            imgPoster.setVisibility(View.GONE);
+                            //imgPoster.setVisibility(View.GONE);
                         }
                     }
                 });
