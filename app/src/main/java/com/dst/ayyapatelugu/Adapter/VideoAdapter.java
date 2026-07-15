@@ -109,7 +109,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
 
             // టెక్స్ట్ వ్యూ (వీడియోను ప్రాసెస్ అవుతుంది...)
             android.widget.TextView textView = new android.widget.TextView(context);
-            textView.setText("వీడియోను ప్రాసెస్ అవుతుంది...");
+            textView.setText("వీడియో ప్రాసెస్ అవుతుంది...");
             textView.setTextColor(android.graphics.Color.parseColor("#222222"));
             textView.setTextSize(18f);
             textView.setTypeface(null, android.graphics.Typeface.BOLD);
@@ -186,7 +186,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
             layout.setGravity(android.view.Gravity.CENTER);
 
             android.widget.TextView textView = new android.widget.TextView(context);
-            textView.setText("వీడియోను ప్రాసెస్ అవుతుంది...");
+            textView.setText("వీడియో ప్రాసెస్ అవుతుంది...");
             textView.setTextColor(android.graphics.Color.parseColor("#222222"));
             textView.setTextSize(18f);
             textView.setTypeface(null, android.graphics.Typeface.BOLD);

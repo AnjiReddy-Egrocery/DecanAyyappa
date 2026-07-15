@@ -208,10 +208,7 @@ public class AyyapaKarmaDetailsActivity extends AppCompatActivity {
 
                         String fullImageUrl = data.imageUrl + item.image;
 
-                        fullImageUrl = fullImageUrl.replace(
-                                "https://www.ayyappatelugu.com/",
-                                "https://www.ayyappatelugu.com/public/"
-                        );
+
 
                         Log.d("IMAGE_DEBUG", "Final URL: " + fullImageUrl);
 

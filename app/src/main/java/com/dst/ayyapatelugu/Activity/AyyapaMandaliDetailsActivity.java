@@ -202,10 +202,7 @@ public class AyyapaMandaliDetailsActivity extends AppCompatActivity {
 
                         String fullImageUrl = data.imageUrl + item.profilePic;
 
-                        fullImageUrl = fullImageUrl.replace(
-                                "https://www.ayyappatelugu.com/",
-                                "https://www.ayyappatelugu.com/public/"
-                        );
+
 
                         Log.d("IMAGE_DEBUG", "Final URL: " + fullImageUrl);
 

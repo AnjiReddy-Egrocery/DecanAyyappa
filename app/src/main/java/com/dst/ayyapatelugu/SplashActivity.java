@@ -25,6 +25,7 @@ import com.dst.ayyapatelugu.Activity.PanchagamActivity;
 import com.dst.ayyapatelugu.Activity.PostVideosActivity;
 import com.dst.ayyapatelugu.Activity.ProductDetailsActivity;
 import com.dst.ayyapatelugu.Activity.TeluguCalenderActivity;
+import com.dst.ayyapatelugu.Activity.UpdateActivity;
 import com.dst.ayyapatelugu.Activity.ViewAllNewsDetailsActivity;
 import com.dst.ayyapatelugu.Activity.ViewAnadanamDetailsActivity;
 import com.dst.ayyapatelugu.Activity.ViewTempleListDetailsActivity;
@@ -55,6 +56,13 @@ public class SplashActivity extends AppCompatActivity {
                     boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
 
                     Intent incomingIntent = getIntent();
+                    String notificationFor = incomingIntent.getStringExtra("notificationFor");
+
+                    String features = incomingIntent.getStringExtra("features");
+
+                    Log.d("FCM_DEBUG", "notificationFor = " + notificationFor);
+
+                    Log.d("FCM_DEBUG", "features = " + features);
                     String newsId = incomingIntent.getStringExtra("newsId");
                     String guruswamiId = incomingIntent.getStringExtra("guruswamiId");
                     String bajanamandaliId = incomingIntent.getStringExtra("bajanamandaliId");
@@ -78,7 +86,15 @@ public class SplashActivity extends AppCompatActivity {
 
                     Intent intent;
 
-                    if (newsId != null && !newsId.isEmpty()) {
+                    if ("appupdate".equals(notificationFor)) {
+
+                        intent = new Intent(SplashActivity.this, UpdateActivity.class);
+
+                        intent.putExtra("features", features);
+
+                        Log.d("FCM_DEBUG", "Opening UpdateActivity");
+                    }
+                     else if (newsId != null && !newsId.isEmpty()) {
                         // 🔥 Direct ga News Details ki vellali
                         intent = new Intent(SplashActivity.this, ViewAllNewsDetailsActivity.class);
                         intent.putExtra("newsId", newsId);

@@ -172,10 +172,7 @@ public class BlogDetailsActivity extends AppCompatActivity {
                         // ✅ Image
                         String fullImageUrl = res.getImageUrl() + item.getImage();
 
-                        fullImageUrl = fullImageUrl.replace(
-                                "https://www.ayyappatelugu.com/",
-                                "https://www.ayyappatelugu.com/public/"
-                        );
+
 
 
                         Log.d("FCM_DEBUG", "Final: " + fullImageUrl);

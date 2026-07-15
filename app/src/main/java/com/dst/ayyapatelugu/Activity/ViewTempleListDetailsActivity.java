@@ -125,12 +125,12 @@ public class ViewTempleListDetailsActivity extends AppCompatActivity {
         String village = bundle.getString("Location");
         String imagePath = bundle.getString("imagePath");
 
-        /*txtname.setText(dname);
+        txtname.setText(dname);
         txttname.setText(fname);
         txtstarttime.setText(city);
         txtendTime.setText(Specilization);
         txtlocation.setText(village);
-        Picasso.get().load(imagePath).into(imageView);*/
+        Picasso.get().load(imagePath).into(imageView);
 
         loadTempleDetails(templeId);
 

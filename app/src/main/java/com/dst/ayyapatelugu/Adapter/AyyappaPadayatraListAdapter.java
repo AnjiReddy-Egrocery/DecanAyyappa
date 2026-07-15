@@ -47,7 +47,7 @@ public class AyyappaPadayatraListAdapter extends RecyclerView.Adapter<AyyappaPad
     @Override
     public void onBindViewHolder(AyyappaPadayatraListAdapter.MyviewHolder holder, int position) {
         PadayatraBrundam padayatraBrundam = padayatraList.get(position);
-        String imgUrl = "https://www.ayyappatelugu.com/public/assets/img/padayatrabrundams/" + padayatraBrundam.getImage();
+        String imgUrl = "https://www.ayyappatelugu.com/public/assets/uploads/padayatrabrundams/" + padayatraBrundam.getImage();
         String name = padayatraBrundam.getPadayatrabrundamTelugu();
 
         holder.tvtitle.setText(name);

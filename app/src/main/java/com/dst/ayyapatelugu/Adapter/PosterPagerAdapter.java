@@ -39,6 +39,8 @@ public class PosterPagerAdapter  extends RecyclerView.Adapter<PosterPagerAdapter
     String flyerDesignation;
     String flyerPic;
 
+
+
     public PosterPagerAdapter(Context context,
                               String imageUrl,
                               String flyerName,

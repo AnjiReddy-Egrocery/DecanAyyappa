@@ -35,6 +35,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".Activity.UpdateActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activity.ProfileActivity"
             android:exported="false" />
         <activity
@@ -194,11 +197,11 @@
         <activity
             android:name=".User.RegisterActivity"
             android:exported="true"
-            android:windowSoftInputMode="stateHidden|adjustResize"/>
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".User.LoginActivity"
             android:exported="false"
-            android:windowSoftInputMode="stateHidden|adjustResize"/>
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".SplashActivity"
             android:exported="true">

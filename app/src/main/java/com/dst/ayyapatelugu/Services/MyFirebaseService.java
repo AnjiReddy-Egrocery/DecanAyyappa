@@ -27,6 +27,7 @@ import com.dst.ayyapatelugu.Activity.PanchagamActivity;
 import com.dst.ayyapatelugu.Activity.PostVideosActivity;
 import com.dst.ayyapatelugu.Activity.ProductDetailsActivity;
 import com.dst.ayyapatelugu.Activity.TeluguCalenderActivity;
+import com.dst.ayyapatelugu.Activity.UpdateActivity;
 import com.dst.ayyapatelugu.Activity.ViewAllNewsDetailsActivity;
 import com.dst.ayyapatelugu.Activity.ViewAllNewsListActivity;
 import com.dst.ayyapatelugu.Activity.ViewAllTemplesActivity;
@@ -329,6 +330,15 @@ public class MyFirebaseService extends FirebaseMessagingService {
                     intent = new Intent(this, PostVideosActivity.class);
 
                     intent.putExtra("videos", "true");
+
+                    break;
+
+                case "appupdate":
+
+                    intent = new Intent(this, UpdateActivity.class);
+
+                    intent.putExtra("version", message.getData().get("version"));
+                    intent.putExtra("features", message.getData().get("features"));
 
                     break;
 

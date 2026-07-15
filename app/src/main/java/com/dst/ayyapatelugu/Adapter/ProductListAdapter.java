@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.dst.ayyapatelugu.Activity.AyyapaMandaliDetailsActivity;
 import com.dst.ayyapatelugu.Activity.AyyappaMandaliListActivity;
 import com.dst.ayyapatelugu.Activity.ProductDetailsActivity;
@@ -56,7 +57,9 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
         Log.d("Image URL", "Image URL: " + imgUrl);
 
         // Load the image using the custom loader
-        ImageLoader.loadImage(mContext, imgUrl, holder.image);
+        Glide.with(mContext)
+                .load(imgUrl)
+                .into(holder.image);
 
         String id = modal.getProductId();
 
