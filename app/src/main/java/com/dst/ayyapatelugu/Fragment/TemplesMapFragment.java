@@ -328,6 +328,7 @@ public class TemplesMapFragment extends Fragment implements OnMapReadyCallback {
             displayCurrentUserLocation();
             setupMarkerClickListeners();
             fetchLocationDataAndAddMarkers();
+            startTempleTracking();
         } else {
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -348,6 +349,22 @@ public class TemplesMapFragment extends Fragment implements OnMapReadyCallback {
                 }
             }
         });
+    }
+
+    private void startTempleTracking() {
+        Intent i =
+                new Intent(
+                        requireContext(),
+                        LocationForegroundService.class
+                );
+
+        i.setAction("TEMPLE_ON");
+
+
+        ContextCompat.startForegroundService(
+                requireContext(),
+                i
+        );
     }
 
 
@@ -638,18 +655,23 @@ public class TemplesMapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("TempleService", "TEMPLE_ON sending");
-        Intent i = new Intent(getActivity(), LocationForegroundService.class);
-        i.setAction("TEMPLE_ON");
-        requireActivity().startService(i);
-    }
+
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.d("TempleService", "TEMPLE_OFF sending");
+        Intent i =
+                new Intent(
+                        requireContext(),
+                        LocationForegroundService.class
+                );
+
+        i.setAction("TEMPLE_OFF");
+
+
+        ContextCompat.startForegroundService(
+                requireContext(),
+                i
+        );
     }
 }

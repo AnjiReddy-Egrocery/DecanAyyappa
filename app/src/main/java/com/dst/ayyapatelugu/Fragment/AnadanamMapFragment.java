@@ -174,6 +174,7 @@ public class AnadanamMapFragment extends Fragment implements OnMapReadyCallback 
             setupMarkerClicks();
             displayCurrentUserLocation();
             fetchLocationData();
+            startAnnadanamTracking();
         }
 
         float savedZoom = SharedPreferenceHelper.getZoomLevel(getContext());
@@ -183,6 +184,23 @@ public class AnadanamMapFragment extends Fragment implements OnMapReadyCallback 
             currentZoomLevel = mMap.getCameraPosition().zoom;
             SharedPreferenceHelper.setZoomLevel(getContext(), currentZoomLevel);
         });
+    }
+
+    private void startAnnadanamTracking() {
+        Intent i =
+                new Intent(
+                        requireContext(),
+                        LocationForegroundService.class
+                );
+
+        i.setAction("ANNADANAM_ON");
+
+
+        ContextCompat.startForegroundService(
+                requireContext(),
+                i
+        );
+
     }
 
     private void getCurrentLocation() {
@@ -509,20 +527,26 @@ public class AnadanamMapFragment extends Fragment implements OnMapReadyCallback 
         } catch (Exception e) { return t; }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        Intent i = new Intent(getActivity(), LocationForegroundService.class);
-        i.setAction("ANNADANAM_ON");
-        requireActivity().startService(i);
-    }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        Log.d("TempleService", "TEMPLE_OFF sending");
+
+        Intent i =
+                new Intent(
+                        requireContext(),
+                        LocationForegroundService.class
+                );
+
+        i.setAction("ANNADANAM_OFF");
+
+
+        ContextCompat.startForegroundService(
+                requireContext(),
+                i
+        );
+
     }
 }
 

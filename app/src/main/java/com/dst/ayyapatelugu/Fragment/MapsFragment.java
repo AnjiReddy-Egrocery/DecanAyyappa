@@ -327,7 +327,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             mMap.setMyLocationEnabled(true);
             displayCurrentUserLocation();
             setupMarkerClickListeners();
-            fetchLocationDataAndAddMarkers();        } else {
+            fetchLocationDataAndAddMarkers();
+            startAyyappaTempleTracking();
+        } else {
             // Request location permissions here
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -349,6 +351,22 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                 }
             }
         });
+    }
+
+    private void startAyyappaTempleTracking() {
+        Intent i =
+                new Intent(
+                        requireContext(),
+                        LocationForegroundService.class
+                );
+
+        i.setAction("AYYAPPA_ON");
+
+
+        ContextCompat.startForegroundService(
+                requireContext(),
+                i
+        );
     }
 
 
@@ -665,19 +683,23 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
 
-        Intent i = new Intent(requireContext(),
-                LocationForegroundService.class);
-        i.setAction("AYYAPPA_ON");
-        requireContext().startService(i);
-    }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.d("TempleService", "TEMPLE_OFF sending");
+        Intent i =
+                new Intent(
+                        requireContext(),
+                        LocationForegroundService.class
+                );
+
+        i.setAction("AYYAPPA_OFF");
+
+
+        ContextCompat.startForegroundService(
+                requireContext(),
+                i
+        );
     }
 }

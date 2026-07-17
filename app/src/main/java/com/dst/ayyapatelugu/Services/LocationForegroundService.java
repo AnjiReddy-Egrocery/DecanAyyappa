@@ -43,7 +43,7 @@ public class LocationForegroundService extends Service {
     private boolean isAyyappaMapActive = false;
 
     // 🔥 Prevent duplicate in same session
-    private Set<String> notified = new HashSet<>();
+    /*private Set<String> notified = new HashSet<>();*/
 
     @Override
     public void onCreate() {
@@ -53,6 +53,8 @@ public class LocationForegroundService extends Service {
         startForeground(1, buildForegroundNotification());
 
         client = LocationServices.getFusedLocationProviderClient(this);
+
+
 
         startLocationUpdates();
         startChecker();
@@ -67,34 +69,57 @@ public class LocationForegroundService extends Service {
             switch (intent.getAction()) {
 
                 case "ANNADANAM_ON":
+
                     isAnnadanamMapActive = true;
 
-                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+
+                    // First try cached location (fast)
+                    client.getLastLocation()
+                            .addOnSuccessListener(location -> {
 
 
-                        client.getCurrentLocation(
-                                Priority.PRIORITY_HIGH_ACCURACY,
-                                null
-                        ).addOnSuccessListener(location -> {
+                                if(location != null){
+
+                                    Log.d(
+                                            "TempleService",
+                                            "Last Location Checking Annadanam"
+                                    );
 
 
-                            if(location != null){
-
-                                Log.d(
-                                        "TempleService",
-                                        "Checking nearby Annadanam"
-                                );
+                                    checkAnnadanam(location);
 
 
-                                checkAnnadanam(location);
-
-                            }
-
-
-                        });
+                                }
+                                else {
 
 
-                    },1000);
+                                    // If last location unavailable
+                                    client.getCurrentLocation(
+                                            Priority.PRIORITY_HIGH_ACCURACY,
+                                            null
+                                    ).addOnSuccessListener(currentLocation -> {
+
+
+                                        if(currentLocation != null){
+
+                                            Log.d(
+                                                    "TempleService",
+                                                    "Current Location Checking Annadanam"
+                                            );
+
+
+                                            checkAnnadanam(currentLocation);
+
+                                        }
+
+
+                                    });
+
+
+                                }
+
+
+                            });
 
 
                     break;
@@ -103,22 +128,53 @@ public class LocationForegroundService extends Service {
 
                     isTempleMapActive = true;
 
-                    Log.d("TempleService", "TEMPLE_ON received");
+                    client.getLastLocation()
+                            .addOnSuccessListener(location -> {
 
 
-                    client.getCurrentLocation(
-                            Priority.PRIORITY_HIGH_ACCURACY,
-                            null
-                    ).addOnSuccessListener(location -> {
+                                if(location != null){
+
+                                    Log.d(
+                                            "TempleService",
+                                            "Last Location Checking Annadanam"
+                                    );
 
 
-                        if(location != null){
+                                    checkTemples(location);
 
-                            checkTemples(location);
 
-                        }
+                                }
+                                else {
 
-                    });
+
+                                    // If last location unavailable
+                                    client.getCurrentLocation(
+                                            Priority.PRIORITY_HIGH_ACCURACY,
+                                            null
+                                    ).addOnSuccessListener(currentLocation -> {
+
+
+                                        if(currentLocation != null){
+
+                                            Log.d(
+                                                    "TempleService",
+                                                    "Current Location Checking Annadanam"
+                                            );
+
+
+                                            checkTemples(location);
+
+
+                                        }
+
+
+                                    });
+
+
+                                }
+
+
+                            });
 
 
                     break;
@@ -128,25 +184,55 @@ public class LocationForegroundService extends Service {
                     isAyyappaMapActive = true;
 
 
-                    Log.d(
-                            "TempleService",
-                            "AYYAPPA_ON received"
-                    );
+                    client.getLastLocation()
+                            .addOnSuccessListener(location -> {
 
 
-                    client.getCurrentLocation(
-                            Priority.PRIORITY_HIGH_ACCURACY,
-                            null
-                    ).addOnSuccessListener(location -> {
+                                if(location != null){
+
+                                    Log.d(
+                                            "TempleService",
+                                            "Last Location Checking Annadanam"
+                                    );
 
 
-                        if(location != null){
+                                    checkAyyappa(location);
 
-                            checkAyyappa(location);
 
-                        }
+                                }
+                                else {
 
-                    });
+
+                                    // If last location unavailable
+                                    client.getCurrentLocation(
+                                            Priority.PRIORITY_HIGH_ACCURACY,
+                                            null
+                                    ).addOnSuccessListener(currentLocation -> {
+
+
+                                        if(currentLocation != null){
+
+                                            Log.d(
+                                                    "TempleService",
+                                                    "Current Location Checking Annadanam"
+                                            );
+
+
+                                            checkAyyappa(location);
+
+
+                                        }
+
+
+                                    });
+
+
+                                }
+
+
+                            });
+
+
 
 
                     break;
@@ -246,19 +332,23 @@ public class LocationForegroundService extends Service {
                             }
                         });
 
-                    }, 5000);
+                    }, 1000);
 
             return;
         }
 
+        ArrayList<MapDataResponse.Result> nearbyList = new ArrayList<>();
+
         for (MapDataResponse.Result item : list) {
 
-            String key = "A_" + item.getAnnadhanamId();
-
-            if (notified.contains(key))
-                continue;
+//            String key = "A_" + item.getAnnadhanamId();
+//
+//            // Already notified అయితే skip
+//            if (notified.contains(key))
+//                continue;
 
             try {
+
                 float[] res = new float[1];
 
                 Location.distanceBetween(
@@ -270,36 +360,84 @@ public class LocationForegroundService extends Service {
                 );
 
                 if (res[0] <= ANNADANAM_DISTANCE) {
-                    sendAnnadanam(item, res[0]);
-                    notified.add(key);
+
+                    nearbyList.add(item);
+
+                    // తర్వాత duplicate notification రాకుండా
+
                 }
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
+        if (!nearbyList.isEmpty()) {
+
+            sendNearbyAnnadanamNotification(nearbyList);
+
+        }
+    }
+
+    private void sendNearbyAnnadanamNotification(ArrayList<MapDataResponse.Result> nearbyList) {
+
+        // Save nearby temples
+        SharedPreferenceHelper.saveNearbyAnnadanam(
+                this,
+                nearbyList
+        );
+
+
+        Intent intent =
+                new Intent(this, NearbyAnnadanamListActivity.class);
+
+        intent.putExtra("OPEN_NEARBY", true);
+
+        PendingIntent pi = PendingIntent.getActivity(
+                this,
+                500,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this, CHANNEL_ANNADANAM)
+                        .setSmallIcon(R.drawable.ic_launcher_foreground)
+                        .setContentTitle("\uD83D\uDE4F అన్నదానం నిర్వహించే దేవాలయాలు ")
+                        .setContentText("మీ సమీపంలో "
+                                + nearbyList.size()
+                                + " దేవాలయాలు అందుబాటులో ఉన్నాయి.\n"
+                                + "వివరాల కోసం క్లిక్ చేయండి."
+                        )
+                        .setStyle(new NotificationCompat.BigTextStyle()
+                                .bigText(nearbyList.size() + " Annadanam temples are within 5 KM.\nTap to view the complete list."))
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setAutoCancel(true)
+                        .setContentIntent(pi);
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        NotificationManagerCompat.from(this)
+                .notify(1001, builder.build());
     }
 
     // ================= TEMPLE =================
     private void checkTemples(Location loc) {
-
-        Log.d("TempleService",
-                "isTempleMapActive = " + isTempleMapActive);
 
         if (!isTempleMapActive) return;
 
         List<TempleMapDataResponse.Result> list =
                 SharedPreferenceManager.getTempleData(this);
 
-        Log.d("TempleService",
-                "Temple List Size = " +
-                        (list == null ? "NULL" : list.size()));
-
-        // 👇 Ee block ikkada pettali
         if (list == null || list.isEmpty()) {
 
             Log.d("TempleService",
-                    "Temple data not available. Retry after 5 sec.");
+                    "Annadanam data not available. Retry after 5 sec.");
 
             new Handler(Looper.getMainLooper())
                     .postDelayed(() -> {
@@ -314,17 +452,20 @@ public class LocationForegroundService extends Service {
                             }
                         });
 
-                    }, 5000);
+                    }, 1000);
 
             return;
         }
 
+        ArrayList<TempleMapDataResponse.Result> nearbyList = new ArrayList<>();
+
         for (TempleMapDataResponse.Result item : list) {
 
-            String key = "T_" + item.getTempleId();
-
-            if (notified.contains(key))
-                continue;
+//            String key = "A_" + item.getAnnadhanamId();
+//
+//            // Already notified అయితే skip
+//            if (notified.contains(key))
+//                continue;
 
             try {
 
@@ -338,29 +479,77 @@ public class LocationForegroundService extends Service {
                         res
                 );
 
-                Log.d("TempleService",
-                        item.getTempleNameTelugu()
-                                + " distance = "
-                                + res[0]);
-
                 if (res[0] <= TEMPLE_DISTANCE) {
 
-                    Log.d("TempleService",
-                            "Sending notification : "
-                                    + item.getTempleNameTelugu());
+                    nearbyList.add(item);
 
-                    sendTemple(item, res[0]);
-                    notified.add(key);
+                    // తర్వాత duplicate notification రాకుండా
+
                 }
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
+        if (!nearbyList.isEmpty()) {
+
+            sendNearbyTempleNotification(nearbyList);
+
+        }
+
+
+    }
+
+    private void sendNearbyTempleNotification(ArrayList<TempleMapDataResponse.Result> nearbyList) {
+        SharedPreferenceHelper.saveNearbyTemple(
+                this,
+                nearbyList
+        );
+
+
+        Intent intent =
+                new Intent(this, NearbyTempleListActivity.class);
+
+        intent.putExtra("OPEN_TEMPLE", true);
+
+        PendingIntent pi = PendingIntent.getActivity(
+                this,
+                500,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this, CHANNEL_ANNADANAM)
+                        .setSmallIcon(R.drawable.ic_launcher_foreground)
+                        .setContentTitle("\uD83D\uDE4F దేవాలయాలు ")
+                        .setContentText("మీ సమీపంలో "
+                                + nearbyList.size()
+                                + " దేవాలయాలు అందుబాటులో ఉన్నాయి.\n"
+                                + "వివరాల కోసం క్లిక్ చేయండి."
+                        )
+                        .setStyle(new NotificationCompat.BigTextStyle()
+                                .bigText(nearbyList.size() + " Temples are within 5 KM.\nTap to view the complete list."))
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setAutoCancel(true)
+                        .setContentIntent(pi);
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        NotificationManagerCompat.from(this)
+                .notify(1001, builder.build());
+
     }
 
     // ================= AYYAPPA =================
     private void checkAyyappa(Location loc) {
+
 
         if (!isAyyappaMapActive) return;
 
@@ -370,7 +559,7 @@ public class LocationForegroundService extends Service {
         if (list == null || list.isEmpty()) {
 
             Log.d("TempleService",
-                    "Ayyappa temple data not available. Retry after 5 sec.");
+                    "Annadanam data not available. Retry after 5 sec.");
 
             new Handler(Looper.getMainLooper())
                     .postDelayed(() -> {
@@ -385,19 +574,23 @@ public class LocationForegroundService extends Service {
                             }
                         });
 
-                    }, 5000);
+                    }, 1000);
 
             return;
         }
 
+        ArrayList<AyyappaTempleMapDataResponse.Result> nearbyList = new ArrayList<>();
+
         for (AyyappaTempleMapDataResponse.Result item : list) {
 
-            String key = "Y_" + item.getTempleId();
-
-            if (notified.contains(key))
-                continue;
+//            String key = "A_" + item.getAnnadhanamId();
+//
+//            // Already notified అయితే skip
+//            if (notified.contains(key))
+//                continue;
 
             try {
+
                 float[] res = new float[1];
 
                 Location.distanceBetween(
@@ -409,14 +602,73 @@ public class LocationForegroundService extends Service {
                 );
 
                 if (res[0] <= AYYAPPA_DISTANCE) {
-                    sendAyyappa(item, res[0]);
-                    notified.add(key);
+
+                    nearbyList.add(item);
+
+                    // తర్వాత duplicate notification రాకుండా
+
                 }
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
+        if (!nearbyList.isEmpty()) {
+
+            sendNearbyAyyappaTempleNotification(nearbyList);
+
+        }
+
+
+
+
+    }
+
+    private void sendNearbyAyyappaTempleNotification(ArrayList<AyyappaTempleMapDataResponse.Result> nearbyList) {
+        SharedPreferenceHelper.saveNearbyAyyappaTemple(
+                this,
+                nearbyList
+        );
+
+
+        Intent intent =
+                new Intent(this, NearbyAyyappaTempleListActivity.class);
+
+        intent.putExtra("OPEN_AYYAPPATEMPLE", true);
+
+        PendingIntent pi = PendingIntent.getActivity(
+                this,
+                500,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this, CHANNEL_ANNADANAM)
+                        .setSmallIcon(R.drawable.ic_launcher_foreground)
+                        .setContentTitle("\uD83D\uDE4F అయ్యప్ప దేవాలయాలు ")
+                        .setContentText("మీ సమీపంలో "
+                                + nearbyList.size()
+                                + " అయ్యప్ప దేవాలయాలు అందుబాటులో ఉన్నాయి.\n"
+                                + "వివరాల కోసం క్లిక్ చేయండి."
+                        )
+                        .setStyle(new NotificationCompat.BigTextStyle()
+                                .bigText(nearbyList.size() + " AyyappaTemples are within 5 KM.\nTap to view the complete list."))
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setAutoCancel(true)
+                        .setContentIntent(pi);
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        NotificationManagerCompat.from(this)
+                .notify(1001, builder.build());
+
     }
 
     // ================= NOTIFICATIONS =================

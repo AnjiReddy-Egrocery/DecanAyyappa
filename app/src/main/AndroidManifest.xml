@@ -35,6 +35,15 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".Activity.NearbyAyyappaTempleListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.NearbyTempleListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.NearbyAnnadanamListActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activity.UpdateActivity"
             android:exported="false" />
         <activity
