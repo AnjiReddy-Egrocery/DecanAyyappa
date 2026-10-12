@@ -19,6 +19,9 @@
         android:id="@+id/txt_name"
         android:textStyle="bold"/>
 
+    <com.dst.ayyapatelugu.Services.ZoomLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -174,15 +177,7 @@
         </LinearLayout>
     </ScrollView>
 
-
-
-
-
-
-
-
-
-
+    </com.dst.ayyapatelugu.Services.ZoomLayout>
 
 </LinearLayout>
 

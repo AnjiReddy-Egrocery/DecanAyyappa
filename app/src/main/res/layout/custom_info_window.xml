@@ -7,29 +7,46 @@
     android:background="#FFF"
     android:clickable="true"
     android:focusable="true"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     card_view:strokeColor="#9E9494"
     card_view:strokeWidth="1dp"
-    card_view:cardUseCompatPadding="true"
-    card_view:cardElevation="5dp"
-    android:layout_margin="16dp"
+    card_view:cardUseCompatPadding="false"
+    card_view:cardElevation="6dp"
+    card_view:cardBackgroundColor="#FFFFFF"
     card_view:cardCornerRadius="8dp">
 
     <LinearLayout android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#FFF"
-        android:padding="8dp"
+        android:padding="12dp"
         android:orientation="vertical">
-        <TextView
-            android:id="@+id/info_window_title"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@android:color/black"
-            android:gravity="center"
-            android:textSize="16dp"
-            android:text="Info Window Title" />
+            android:gravity="top">
+
+            <TextView
+                android:id="@+id/info_window_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#000000"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/info_close"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Close"
+                android:src="@android:drawable/ic_menu_close_clear_cancel" />
+        </LinearLayout>
+
         <TextView
             android:id="@+id/info_location"
             android:layout_width="match_parent"
@@ -38,7 +55,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/black"
             android:gravity="center"
-            android:textSize="16dp"
+            android:textSize="14dp"
             android:text="Location Details" />
 
         <TextView
@@ -49,14 +66,14 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/black"
             android:textStyle="bold"
-            android:textSize="16dp"
-            android:text="Bhiksha Details" />
+            android:textSize="14dp"
+            android:text="అన్నదానం సమయాలు" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            >
+            android:layout_marginTop="8dp">
 
             <TextView
                 android:id="@+id/info_start_date"
@@ -66,7 +83,7 @@
                 android:layout_weight="1"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@android:color/black"
-                android:textSize="16dp"
+                android:textSize="14dp"
                 android:text="Start Date :" />
 
             <TextView
@@ -76,7 +93,7 @@
                 android:layout_weight="1"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@android:color/black"
-                android:textSize="16dp"
+                android:textSize="14dp"
                 android:text="End Date :" />
 
         </LinearLayout>
@@ -84,7 +101,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-           >
+            android:layout_marginTop="8dp">
 
             <TextView
                 android:id="@+id/info_start_time"
@@ -94,7 +111,7 @@
                 android:layout_weight="1"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@android:color/black"
-                android:textSize="16dp"
+                android:textSize="14dp"
                 android:text="Start Time :" />
 
             <TextView
@@ -104,7 +121,7 @@
                 android:layout_weight="1"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@android:color/black"
-                android:textSize="16dp"
+                android:textSize="14dp"
                 android:text="End Time :" />
 
         </LinearLayout>
@@ -122,6 +139,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/start_navigation_button"
+                android:background="@drawable/navigation_bg"
                 android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"
@@ -129,15 +147,14 @@
                 android:text="Start Navigation"
                 android:textSize="14dp"
                 android:layout_marginLeft="10dp"
-                android:textColor="#3C54DA"
+                android:textColor="#FFF"
                 android:textStyle="bold"
                 android:layout_gravity="center"/>
             <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:text="Start Navigation"
-                android:src="@drawable/navigation_icon"
-                android:backgroundTint="#E41010" />
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/navigation_icon_white"
+                android:backgroundTint="#fff" />
             </LinearLayout>
         </LinearLayout>
 

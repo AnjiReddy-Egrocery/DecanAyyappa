@@ -54,11 +54,16 @@
             android:layout_width="match_parent"
             android:layout_marginTop="12dp"
             android:layout_height="match_parent">
+            <com.dst.ayyapatelugu.Services.ZoomLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="6dp"
                 android:id="@+id/recycler_blog"/>
+            </com.dst.ayyapatelugu.Services.ZoomLayout>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </LinearLayout>
 

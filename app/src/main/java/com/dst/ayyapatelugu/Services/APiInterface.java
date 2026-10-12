@@ -1,6 +1,7 @@
 package com.dst.ayyapatelugu.Services;
 
 import com.dst.ayyapatelugu.Model.ActivitiesDetailsResponse;
+import com.dst.ayyapatelugu.Model.AddImageResponse;
 import com.dst.ayyapatelugu.Model.AnadanamDetailResponse;
 import com.dst.ayyapatelugu.Model.AnadanamList;
 import com.dst.ayyapatelugu.Model.AyyappaTempleList;
@@ -94,6 +95,9 @@ public interface APiInterface {
 
     @POST("APICalls/News/index")
     Call<NewsList> getNewsList();
+
+    @GET("APICalls/ad-images")
+    Call<AddImageResponse> getAdImages();
     @FormUrlEncoded
     @POST("APICalls/News/info")
     Call<NewsDetailsResponse> getNewsDetails(

@@ -36,6 +36,11 @@ public class AyyappaListAdapter extends RecyclerView.Adapter<AyyappaListAdapter.
     @Override
     public AyyappaListAdapter.MyviewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.ayyappatemple_list_adapter, parent, false);
+        int parentWidth = parent.getMeasuredWidth();
+        if (parentWidth == 0) {
+            parentWidth = mContext.getResources().getDisplayMetrics().widthPixels;
+        }
+        view.getLayoutParams().width = parentWidth / 3;
         return new AyyappaListAdapter.MyviewHolder(view);
     }
 
@@ -60,7 +65,7 @@ public class AyyappaListAdapter extends RecyclerView.Adapter<AyyappaListAdapter.
         String close=templesListModel.getClosingTime();
         String location= templesListModel.getLocation();
 
-        // holder.tvTempleName.setText(name);
+        //holder.tvTempleName.setText(name);
         Picasso.get()
                 .load(imageUrl)
                 .placeholder(R.drawable.ayyapaimage)  // 🔹 loading సమయంలో చూపించేది

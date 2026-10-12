@@ -30,6 +30,11 @@
         android:layout_height="match_parent"
         android:layout_marginTop="67dp">
 
+        <com.dst.ayyapatelugu.Services.ZoomLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -206,5 +211,6 @@ Google ప్రకటనల భాగస్వాముల గోప్యత�
                     android:textSize="14dp"/>
             </LinearLayout>
         </ScrollView>
+        </com.dst.ayyapatelugu.Services.ZoomLayout>
     </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

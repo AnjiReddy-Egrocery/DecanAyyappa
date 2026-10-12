@@ -5,24 +5,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.annotation.SuppressLint;
-
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.Spanned;
-import android.text.util.Linkify;
 import android.util.Log;
-import android.view.View;
-import android.webkit.WebSettings;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dst.ayyapatelugu.Model.ActivitiesDetailsResponse;
-import com.dst.ayyapatelugu.Model.BajanaMandaliDetailsResponse;
 import com.dst.ayyapatelugu.R;
 import com.dst.ayyapatelugu.Services.APiInterface;
 import com.dst.ayyapatelugu.Services.UnsafeTrustManager;
@@ -38,6 +35,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AyyapaKarmaDetailsActivity extends AppCompatActivity {
 
+    // Zoom settings
+    private static final int MIN_ZOOM = 70;    // percent
+    private static final int MAX_ZOOM = 250;   // percent
+
     Toolbar toolbar;
 
     TextView txtName;
@@ -45,10 +46,16 @@ public class AyyapaKarmaDetailsActivity extends AppCompatActivity {
 
     ImageView imageView;
 
-    ImageView imageAnadanam,imageNityaPooja;
-    TextView textAndanam,txtNityaPooja;
+    ImageView imageAnadanam, imageNityaPooja;
+    TextView textAndanam, txtNityaPooja;
 
     String activitiesId;
+
+    // Pinch zoom (fingers tho zoom)
+    private int textZoom = 100;
+    private ScaleGestureDetector scaleDetector;
+    private float pinchZoom = 100f;
+    private boolean pinching = false;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint("MissingInflatedId")
@@ -59,123 +66,127 @@ public class AyyapaKarmaDetailsActivity extends AppCompatActivity {
 
         toolbar = findViewById(R.id.toolbar);
 
-       /* toolbar.setLogo(R.drawable.user_profile_background);
-
-
-        toolbar.setTitle("www.ayyappatelugu.com");
-        toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));*/
-
         activitiesId = getIntent().getStringExtra("activitiesId");
         if (activitiesId != null) {
-            activitiesId = activitiesId.replace("'", "").trim(); // 🔥 remove quotes
+            activitiesId = activitiesId.replace("'", "").trim(); // remove quotes
         }
 
         Log.d("FCM_DEBUG", "Final: " + activitiesId);
 
+        // ---------- Toolbar ----------
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         Drawable nav = toolbar.getNavigationIcon();
         if (nav != null) {
-
             nav.setTint(getResources().getColor(R.color.white));
         }
+        toolbar.setNavigationOnClickListener(v -> finish());
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        imageAnadanam=findViewById(R.id.layout_image_anadanam);
-        imageAnadanam.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(AyyapaKarmaDetailsActivity.this,AnadanamActivity.class);
-                startActivity(intent);
-            }
-        });
+        // ---------- Bottom bar ----------
+        imageAnadanam = findViewById(R.id.layout_image_anadanam);
+        imageAnadanam.setOnClickListener(v ->
+                startActivity(new Intent(AyyapaKarmaDetailsActivity.this, AnadanamActivity.class)));
 
         textAndanam = findViewById(R.id.layout_txt_anadanam);
-        textAndanam.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(AyyapaKarmaDetailsActivity.this,AnadanamActivity.class);
-                startActivity(intent);
-            }
-        });
+        textAndanam.setOnClickListener(v ->
+                startActivity(new Intent(AyyapaKarmaDetailsActivity.this, AnadanamActivity.class)));
 
         txtNityaPooja = findViewById(R.id.txt_nitya_pooja);
-        txtNityaPooja.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        txtNityaPooja.setOnClickListener(v ->
+                startActivity(new Intent(AyyapaKarmaDetailsActivity.this, NityaPoojaActivity.class)));
 
-                Intent intent=new Intent(AyyapaKarmaDetailsActivity.this, NityaPoojaActivity.class);
-                startActivity(intent);
-
-            }
-        });
         imageNityaPooja = findViewById(R.id.img_nitya_pooja);
-        imageNityaPooja.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(AyyapaKarmaDetailsActivity.this,NityaPoojaActivity.class);
-                startActivity(intent);
-            }
-        });
+        imageNityaPooja.setOnClickListener(v ->
+                startActivity(new Intent(AyyapaKarmaDetailsActivity.this, NityaPoojaActivity.class)));
 
-
+        // ---------- Content views ----------
         txtName = findViewById(R.id.txt_name);
         webView = findViewById(R.id.webview);
-        webView.getSettings().setJavaScriptEnabled(true); // if needed
+        webView.getSettings().setJavaScriptEnabled(true);
         webView.setBackgroundColor(Color.TRANSPARENT);
         imageView = findViewById(R.id.image_view);
 
-        Bundle bundle = getIntent().getExtras();
-
-        String name = bundle.getString("Name");
-        String discription = bundle.getString("Discription");
-        String imagePath = bundle.getString("ImagePath");
-
-       /* txtName.setText(name);
-        Picasso.get().load(imagePath).into(imageView);
-        String htmlContent = "<html><head>" +
-                "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>" +
-                "<style>" +
-                "body { background-color: transparent; color: white; font-size: 14px; line-height: 1.6; }" +
-                "* { color: white !important; }" +
-                "</style>" +
-                "</head><body>" + discription + "</body></html>";
-
-        webView.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null);*/
-       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-
-            WebSettings webSettings = webView.getSettings();
-            webSettings.setJavaScriptEnabled(true);
-
-            webView.loadDataWithBaseURL(null, discription, "text/html", "utf-8", null);
-            ;
-
-            //webView.loadData(discription, "text/html", "UTF-8");
-
-        }*/
+        // ---------- Zoom (pinch only) ----------
+        try {
+            textZoom = Integer.parseInt(getFromPreferences("textZoom", "100"));
+        } catch (NumberFormatException e) {
+            textZoom = 100;
+        }
+        applyZoom(true);
+        scaleDetector = new ScaleGestureDetector(this, new PinchListener());
 
         loadPoojakaryakaramamDetails(activitiesId);
-
     }
 
+    // ================= ZOOM =================
+    private void applyZoom(boolean save) {
+        webView.getSettings().setTextZoom(textZoom);
+        if (save) {
+            saveToPreferences("textZoom", String.valueOf(textZoom));
+        }
+    }
+
+    private class PinchListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector) {
+            pinchZoom = textZoom;
+            return true;
+        }
+
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            pinchZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, pinchZoom * detector.getScaleFactor()));
+            int newZoom = Math.round(pinchZoom);
+            if (newZoom != textZoom) {
+                textZoom = newZoom;
+                applyZoom(false); // save at the end of pinch
+            }
+            return true;
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+            saveToPreferences("textZoom", String.valueOf(textZoom));
+        }
+    }
+
+    // Screen meeda ekkada pinch chesina zoom avtundi (ScrollView/WebView lopala unna sare)
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        scaleDetector.onTouchEvent(ev);
+
+        if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            pinching = false;
+        }
+
+        if (ev.getPointerCount() > 1 || scaleDetector.isInProgress() || pinching) {
+            if (!pinching) {
+                pinching = true;
+                // child views ki (WebView/ScrollView) cancel pampi, scroll aapali
+                MotionEvent cancel = MotionEvent.obtain(ev);
+                cancel.setAction(MotionEvent.ACTION_CANCEL);
+                super.dispatchTouchEvent(cancel);
+                cancel.recycle();
+            }
+            return true;
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    // ================= API =================
     private void loadPoojakaryakaramamDetails(String activitiesId) {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient client = new OkHttpClient.Builder()
-                .sslSocketFactory(UnsafeTrustManager.createTrustAllSslSocketFactory(), UnsafeTrustManager.createTrustAllTrustManager())
-                .hostnameVerifier((hostname, session) -> true) // Bypasses hostname verification
+                .sslSocketFactory(UnsafeTrustManager.createTrustAllSslSocketFactory(),
+                        UnsafeTrustManager.createTrustAllTrustManager())
+                .hostnameVerifier((hostname, session) -> true)
                 .addInterceptor(loggingInterceptor)
                 .build();
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://www.ayyappatelugu.com/") // Replace with your API URL
+                .baseUrl("https://www.ayyappatelugu.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
@@ -184,6 +195,8 @@ public class AyyapaKarmaDetailsActivity extends AppCompatActivity {
         call.enqueue(new Callback<ActivitiesDetailsResponse>() {
             @Override
             public void onResponse(Call<ActivitiesDetailsResponse> call, Response<ActivitiesDetailsResponse> response) {
+                if (isFinishing() || isDestroyed()) return;
+
                 if (response.isSuccessful() && response.body() != null &&
                         "200".equals(response.body().errorCode)) {
 
@@ -205,28 +218,29 @@ public class AyyapaKarmaDetailsActivity extends AppCompatActivity {
 
                         webView.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null);
 
-
                         String fullImageUrl = data.imageUrl + item.image;
-
-
-
                         Log.d("IMAGE_DEBUG", "Final URL: " + fullImageUrl);
 
-                        Picasso.get()
-                                .load(fullImageUrl)
-
-                                .into(imageView);
-
-
+                        Picasso.get().load(fullImageUrl).into(imageView);
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<ActivitiesDetailsResponse> call, Throwable t) {
-                Log.e("API_ERROR", t.getMessage());
+                Log.e("API_ERROR", String.valueOf(t.getMessage()));
             }
         });
+    }
 
+    // ================= SharedPreferences =================
+    private void saveToPreferences(String key, String value) {
+        SharedPreferences sp = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        sp.edit().putString(key, value).apply();
+    }
+
+    private String getFromPreferences(String key, String defaultValue) {
+        SharedPreferences sp = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        return sp.getString(key, defaultValue);
     }
 }

@@ -14,10 +14,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -92,6 +94,13 @@ public class TemplesMapFragment extends Fragment implements OnMapReadyCallback {
     private String selectedLng;
 
     Button butNearsttemples;
+
+    // Custom info card (real View overlay, so its buttons are clickable)
+    private View infoCard;
+    private Marker selectedMarker;
+
+    // Height of the default Google marker pin (dp); tune if the card is too high/low
+    private static final int MARKER_HEIGHT_DP = 40;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -184,7 +193,37 @@ public class TemplesMapFragment extends Fragment implements OnMapReadyCallback {
                 .build();
         apiClient = retrofit.create(APiInterface.class);
 
-        return view;
+        // Wrap the map layout in a FrameLayout so we can float the info card on top of it
+        FrameLayout root = new FrameLayout(requireContext());
+        root.addView(view, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+
+        infoCard = inflater.inflate(R.layout.custom_temple_window, root, false);
+        FrameLayout.LayoutParams cardParams = (FrameLayout.LayoutParams) infoCard.getLayoutParams();
+        cardParams.gravity = Gravity.TOP | Gravity.START;
+        cardParams.setMargins(0, 0, 0, 0);   // position is set from the marker's screen point
+
+        // Fixed, compact width (max 300dp, never wider than the screen minus 16dp each side)
+        float density = getResources().getDisplayMetrics().density;
+        int screenW = getResources().getDisplayMetrics().widthPixels;
+        cardParams.width = Math.min((int) (300 * density), screenW - (int) (32 * density));
+
+        infoCard.setLayoutParams(cardParams);
+        infoCard.setVisibility(View.GONE);
+        root.addView(infoCard);
+
+        // Only the close button closes the card
+        infoCard.findViewById(R.id.window_close).setOnClickListener(v -> hideInfoCard());
+
+        // Only the Start Navigation button starts navigation
+        infoCard.findViewById(R.id.start_navigation_button).setOnClickListener(v -> {
+            if (selectedMarker != null) {
+                startNavigation(selectedMarker.getPosition());
+            }
+        });
+
+        return root;
     }
 
     private void displayNearByTemples() {
@@ -390,13 +429,20 @@ public class TemplesMapFragment extends Fragment implements OnMapReadyCallback {
                 if (selectedTempleId != null &&
                         selectedTempleId.equals(temple.getTempleId())) {
 
-                    marker.showInfoWindow();
-
+                    // Zoom in first, then show the card (it centers itself after the zoom)
                     mMap.animateCamera(
-                            CameraUpdateFactory.newLatLngZoom(
-                                    pos,
-                                    18f
-                            )
+                            CameraUpdateFactory.newLatLngZoom(pos, 18f),
+                            new GoogleMap.CancelableCallback() {
+                                @Override
+                                public void onFinish() {
+                                    showInfoCard(marker);
+                                }
+
+                                @Override
+                                public void onCancel() {
+                                    showInfoCard(marker);
+                                }
+                            }
                     );
                 }
 
@@ -407,58 +453,78 @@ public class TemplesMapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void setupMarkerClickListeners() {
-        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                marker.showInfoWindow();
-                return true;
-            }
+        mMap.setOnMarkerClickListener(marker -> {
+            showInfoCard(marker);
+            return true;
         });
 
-        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-                startNavigation(marker.getPosition());
+        // Card moves along with the map
+        mMap.setOnCameraMoveListener(this::updateInfoCardPosition);
+
+        // Tapping anywhere else on the map closes the card
+        mMap.setOnMapClickListener(latLng -> hideInfoCard());
+    }
+
+    private void showInfoCard(Marker marker) {
+        if (infoCard == null) return;
+        selectedMarker = marker;
+
+        TextView title = infoCard.findViewById(R.id.window_title);
+        title.setText(marker.getTitle());
+        TextView txtLocation = infoCard.findViewById(R.id.window_location);
+        txtLocation.setText(marker.getSnippet());
+
+        // Wait for the card to be measured, then place it above the marker
+        infoCard.setVisibility(View.INVISIBLE);
+        infoCard.post(() -> {
+            updateInfoCardPosition();
+            if (selectedMarker != null) {
+                infoCard.setVisibility(View.VISIBLE);
+                centerMarkerWithCard();
             }
         });
     }
 
-    private class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
-
-        View mContentsView;
-
-        CustomInfoWindowAdapter() {
-            mContentsView = getLayoutInflater().inflate(R.layout.custom_temple_window, null);
+    private void hideInfoCard() {
+        selectedMarker = null;
+        if (infoCard != null) {
+            infoCard.setVisibility(View.GONE);
         }
+    }
 
-        @Nullable
-        @Override
-        public View getInfoContents(@NonNull Marker marker) {
-            return null;
-        }
+    // Puts the card just above the selected marker
+    private void updateInfoCardPosition() {
+        if (mMap == null || infoCard == null || selectedMarker == null) return;
 
-        @Nullable
-        @Override
-        public View getInfoWindow(@NonNull Marker marker) {
-            TextView title = mContentsView.findViewById(R.id.window_title);
-            title.setText(marker.getTitle());
+        float density = getResources().getDisplayMetrics().density;
+        android.graphics.Point p = mMap.getProjection().toScreenLocation(selectedMarker.getPosition());
+        int markerHeight = (int) (MARKER_HEIGHT_DP * density);
 
-            TextView txtLocation = mContentsView.findViewById(R.id.window_location);
-            //String address = (String) marker.getTag();
-            txtLocation.setText(marker.getSnippet());
+        // Centered over the marker, but kept fully inside the screen
+        View parent = (View) infoCard.getParent();
+        float edge = 8 * density;
+        float x = p.x - infoCard.getWidth() / 2f;
+        float maxX = parent.getWidth() - infoCard.getWidth() - edge;
+        x = Math.max(edge, Math.min(x, maxX));
 
-            // Handle the "Start Navigation" button click
-            LinearLayout startNavigationButton = mContentsView.findViewById(R.id.start_navigation_button);
-            startNavigationButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startNavigation(marker.getPosition());
-                }
-            });
+        infoCard.setTranslationX(x);
+        infoCard.setTranslationY(p.y - markerHeight - infoCard.getHeight());
+    }
 
-            return mContentsView;
-        }
+    // Scrolls the map so that (card + pin) ends up in the middle of the screen
+    private void centerMarkerWithCard() {
+        if (mMap == null || infoCard == null || selectedMarker == null) return;
+
+        View parent = (View) infoCard.getParent();
+        android.graphics.Point p = mMap.getProjection().toScreenLocation(selectedMarker.getPosition());
+
+        int markerHeight = (int) (MARKER_HEIGHT_DP * getResources().getDisplayMetrics().density);
+        int blockHeight = markerHeight + infoCard.getHeight();
+
+        float targetX = parent.getWidth() / 2f;
+        float targetY = parent.getHeight() / 2f + blockHeight / 2f;   // marker tip position
+
+        mMap.animateCamera(CameraUpdateFactory.scrollBy(p.x - targetX, p.y - targetY));
     }
 
     private void startNavigation(LatLng position) {

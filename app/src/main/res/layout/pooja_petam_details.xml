@@ -35,6 +35,11 @@
                     android:textStyle="bold"
                     android:textColor="#fff"
                     android:textSize="18dp"/>
+                <com.dst.ayyapatelugu.Services.ZoomLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    >
+
                 <ScrollView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
@@ -262,6 +267,7 @@
                         </LinearLayout>
                     </LinearLayout>
                 </ScrollView>
+                </com.dst.ayyapatelugu.Services.ZoomLayout>
             </LinearLayout>
         </LinearLayout>
 </LinearLayout>

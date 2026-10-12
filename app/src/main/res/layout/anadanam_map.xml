@@ -4,17 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
         <fragment
             android:id="@+id/map_fragment"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true" />
 
@@ -49,6 +48,13 @@
                 android:src="@drawable/baseline_remove_24" />
         </LinearLayout>
 
+        <!-- NEW: marker popup overlay (must stay LAST so it draws above the map) -->
+        <FrameLayout
+            android:id="@+id/popup_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="false"
+            android:focusable="false" />
 
     </RelativeLayout>
 </LinearLayout>

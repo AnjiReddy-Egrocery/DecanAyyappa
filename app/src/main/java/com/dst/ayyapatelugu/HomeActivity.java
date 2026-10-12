@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -24,10 +25,12 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -63,7 +66,9 @@ import com.dst.ayyapatelugu.Activity.ViewAllDetailsActivity;
 import com.dst.ayyapatelugu.Activity.ViewAllNewsDetailsActivity;
 import com.dst.ayyapatelugu.Activity.ViewAllNewsListActivity;
 import com.dst.ayyapatelugu.Activity.ViewAllTemplesActivity;
+import com.dst.ayyapatelugu.Adapter.AdsSliderAdapter;
 import com.dst.ayyapatelugu.Adapter.AllNewsListAdapter;
+import com.dst.ayyapatelugu.Adapter.HeroSliderAdapter;
 import com.dst.ayyapatelugu.Adapter.AyyappaListAdapter;
 import com.dst.ayyapatelugu.Adapter.AyyappaTemplesListAdapter;
 import com.dst.ayyapatelugu.Adapter.NewsListAdapter;
@@ -73,8 +78,10 @@ import com.dst.ayyapatelugu.Adapter.ViewAllNewsListAdapter;
 import com.dst.ayyapatelugu.DataBase.SharedPrefManager;
 import com.dst.ayyapatelugu.DataBase.SharedPreferencesHelper;
 import com.dst.ayyapatelugu.DataBase.SharedPreferencesManager;
+import com.dst.ayyapatelugu.Model.AddImageResponse;
 import com.dst.ayyapatelugu.Model.AyyaTempleListModel;
 import com.dst.ayyapatelugu.Model.AyyappaTempleList;
+import com.dst.ayyapatelugu.Model.HeroSlide;
 import com.dst.ayyapatelugu.Model.LoginDataResponse;
 import com.dst.ayyapatelugu.Model.NewsList;
 import com.dst.ayyapatelugu.Model.NewsListModel;
@@ -162,7 +169,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     private static final int REQUEST_PERMISSION_CODE = 1;
 
-    LinearLayout layoutBhajanamandali,layoutGuruSwami,layoutPoojaPetam,layoutCalender,layoutTourse,layoutAnadanam,layoutBooks,layoutProducts;
+    LinearLayout layoutBhajanamandali,layoutGuruSwami,layoutPoojaPetam,layoutCalender,layoutTourse,layoutAnadanam,layoutBooks,layoutProducts,layoutsharanughosha,layoutNityapooja;
     ImageView imageAnadanam,imageNityaPooja;
     TextView textAndanam,txtNityaPooja;
 
@@ -170,7 +177,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     Button butViewAll,viewallButton;
 
-    LinearLayout layoutSharanughosha,layoutNityaPooja;
+    // Hero section (static data)
+    ViewPager2 heroViewPager;
+    LinearLayout heroDots;
+    ImageView[] heroDotViews;
+    List<HeroSlide> heroSlides = new ArrayList<>();
+    Handler heroHandler = new Handler(Looper.getMainLooper());
+    Runnable heroRunnable;
+    private static final long HERO_AUTO_SLIDE_MS = 4000;
     SwipeRefreshLayout swipeRefreshLayout,swipeRefreshLayout1,swipeRefreshLayout2;
 
     RecyclerView recyclerviewnews;
@@ -179,6 +193,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     AllNewsListAdapter viewAllNewsListAdapter;
 
     LoginDataResponse.Result result;
+
+    ViewPager2 adsViewPager;
+    LinearLayout adsDots;
+    Handler adsHandler = new Handler(Looper.getMainLooper());
+    Runnable adsRunnable;
+    List<AddImageResponse.AdItem> adImages = new ArrayList<>();
+    ImageView[] adsDotViews;
+    LinearLayout layoutAdsContainer;
 
 
     @Override
@@ -225,19 +247,20 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(intent);
             }
         });
-        layoutSharanughosha = findViewById(R.id.layout_sharanughosha);
-        layoutSharanughosha.setOnClickListener(new View.OnClickListener() {
+        layoutsharanughosha = findViewById(R.id.layout_sharanughosha);
+        layoutsharanughosha.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent= new Intent(HomeActivity.this, SharanughoshaActivity.class);
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeActivity.this, SharanughoshaActivity.class);
                 startActivity(intent);
             }
         });
-        layoutNityaPooja = findViewById(R.id.layout_nityapooja);
-        layoutNityaPooja.setOnClickListener(new View.OnClickListener() {
+
+        layoutNityapooja = findViewById(R.id.layout_nityapooja);
+        layoutNityapooja.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this,NityaPoojaActivity.class);
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeActivity.this, NityaPoojaActivity.class);
                 startActivity(intent);
             }
         });
@@ -398,7 +421,210 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         TemplesListMethod();
         AyyaTemplesListMethod();
 
+        adsCarouselMethod();
+
+        heroSectionMethod();
+
     }
+
+
+    // ---------------------------------------------------------------------------------
+    // Hero section: full-width carousel with static data
+    // ---------------------------------------------------------------------------------
+    private void heroSectionMethod() {
+        heroViewPager = findViewById(R.id.heroViewPager);
+        heroDots = findViewById(R.id.heroDots);
+
+        heroSlides = new ArrayList<>();
+        // Slide 1 - Nitya Pooja vidhanam
+        heroSlides.add(new HeroSlide(
+                "శరణుఘోష",
+                "అయ్యప్ప స్వామి\nనిత్యపూజా విధానం",
+                null,
+                R.drawable.ayyappaphome,
+                "నిత్య పూజ", NityaPoojaActivity.class,
+                "అన్నదానం", AnadanamActivity.class));
+        // Slide 2 - Sabarimala yatra
+        heroSlides.add(new HeroSlide(
+                "శబరిమల యాత్ర",
+                "శబరిమల యాత్ర",
+                "Package Starts From \u20B99,999/-",
+                R.drawable.shabarimalayatra,
+                "వివరాలు", AyyappaTourseDetailsACtivity.class,
+                null, null));
+        // Slide 3 - Sharanughosha
+        heroSlides.add(new HeroSlide(
+                "శరణుఘోష",
+                "శరణుఘోష",
+                null,
+                R.drawable.background,
+                "శరణుఘోష వినండి", SharanughoshaActivity.class,
+                "అన్నదానం", AnadanamActivity.class));
+
+        heroViewPager.setAdapter(new HeroSliderAdapter(HomeActivity.this, heroSlides));
+
+        // dots
+        heroDots.removeAllViews();
+        heroDotViews = new ImageView[heroSlides.size()];
+        int size = (int) (8 * getResources().getDisplayMetrics().density);
+        int margin = (int) (4 * getResources().getDisplayMetrics().density);
+        for (int i = 0; i < heroDotViews.length; i++) {
+            heroDotViews[i] = new ImageView(this);
+            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(size, size);
+            p.setMargins(margin, 0, margin, 0);
+            heroDots.addView(heroDotViews[i], p);
+        }
+        updateHeroDots(0);
+
+        heroViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                updateHeroDots(position);
+                // restart the timer after a manual swipe
+                startHeroAutoSlide();
+            }
+        });
+
+        // auto slide (loops back to first slide)
+        heroRunnable = () -> {
+            if (heroSlides.size() > 1) {
+                int next = (heroViewPager.getCurrentItem() + 1) % heroSlides.size();
+                heroViewPager.setCurrentItem(next, true);
+            }
+        };
+        startHeroAutoSlide();
+    }
+
+    private void startHeroAutoSlide() {
+        if (heroRunnable == null || heroSlides == null || heroSlides.size() < 2) return;
+        heroHandler.removeCallbacks(heroRunnable);
+        heroHandler.postDelayed(heroRunnable, HERO_AUTO_SLIDE_MS);
+    }
+
+    private void updateHeroDots(int position) {
+        if (heroDotViews == null) return;
+        for (int i = 0; i < heroDotViews.length; i++) {
+            heroDotViews[i].setImageResource(i == position ? R.drawable.dot_active : R.drawable.dot_inactive);
+        }
+    }
+
+        private void adsCarouselMethod() {
+            adsViewPager = findViewById(R.id.adsViewPager);
+            adsDots = findViewById(R.id.adsDots);
+            layoutAdsContainer = findViewById(R.id.layout_ads);
+
+            // Data vachaka matrame chupistam
+            layoutAdsContainer.setVisibility(View.GONE);
+
+            adsViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+                @Override
+                public void onPageSelected(int position) {
+                    if (adImages == null || adImages.isEmpty()) return;
+                    updateAdsDots(position % adImages.size());                }
+            });
+
+            // auto slide
+            adsRunnable = () -> {
+                if (adImages != null && adImages.size() > 1) {
+                    adsViewPager.setCurrentItem(adsViewPager.getCurrentItem() + 1, true);
+                    adsHandler.postDelayed(adsRunnable, 3000);
+                }
+            };
+
+
+            loadAds();
+        }
+
+    private void loadAds() {
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .sslSocketFactory(UnsafeTrustManager.createTrustAllSslSocketFactory(), UnsafeTrustManager.createTrustAllTrustManager())
+                .hostnameVerifier((hostname, session) -> true)
+                .addInterceptor(loggingInterceptor)
+                .build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://www.ayyappatelugu.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+        APiInterface apiClient = retrofit.create(APiInterface.class);
+
+        apiClient.getAdImages().enqueue(new Callback<AddImageResponse>() {
+            @Override
+            public void onResponse(Call<AddImageResponse> call, Response<AddImageResponse> response) {
+                if (isFinishing() || isDestroyed()) return;
+
+                AddImageResponse body = response.body();
+                Log.d("ADS_API", "http=" + response.code()
+                        + " body=" + (body == null ? "null" : new Gson().toJson(body)));
+
+                if (response.isSuccessful() && body != null
+                        && "200".equals(body.errorCode)
+                        && body.result != null && !body.result.isEmpty()) {
+                    showAds(body);
+                } else {
+                    hideAds();
+                }
+            }
+            @Override
+            public void onFailure(Call<AddImageResponse> call, Throwable t) {
+                Log.e("ADS_API", String.valueOf(t.getMessage()));
+                if (!isFinishing() && !isDestroyed()) {
+                    hideAds();
+                }
+            }
+        });
+    }
+
+    private void showAds(AddImageResponse body) {
+        adImages = body.result;
+        adsViewPager.setAdapter(new AdsSliderAdapter(HomeActivity.this, body.imageUrl, adImages));
+
+        // dots (API lo enni images unte anni)
+        adsDots.removeAllViews();
+        adsDotViews = new ImageView[adImages.size()];
+        int size = (int) (8 * getResources().getDisplayMetrics().density);   // 8dp
+        int margin = (int) (4 * getResources().getDisplayMetrics().density); // 4dp
+        for (int i = 0; i < adsDotViews.length; i++) {
+            adsDotViews[i] = new ImageView(this);
+            adsDotViews[i].setImageResource(R.drawable.dot_inactive);
+            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(size, size);
+            p.setMargins(margin, 0, margin, 0);
+            adsDots.addView(adsDotViews[i], p);
+        }
+        adsDots.setVisibility(adImages.size() > 1 ? View.VISIBLE : View.GONE);
+        updateAdsDots(0);
+
+        layoutAdsContainer.setVisibility(View.VISIBLE);
+
+        // auto slide start
+        adsHandler.removeCallbacks(adsRunnable);
+        if (adImages.size() > 1) {
+            int half = Integer.MAX_VALUE / 2;
+            int start = half - (half % adImages.size());
+            adsViewPager.setCurrentItem(start, false);
+            adsHandler.postDelayed(adsRunnable, 3000);   // <- idi add cheyyandi
+        }
+    }
+
+    private void hideAds() {
+        adImages = new ArrayList<>();
+        adsHandler.removeCallbacks(adsRunnable);
+        if (adsViewPager != null) adsViewPager.setAdapter(null);
+        if (adsDots != null) adsDots.removeAllViews();
+        layoutAdsContainer.setVisibility(View.GONE);
+    }
+
+    private void updateAdsDots(int position) {
+        if (adsDotViews == null) return;
+        for (int i = 0; i < adsDotViews.length; i++) {
+            adsDotViews[i].setImageResource(i == position ? R.drawable.dot_active : R.drawable.dot_inactive);
+        }
+    }
+
+
 
     private void bajanaSongsMethod() {
        // butBajanaSongs = findViewById(R.id.viewall_but_bajana_songs);
@@ -1073,6 +1299,24 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             startActivity(intent);
             finish();
         }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startHeroAutoSlide();
+        if (adsRunnable != null && adImages != null && adImages.size() > 1) {
+            adsHandler.removeCallbacks(adsRunnable);
+            adsHandler.postDelayed(adsRunnable, 3000);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        adsHandler.removeCallbacks(adsRunnable);
+        if (heroRunnable != null) heroHandler.removeCallbacks(heroRunnable);
     }
 
 

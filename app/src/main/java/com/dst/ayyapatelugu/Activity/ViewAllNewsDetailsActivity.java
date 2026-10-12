@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -12,29 +13,23 @@ import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.text.Html;
-import android.text.Spanned;
-import android.text.util.Linkify;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.dst.ayyapatelugu.DataBase.SharedPreferencesManager;
-import com.dst.ayyapatelugu.HomeActivity;
 import com.dst.ayyapatelugu.Model.NewsDetailsResponse;
-import com.dst.ayyapatelugu.Model.NewsList;
 import com.dst.ayyapatelugu.R;
 import com.dst.ayyapatelugu.Services.APiInterface;
 import com.dst.ayyapatelugu.Services.UnsafeTrustManager;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Locale;
 
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
-import okhttp3.RequestBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,19 +39,22 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ViewAllNewsDetailsActivity extends AppCompatActivity {
 
+    // Zoom settings
+    private static final int MIN_ZOOM = 70;    // percent
+    private static final int MAX_ZOOM = 250;   // percent
+
     Toolbar toolbar;
 
     TextView txtName;
 
-
     ImageView imageView;
 
-    ImageView imageAnadanam,imageNityaPooja;
-    TextView textAndanam,txtNityaPooja;
+    ImageView imageAnadanam, imageNityaPooja;
+    TextView textAndanam, txtNityaPooja;
     private TextToSpeech textToSpeech;
     private ImageView playAudioIcon;
     ImageView playReplayIcon;
-    private TextView textContent,txtViewMore;
+    private TextView textContent, txtViewMore;
 
     private boolean isPlaying = false; // Track the playing state
 
@@ -66,9 +64,15 @@ public class ViewAllNewsDetailsActivity extends AppCompatActivity {
     private static final String PREF_NAME = "tts_prefs";
     private static final String KEY_INDEX = "current_index";
     String newsId;
-    String imagePath;
 
-    @SuppressLint("MissingInflatedId")
+    // Pinch zoom (fingers tho zoom)
+    private int textZoom = 100;
+    private float baseTextSizePx;           // news text original size
+    private ScaleGestureDetector scaleDetector;
+    private float pinchZoom = 100f;
+    private boolean pinching = false;
+
+    @SuppressLint({"MissingInflatedId", "NewApi"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,111 +80,66 @@ public class ViewAllNewsDetailsActivity extends AppCompatActivity {
 
         toolbar = findViewById(R.id.toolbar);
 
-       /* toolbar.setLogo(R.drawable.user_profile_background);
-
-
-        toolbar.setTitle("www.ayyappatelugu.com");
-        toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));*/
         newsId = getIntent().getStringExtra("newsId");
         if (newsId != null) {
-            newsId = newsId.replace("'", "").trim(); // 🔥 remove quotes
+            newsId = newsId.replace("'", "").trim(); // remove quotes
         }
 
         Log.d("FCM_DEBUG", "Final: " + newsId);
 
-
         txtViewMore = findViewById(R.id.txt_view_more);
-        playAudioIcon = findViewById(R.id.play_audio_icon); // XML లో music player icon ID
+        playAudioIcon = findViewById(R.id.play_audio_icon);
         playReplayIcon = findViewById(R.id.play_replay_icon);
 
+        // ---------- Toolbar ----------
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         Drawable nav = toolbar.getNavigationIcon();
         if (nav != null) {
-
             nav.setTint(getResources().getColor(R.color.white));
         }
+        toolbar.setNavigationOnClickListener(v -> finish());
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        imageAnadanam=findViewById(R.id.layout_image_anadanam);
-        imageAnadanam.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(ViewAllNewsDetailsActivity.this,AnadanamActivity.class);
-                startActivity(intent);
-            }
-        });
+        // ---------- Bottom bar ----------
+        imageAnadanam = findViewById(R.id.layout_image_anadanam);
+        imageAnadanam.setOnClickListener(v ->
+                startActivity(new Intent(ViewAllNewsDetailsActivity.this, AnadanamActivity.class)));
 
         sharedPreferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
         currentChunkIndex = sharedPreferences.getInt(KEY_INDEX, 0); // Load saved index
 
         textAndanam = findViewById(R.id.layout_txt_anadanam);
-        textAndanam.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(ViewAllNewsDetailsActivity.this,AnadanamActivity.class);
-                startActivity(intent);
-            }
-        });
+        textAndanam.setOnClickListener(v ->
+                startActivity(new Intent(ViewAllNewsDetailsActivity.this, AnadanamActivity.class)));
 
         txtNityaPooja = findViewById(R.id.txt_nitya_pooja);
-        txtNityaPooja.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        txtNityaPooja.setOnClickListener(v ->
+                startActivity(new Intent(ViewAllNewsDetailsActivity.this, NityaPoojaActivity.class)));
 
-                Intent intent=new Intent(ViewAllNewsDetailsActivity.this, NityaPoojaActivity.class);
-                startActivity(intent);
-
-            }
-        });
         imageNityaPooja = findViewById(R.id.img_nitya_pooja);
-        imageNityaPooja.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(ViewAllNewsDetailsActivity.this,NityaPoojaActivity.class);
-                startActivity(intent);
-            }
-        });
+        imageNityaPooja.setOnClickListener(v ->
+                startActivity(new Intent(ViewAllNewsDetailsActivity.this, NityaPoojaActivity.class)));
 
+        // ---------- Content views ----------
         txtName = findViewById(R.id.txt_name);
         textContent = findViewById(R.id.webview);
         imageView = findViewById(R.id.image_view);
 
-        Bundle bundle = getIntent().getExtras();
-        String name = bundle.getString("Name");
-        imagePath = bundle.getString("imagePath");
-        String discription = bundle.getString("Discription");
+        txtViewMore.setOnClickListener(v ->
+                startActivity(new Intent(ViewAllNewsDetailsActivity.this, ViewAllNewsListActivity.class)));
 
-   /*     txtName.setText(name);*/
+        // ---------- Zoom (pinch only) ----------
+        baseTextSizePx = textContent.getTextSize(); // original size (px)
+        try {
+            textZoom = Integer.parseInt(getFromPreferences("textZoom", "100"));
+        } catch (NumberFormatException e) {
+            textZoom = 100;
+        }
+        applyZoom(true);
+        scaleDetector = new ScaleGestureDetector(this, new PinchListener());
 
-        txtViewMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentnews=new Intent(ViewAllNewsDetailsActivity.this,ViewAllNewsListActivity.class);
-                startActivity(intentnews);
-            }
-        });
-
-       /* Picasso.get().load(imagePath).into(imageView);
-        String htmlDescription = bundle.getString("Discription");
-
-// Render HTML tags & remove special characters like &zwnj; &lsquo;
-        if (htmlDescription != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                textContent.setText(Html.fromHtml(htmlDescription, Html.FROM_HTML_MODE_LEGACY));
-            } else {
-                textContent.setText(Html.fromHtml(htmlDescription));
-            }
-        }*/
-       // textContent.setText(discription);
-
+        // ---------- Text to Speech ----------
         textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -190,7 +149,7 @@ public class ViewAllNewsDetailsActivity extends AppCompatActivity {
                         Log.e("TTS", "Telugu language not supported!");
                     }
 
-                    // 👉 Listener for utterance completion
+                    // Listener for utterance completion
                     textToSpeech.setOnUtteranceProgressListener(new UtteranceProgressListener() {
                         @Override
                         public void onStart(String utteranceId) {}
@@ -245,17 +204,74 @@ public class ViewAllNewsDetailsActivity extends AppCompatActivity {
         loadnews(newsId);
     }
 
+    // ================= ZOOM =================
+    private void applyZoom(boolean save) {
+        textContent.setTextSize(TypedValue.COMPLEX_UNIT_PX, baseTextSizePx * textZoom / 100f);
+        if (save) {
+            saveToPreferences("textZoom", String.valueOf(textZoom));
+        }
+    }
+
+    private class PinchListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector) {
+            pinchZoom = textZoom;
+            return true;
+        }
+
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            pinchZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, pinchZoom * detector.getScaleFactor()));
+            int newZoom = Math.round(pinchZoom);
+            if (newZoom != textZoom) {
+                textZoom = newZoom;
+                applyZoom(false); // save at the end of pinch
+            }
+            return true;
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+            saveToPreferences("textZoom", String.valueOf(textZoom));
+        }
+    }
+
+    // Screen meeda ekkada pinch chesina zoom avtundi (ScrollView lopala unna sare)
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        scaleDetector.onTouchEvent(ev);
+
+        if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            pinching = false;
+        }
+
+        if (ev.getPointerCount() > 1 || scaleDetector.isInProgress() || pinching) {
+            if (!pinching) {
+                pinching = true;
+                // child views (ScrollView) ki cancel pampi, scroll aapali
+                MotionEvent cancel = MotionEvent.obtain(ev);
+                cancel.setAction(MotionEvent.ACTION_CANCEL);
+                super.dispatchTouchEvent(cancel);
+                cancel.recycle();
+            }
+            return true;
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    // ================= API =================
     private void loadnews(String newsId) {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient client = new OkHttpClient.Builder()
-                .sslSocketFactory(UnsafeTrustManager.createTrustAllSslSocketFactory(), UnsafeTrustManager.createTrustAllTrustManager())
-                .hostnameVerifier((hostname, session) -> true) // Bypasses hostname verification
+                .sslSocketFactory(UnsafeTrustManager.createTrustAllSslSocketFactory(),
+                        UnsafeTrustManager.createTrustAllTrustManager())
+                .hostnameVerifier((hostname, session) -> true)
                 .addInterceptor(loggingInterceptor)
                 .build();
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://www.ayyappatelugu.com/") // Replace with your API URL
+                .baseUrl("https://www.ayyappatelugu.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
@@ -265,6 +281,8 @@ public class ViewAllNewsDetailsActivity extends AppCompatActivity {
         call.enqueue(new Callback<NewsDetailsResponse>() {
             @Override
             public void onResponse(Call<NewsDetailsResponse> call, Response<NewsDetailsResponse> response) {
+                if (isFinishing() || isDestroyed()) return;
+
                 if (response.isSuccessful() && response.body() != null &&
                         "200".equals(response.body().errorCode)) {
 
@@ -276,16 +294,10 @@ public class ViewAllNewsDetailsActivity extends AppCompatActivity {
 
                         txtName.setText(item.newsTitle);
 
-
                         String fullImageUrl = data.imageUrl + item.image;
-
-
                         Log.d("IMAGE_DEBUG", "Final URL: " + fullImageUrl);
 
-                        Picasso.get()
-                                .load(fullImageUrl)
-
-                                .into(imageView);
+                        Picasso.get().load(fullImageUrl).into(imageView);
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                             textContent.setText(Html.fromHtml(item.newsDescription, Html.FROM_HTML_MODE_LEGACY));
@@ -298,11 +310,12 @@ public class ViewAllNewsDetailsActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<NewsDetailsResponse> call, Throwable t) {
-                Log.e("API_ERROR", t.getMessage());
+                Log.e("API_ERROR", String.valueOf(t.getMessage()));
             }
         });
     }
 
+    // ================= TTS =================
     private void speakText() {
         String text = textContent.getText().toString();
         textChunks = text.split("(?<=[.!?])\\s+"); // Split by sentence end
@@ -319,10 +332,10 @@ public class ViewAllNewsDetailsActivity extends AppCompatActivity {
             textToSpeech.speak(textChunks[currentChunkIndex], TextToSpeech.QUEUE_FLUSH, params, "chunk_" + currentChunkIndex);
         }
     }
+
     private void prepareChunks() {
         String fullText = textContent.getText().toString();
         textChunks = fullText.split("(?<=[.!?])\\s+"); // Split by sentence
-        //currentChunkIndex = sharedPreferences.getInt(KEY_INDEX, 0);
         currentChunkIndex = sharedPreferences.getInt(KEY_INDEX, 0);
     }
 
@@ -334,12 +347,13 @@ public class ViewAllNewsDetailsActivity extends AppCompatActivity {
         }
         super.onDestroy();
     }
+
     private void pauseTextToSpeech() {
         if (textToSpeech != null && textToSpeech.isSpeaking()) {
             textToSpeech.stop();
             isPlaying = false;
 
-            // 🔥 Advance the index to skip already half-spoken chunk
+            // Advance the index to skip already half-spoken chunk
             currentChunkIndex++;
 
             sharedPreferences.edit().putInt(KEY_INDEX, currentChunkIndex).apply();
@@ -347,11 +361,23 @@ public class ViewAllNewsDetailsActivity extends AppCompatActivity {
             playAudioIcon.setImageResource(R.drawable.baseline_play_arrow_24);
         }
     }
+
     private void stopTextToSpeech() {
         if (textToSpeech != null && textToSpeech.isSpeaking()) {
             textToSpeech.stop(); // This resets the speaking
             isPlaying = false;
             playAudioIcon.setImageResource(R.drawable.baseline_play_arrow_24);
         }
+    }
+
+    // ================= SharedPreferences (zoom) =================
+    private void saveToPreferences(String key, String value) {
+        SharedPreferences sp = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        sp.edit().putString(key, value).apply();
+    }
+
+    private String getFromPreferences(String key, String defaultValue) {
+        SharedPreferences sp = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        return sp.getString(key, defaultValue);
     }
 }

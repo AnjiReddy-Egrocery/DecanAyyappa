@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Full-width hero carousel (no side margins). Included at the top of app_home_layout.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/heroViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="260dp" />
+
+
+    <!-- gold separator line under the hero -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="#F5B83D" />
+
+    <LinearLayout
+        android:id="@+id/heroDots"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"
+        android:gravity="center"
+        android:orientation="horizontal" />
+
+
+
+</LinearLayout>

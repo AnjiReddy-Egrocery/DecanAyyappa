@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Three boxes under the hero. IDs are the ones HomeActivity already wires up
+     (layout_nityapooja, layout_anadanam, layout_tourse), so no Java change is needed. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="12dp"
+    android:baselineAligned="false"
+    android:orientation="horizontal"
+    android:weightSum="3">
+
+    <!-- 1. Nitya Pooja vidhanam -->
+    <LinearLayout
+        android:id="@+id/layout_nityapooja"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:layout_marginEnd="6dp"
+        android:layout_weight="1"
+        android:background="@drawable/hero_tile_bg"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="6dp">
+
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/hero_tile_img_ring"
+            android:clipToOutline="true"
+            android:padding="3dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ayyappaphome" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="అయ్యప్ప స్వామి\nనిత్యపూజా విధానం"
+            android:textColor="#2B1B1B"
+            android:textSize="14dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- 2. Annaprasadam -->
+    <LinearLayout
+        android:id="@+id/layout_sharanughosha"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="3dp"
+        android:layout_weight="1"
+        android:background="@drawable/hero_tile_bg"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="6dp">
+
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/background" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="శరణుఘోష"
+            android:textColor="#2B1B1B"
+            android:textSize="14dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- 3. Sabarimala yatra + price -->
+    <LinearLayout
+        android:id="@+id/layout_tourse"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="6dp"
+        android:layout_weight="1"
+        android:background="@drawable/hero_tile_bg"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="6dp">
+
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/hero_tile_img_ring"
+            android:clipToOutline="true"
+            android:padding="3dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/shabarimalayatra" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="శబరిమల యాత్ర"
+            android:textColor="#2B1B1B"
+            android:textSize="14dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/hero_price_chip"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:text="₹9,999/-"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+</LinearLayout>

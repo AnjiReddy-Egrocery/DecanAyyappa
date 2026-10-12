@@ -21,7 +21,10 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:itemIconTint="#BC0F0F"
-        android:itemTextAppearance="@style/NavDrawerTextStyle"
+        app:itemIconSize="14dp"
+        app:itemIconPadding="20dp"
+        app:itemHorizontalPadding="24dp"
+        app:itemTextAppearance="@style/NavMenuText"
         app:headerLayout="@layout/nav_header_layout"
         app:menu="@menu/menu"/>
 

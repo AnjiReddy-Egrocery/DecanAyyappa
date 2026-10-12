@@ -1,47 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
         android:id="@+id/layout_temples"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
         android:orientation="vertical">
+
+        <!-- Cream border + rounded corners -->
         <androidx.cardview.widget.CardView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginBottom="12dp"
-            card_view:cardElevation="5dp"
-            card_view:cardCornerRadius="15dp"
-            android:layout_gravity="center_horizontal">
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="8dp"
+            card_view:cardBackgroundColor="#FFF3D6"
+            card_view:cardCornerRadius="16dp"
+            card_view:cardElevation="6dp"
+            card_view:contentPadding="2dp">
+
             <ImageView
                 android:id="@+id/templeImage"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:adjustViewBounds="true"
-                android:scaleType="center"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/ayyappaphome" />
-
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ayyapaimage" />
         </androidx.cardview.widget.CardView>
 
+        <!-- Screenshot lo name ledu. Java code break avvakunda GONE lo unchanam -->
         <TextView
             android:id="@+id/templeName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:visibility="gone"
             android:text="HiHello How r u fine "
-            android:textColor="#FFF"
             android:textStyle="bold"
+            android:gravity="center"
             android:lines="2"
-            android:layout_marginLeft="12dp"
-            android:textSize="14dp" />
+            android:textSize="14dp"
+            android:textColor="#fff" />
     </LinearLayout>
-
-
-
-
-
 </LinearLayout>

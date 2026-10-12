@@ -54,12 +54,18 @@
             android:textColorHint="#000"
             android:background="@drawable/searchview_bg"/>
 
+        <com.dst.ayyapatelugu.Services.ZoomLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="6dp"
             android:id="@+id/recycler_product_list"/>
+
+        </com.dst.ayyapatelugu.Services.ZoomLayout>
     </LinearLayout>
 
 

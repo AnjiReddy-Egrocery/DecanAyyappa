@@ -8,6 +8,10 @@
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <com.dst.ayyapatelugu.Services.ZoomLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
 
 
     <LinearLayout
@@ -174,6 +178,7 @@
             </ScrollView>
         </LinearLayout>
     </LinearLayout>
+    </com.dst.ayyapatelugu.Services.ZoomLayout>
 </LinearLayout>
 
 
