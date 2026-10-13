@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Full-width hero carousel (no side margins). Included at the top of app_home_layout.xml -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_hero"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">

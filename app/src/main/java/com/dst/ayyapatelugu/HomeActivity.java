@@ -81,7 +81,7 @@ import com.dst.ayyapatelugu.DataBase.SharedPreferencesManager;
 import com.dst.ayyapatelugu.Model.AddImageResponse;
 import com.dst.ayyapatelugu.Model.AyyaTempleListModel;
 import com.dst.ayyapatelugu.Model.AyyappaTempleList;
-import com.dst.ayyapatelugu.Model.HeroSlide;
+import com.dst.ayyapatelugu.Model.BannerResponse;
 import com.dst.ayyapatelugu.Model.LoginDataResponse;
 import com.dst.ayyapatelugu.Model.NewsList;
 import com.dst.ayyapatelugu.Model.NewsListModel;
@@ -131,7 +131,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     GoogleSignInClient gsc;
 
     //LinearLayout layoutSeva;
-   // Button buttonViewAll;
+    // Button buttonViewAll;
     List<SevaListModel> sevaList;
     private Retrofit retrofit;
 
@@ -177,11 +177,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     Button butViewAll,viewallButton;
 
-    // Hero section (static data)
+    // Hero section (dynamic data from API)
     ViewPager2 heroViewPager;
     LinearLayout heroDots;
+    LinearLayout layoutHeroContainer;
     ImageView[] heroDotViews;
-    List<HeroSlide> heroSlides = new ArrayList<>();
+    List<BannerResponse.BannerItem> heroBanners = new ArrayList<>();
     Handler heroHandler = new Handler(Looper.getMainLooper());
     Runnable heroRunnable;
     private static final long HERO_AUTO_SLIDE_MS = 4000;
@@ -429,52 +430,15 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 
     // ---------------------------------------------------------------------------------
-    // Hero section: full-width carousel with static data
+    // Hero section: full-width carousel, data from GET APICalls/banner-images
     // ---------------------------------------------------------------------------------
     private void heroSectionMethod() {
         heroViewPager = findViewById(R.id.heroViewPager);
         heroDots = findViewById(R.id.heroDots);
+        layoutHeroContainer = findViewById(R.id.layout_hero);
 
-        heroSlides = new ArrayList<>();
-        // Slide 1 - Nitya Pooja vidhanam
-        heroSlides.add(new HeroSlide(
-                "శరణుఘోష",
-                "అయ్యప్ప స్వామి\nనిత్యపూజా విధానం",
-                null,
-                R.drawable.ayyappaphome,
-                "నిత్య పూజ", NityaPoojaActivity.class,
-                "అన్నదానం", AnadanamActivity.class));
-        // Slide 2 - Sabarimala yatra
-        heroSlides.add(new HeroSlide(
-                "శబరిమల యాత్ర",
-                "శబరిమల యాత్ర",
-                "Package Starts From \u20B99,999/-",
-                R.drawable.shabarimalayatra,
-                "వివరాలు", AyyappaTourseDetailsACtivity.class,
-                null, null));
-        // Slide 3 - Sharanughosha
-        heroSlides.add(new HeroSlide(
-                "శరణుఘోష",
-                "శరణుఘోష",
-                null,
-                R.drawable.background,
-                "శరణుఘోష వినండి", SharanughoshaActivity.class,
-                "అన్నదానం", AnadanamActivity.class));
-
-        heroViewPager.setAdapter(new HeroSliderAdapter(HomeActivity.this, heroSlides));
-
-        // dots
-        heroDots.removeAllViews();
-        heroDotViews = new ImageView[heroSlides.size()];
-        int size = (int) (8 * getResources().getDisplayMetrics().density);
-        int margin = (int) (4 * getResources().getDisplayMetrics().density);
-        for (int i = 0; i < heroDotViews.length; i++) {
-            heroDotViews[i] = new ImageView(this);
-            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(size, size);
-            p.setMargins(margin, 0, margin, 0);
-            heroDots.addView(heroDotViews[i], p);
-        }
-        updateHeroDots(0);
+        // Show only after data arrives
+        layoutHeroContainer.setVisibility(View.GONE);
 
         heroViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
@@ -487,16 +451,104 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         // auto slide (loops back to first slide)
         heroRunnable = () -> {
-            if (heroSlides.size() > 1) {
-                int next = (heroViewPager.getCurrentItem() + 1) % heroSlides.size();
+            if (heroBanners != null && heroBanners.size() > 1) {
+                int next = (heroViewPager.getCurrentItem() + 1) % heroBanners.size();
                 heroViewPager.setCurrentItem(next, true);
             }
         };
+
+        loadHeroBanners();
+    }
+
+    private void loadHeroBanners() {
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .sslSocketFactory(UnsafeTrustManager.createTrustAllSslSocketFactory(), UnsafeTrustManager.createTrustAllTrustManager())
+                .hostnameVerifier((hostname, session) -> true)
+                .addInterceptor(loggingInterceptor)
+                .build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://www.ayyappatelugu.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+        APiInterface apiClient = retrofit.create(APiInterface.class);
+
+        apiClient.getBannerImages().enqueue(new Callback<BannerResponse>() {
+            @Override
+            public void onResponse(Call<BannerResponse> call, Response<BannerResponse> response) {
+                if (isFinishing() || isDestroyed()) return;
+
+                BannerResponse body = response.body();
+                if (response.isSuccessful() && body != null
+                        && "200".equals(body.errorCode)
+                        && body.result != null && !body.result.isEmpty()) {
+                    showHero(body);
+                } else {
+                    hideHero();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BannerResponse> call, Throwable t) {
+                Log.e("HERO_API", String.valueOf(t.getMessage()));
+                if (!isFinishing() && !isDestroyed()) {
+                    hideHero();
+                }
+            }
+        });
+    }
+
+    private void showHero(BannerResponse body) {
+        heroBanners = body.result;
+
+        // pager height = full image height (19:6) + text panel below it
+        boolean hasExtra = false;
+        for (BannerResponse.BannerItem b : heroBanners) {
+            if ((b.description != null && !b.description.isEmpty())
+                    || (b.buttonText1 != null && !b.buttonText1.isEmpty())) {
+                hasExtra = true;
+                break;
+            }
+        }
+        float density = getResources().getDisplayMetrics().density;
+        int panelPx = (int) ((hasExtra ? 170 : 80) * density);   // adjust 170 / 80 if you need more or less room
+        ViewGroup.LayoutParams lp = heroViewPager.getLayoutParams();
+        lp.height = HeroSliderAdapter.imageHeightPx(this) + panelPx;
+        heroViewPager.setLayoutParams(lp);
+
+        heroViewPager.setAdapter(new HeroSliderAdapter(HomeActivity.this, body.imageUrl, heroBanners));
+
+        // dots (as many as the API returns)
+        heroDots.removeAllViews();
+        heroDotViews = new ImageView[heroBanners.size()];
+        int size = (int) (8 * getResources().getDisplayMetrics().density);
+        int margin = (int) (4 * getResources().getDisplayMetrics().density);
+        for (int i = 0; i < heroDotViews.length; i++) {
+            heroDotViews[i] = new ImageView(this);
+            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(size, size);
+            p.setMargins(margin, 0, margin, 0);
+            heroDots.addView(heroDotViews[i], p);
+        }
+        heroDots.setVisibility(heroBanners.size() > 1 ? View.VISIBLE : View.GONE);
+        updateHeroDots(0);
+
+        layoutHeroContainer.setVisibility(View.VISIBLE);
         startHeroAutoSlide();
     }
 
+    private void hideHero() {
+        heroBanners = new ArrayList<>();
+        heroHandler.removeCallbacks(heroRunnable);
+        if (heroViewPager != null) heroViewPager.setAdapter(null);
+        if (heroDots != null) heroDots.removeAllViews();
+        layoutHeroContainer.setVisibility(View.GONE);
+    }
+
     private void startHeroAutoSlide() {
-        if (heroRunnable == null || heroSlides == null || heroSlides.size() < 2) return;
+        if (heroRunnable == null || heroBanners == null || heroBanners.size() < 2) return;
         heroHandler.removeCallbacks(heroRunnable);
         heroHandler.postDelayed(heroRunnable, HERO_AUTO_SLIDE_MS);
     }
@@ -508,32 +560,32 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-        private void adsCarouselMethod() {
-            adsViewPager = findViewById(R.id.adsViewPager);
-            adsDots = findViewById(R.id.adsDots);
-            layoutAdsContainer = findViewById(R.id.layout_ads);
+    private void adsCarouselMethod() {
+        adsViewPager = findViewById(R.id.adsViewPager);
+        adsDots = findViewById(R.id.adsDots);
+        layoutAdsContainer = findViewById(R.id.layout_ads);
 
-            // Data vachaka matrame chupistam
-            layoutAdsContainer.setVisibility(View.GONE);
+        // Data vachaka matrame chupistam
+        layoutAdsContainer.setVisibility(View.GONE);
 
-            adsViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-                @Override
-                public void onPageSelected(int position) {
-                    if (adImages == null || adImages.isEmpty()) return;
-                    updateAdsDots(position % adImages.size());                }
-            });
+        adsViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                if (adImages == null || adImages.isEmpty()) return;
+                updateAdsDots(position % adImages.size());                }
+        });
 
-            // auto slide
-            adsRunnable = () -> {
-                if (adImages != null && adImages.size() > 1) {
-                    adsViewPager.setCurrentItem(adsViewPager.getCurrentItem() + 1, true);
-                    adsHandler.postDelayed(adsRunnable, 3000);
-                }
-            };
+        // auto slide
+        adsRunnable = () -> {
+            if (adImages != null && adImages.size() > 1) {
+                adsViewPager.setCurrentItem(adsViewPager.getCurrentItem() + 1, true);
+                adsHandler.postDelayed(adsRunnable, 3000);
+            }
+        };
 
 
-            loadAds();
-        }
+        loadAds();
+    }
 
     private void loadAds() {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
@@ -627,7 +679,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 
     private void bajanaSongsMethod() {
-       // butBajanaSongs = findViewById(R.id.viewall_but_bajana_songs);
+        // butBajanaSongs = findViewById(R.id.viewall_but_bajana_songs);
         //layoutBajanaSongs = findViewById(R.id.layout_bajana_songs);
 
         /*butBajanaSongs.setOnClickListener(new View.OnClickListener() {
@@ -832,15 +884,15 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onResponse(Call<AyyappaTempleList> call, Response<AyyappaTempleList> response) {
                 swipeRefreshLayout.setRefreshing(false); // Hide loader
-                    AyyappaTempleList list= response.body();
-                    ayyaTempleListModels = Arrays.asList(list.getResult());
+                AyyappaTempleList list= response.body();
+                ayyaTempleListModels = Arrays.asList(list.getResult());
 
-                    // Save to SharedPreferences for caching
-                    SharedPreferencesManager.saveAyyappaTempleList(HomeActivity.this, ayyaTempleListModels);
+                // Save to SharedPreferences for caching
+                SharedPreferencesManager.saveAyyappaTempleList(HomeActivity.this, ayyaTempleListModels);
 
-                    // Update RecyclerView
-                    ayyappaupdateRecyclerView(ayyaTempleListModels);
-                }
+                // Update RecyclerView
+                ayyappaupdateRecyclerView(ayyaTempleListModels);
+            }
 
             @Override
             public void onFailure(Call<AyyappaTempleList> call, Throwable t) {
@@ -879,7 +931,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         rightIcon = findViewById(R.id.rightIcon);
         templeList = new ArrayList<>();
 
-         layoutManagerTemple =new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
+        layoutManagerTemple =new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
         recyclerviewTemples.setLayoutManager(layoutManagerTemple);
 
         fechedDatafromShredPreferences();
@@ -991,7 +1043,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     private void sevaMethod() {
 //        buttonViewAll = findViewById(R.id.but_view_all);
-       // layoutSeva = findViewById(R.id.layout_seva);
+        // layoutSeva = findViewById(R.id.layout_seva);
         /*buttonViewAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1317,6 +1369,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         super.onPause();
         adsHandler.removeCallbacks(adsRunnable);
         if (heroRunnable != null) heroHandler.removeCallbacks(heroRunnable);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (heroRunnable != null) heroHandler.removeCallbacks(heroRunnable);
+        if (adsRunnable != null) adsHandler.removeCallbacks(adsRunnable);
     }
 
 

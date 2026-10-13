@@ -11,6 +11,7 @@ import com.dst.ayyapatelugu.Model.BajanaMandaliDetailsResponse;
 import com.dst.ayyapatelugu.Model.BajanaMandaliList;
 import com.dst.ayyapatelugu.Model.BajanaSongDetailsResponse;
 import com.dst.ayyapatelugu.Model.BajanaSongsList;
+import com.dst.ayyapatelugu.Model.BannerResponse;
 import com.dst.ayyapatelugu.Model.BlogResponse;
 import com.dst.ayyapatelugu.Model.BookDetailsResponse;
 import com.dst.ayyapatelugu.Model.BooksListModel;
@@ -98,6 +99,9 @@ public interface APiInterface {
 
     @GET("APICalls/ad-images")
     Call<AddImageResponse> getAdImages();
+
+    @GET("APICalls/banner-images")
+    Call<BannerResponse> getBannerImages();
     @FormUrlEncoded
     @POST("APICalls/News/info")
     Call<NewsDetailsResponse> getNewsDetails(
