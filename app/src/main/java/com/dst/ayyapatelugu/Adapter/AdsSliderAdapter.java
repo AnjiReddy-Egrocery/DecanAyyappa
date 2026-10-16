@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.dst.ayyapatelugu.Model.AddImageResponse;
+import com.dst.ayyapatelugu.Services.LinkRouter;
 
 import java.util.List;
 
@@ -52,19 +53,7 @@ public class AdsSliderAdapter extends RecyclerView.Adapter<AdsSliderAdapter.VH> 
     }
 
     private void openLink(String url) {
-        if (url == null || url.trim().isEmpty()) return;
-
-        url = url.trim();
-        if (!url.startsWith("http://") && !url.startsWith("https://")) {
-            url = "https://" + url;
-        }
-
-        try {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            context.startActivity(intent);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(context, "Link open cheyyadaniki app ledu", Toast.LENGTH_SHORT).show();
-        }
+        LinkRouter.open(context, url);   // app:// -> inside app, otherwise browser
     }
 
     @Override

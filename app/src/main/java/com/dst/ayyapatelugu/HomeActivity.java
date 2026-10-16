@@ -1,5 +1,6 @@
 package com.dst.ayyapatelugu;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -210,6 +211,15 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         //getSupportActionBar().setLogo(R.drawable.user_profile_background);
         //getSupportActionBar().setDisplayUseLogoEnabled(true);
         setContentView(R.layout.activity_home);
+
+        // Back button: onBackPressed() is not called when targeting API 36 (predictive back),
+        // so the exit dialog is registered as a back callback instead.
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                showExitConfirmationDialog();
+            }
+        });
 
         drawerLayout = findViewById(R.id.drawer);
         mNavigationView = findViewById(R.id.nav_view);
@@ -504,19 +514,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private void showHero(BannerResponse body) {
         heroBanners = body.result;
 
-        // pager height = full image height (19:6) + text panel below it
-        boolean hasExtra = false;
-        for (BannerResponse.BannerItem b : heroBanners) {
-            if ((b.description != null && !b.description.isEmpty())
-                    || (b.buttonText1 != null && !b.buttonText1.isEmpty())) {
-                hasExtra = true;
-                break;
-            }
-        }
-        float density = getResources().getDisplayMetrics().density;
-        int panelPx = (int) ((hasExtra ? 170 : 80) * density);   // adjust 170 / 80 if you need more or less room
+        // pager height = image height only (19:6); title, subtitle and buttons are drawn ON the image
         ViewGroup.LayoutParams lp = heroViewPager.getLayoutParams();
-        lp.height = HeroSliderAdapter.imageHeightPx(this) + panelPx;
+        lp.height = HeroSliderAdapter.imageHeightPx(this);
         heroViewPager.setLayoutParams(lp);
 
         heroViewPager.setAdapter(new HeroSliderAdapter(HomeActivity.this, body.imageUrl, heroBanners));
@@ -1166,11 +1166,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 
 
-
-    @Override
-    public void onBackPressed() {
-        showExitConfirmationDialog(); // Show the exit confirmation dialog first
-    }
 
     private void showExitConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

@@ -6,7 +6,6 @@ public class PanchangWrapper {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
-
     public PanchangamData getData() { return data; }
     public void setData(PanchangamData data) { this.data = data; }
 }

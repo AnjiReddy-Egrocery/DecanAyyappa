@@ -10,116 +10,85 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.dst.ayyapatelugu.Model.DateTimeUtil;
 import com.dst.ayyapatelugu.Model.PanchangDay;
 import com.dst.ayyapatelugu.Model.PanchangamData;
 import com.dst.ayyapatelugu.R;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public class MonthAdapter extends RecyclerView.Adapter<MonthAdapter.VH> {
+
+    public interface OnDayClick {
+        void onClick(PanchangDay day);
+    }
+
+    private final Context context;
     private final List<PanchangDay> days;
-    private final Context ctx;
-    private final OnDayClickListener listener;
+    private final OnDayClick listener;
 
-    public interface OnDayClickListener { void onDayClick(PanchangDay day); }
-
-    public MonthAdapter(Context ctx, List<PanchangDay> days, OnDayClickListener l) {
-        this.ctx = ctx; this.days = days; this.listener = l;
+    public MonthAdapter(Context context, List<PanchangDay> days, OnDayClick listener) {
+        this.context = context;
+        this.days = days;
+        this.listener = listener;
     }
 
     @NonNull
     @Override
     public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(ctx).inflate(R.layout.item_telugu_day, parent, false);
+        View v = LayoutInflater.from(context).inflate(R.layout.item_telugu_day, parent, false);
         return new VH(v);
     }
 
-    @Override public void onBindViewHolder(@NonNull VH holder, int pos) {
-        PanchangDay d = days.get(pos);
+    @Override
+    public void onBindViewHolder(@NonNull VH h, int position) {
+        PanchangDay day = days.get(position);
 
-        // EMPTY CELL
-        if (d.getDate() == null || d.getDate().isEmpty()) {
-            holder.tvDate.setText("");
-            holder.tvDate.setTextColor(Color.TRANSPARENT);
-            holder.tvTithi.setText("");
-            holder.tvNakshatra.setText("");
-            holder.tvSunrise.setText("");
+        // Empty offset cell
+        if (day == null || day.getDate() == null) {
+            h.itemView.setVisibility(View.INVISIBLE);
+            h.itemView.setOnClickListener(null);
             return;
         }
+        h.itemView.setVisibility(View.VISIBLE);
 
-        String fullDate = d.getDate(); // yyyy-MM-dd
-        holder.tvDate.setText(fullDate.substring(8));
+        // Date number
+        String dayNum = String.valueOf(Integer.parseInt(day.getDate().substring(8, 10)));
+        h.tvDate.setText(dayNum);
 
-        // PARSE DATE
-        LocalDate dateObj = null;
-        try {
-            dateObj = LocalDate.parse(fullDate);
-        } catch (Exception ignored) {}
+        PanchangamData d = (day.getData() != null) ? day.getData().getData() : null;
 
-        // -----------------------------------
-        // 🎯 TODAY DATE → GREEN
-        // -----------------------------------
-        LocalDate today = LocalDate.now();
-        if (dateObj != null && dateObj.isEqual(today)) {
-            holder.root.setBackgroundColor(Color.parseColor("#f05746")); // MAROON
-            holder.tvDate.setTextColor(Color.WHITE);
-            holder.tvTithi.setTextColor(Color.WHITE);
-            holder.tvNakshatra.setTextColor(Color.WHITE);
-            holder.tvSunrise.setTextColor(Color.WHITE);
+        String tithi = "", nakshatra = "";
+        if (d != null) {
+            if (d.getTithi() != null && !d.getTithi().isEmpty())
+                tithi = d.getTithi().get(0).getName();
+            if (d.getNakshatra() != null && !d.getNakshatra().isEmpty())
+                nakshatra = d.getNakshatra().get(0).getName();
         }
-        else if (dateObj != null && dateObj.getDayOfWeek().getValue() == 7) {
-            // 🎯 SUNDAY → RED
-            holder.tvDate.setTextColor(Color.RED);
-        }
-        else {
-            // 🎯 OTHER DAYS → BLACK
-            holder.tvDate.setTextColor(Color.BLACK);
-            holder.tvTithi.setTextColor(Color.BLACK);
-            holder.tvNakshatra.setTextColor(Color.BLACK);
-            holder.tvSunrise.setTextColor(Color.BLACK);
-        }
+        h.tvTithi.setText(tithi);
+        h.tvNakshatra.setText(nakshatra);
 
-        // -----------------------------------
-        // PANCHANG DATA
-        // -----------------------------------
-        PanchangamData dd = null;
-        if (d.getData() != null) {
-            dd = d.getData().getData();
-        }
+        // Sunday red
+        boolean sunday = d != null && d.getVaara() != null && d.getVaara().startsWith("ఆది");
+        h.tvDate.setTextColor(sunday ? Color.parseColor("#D32F2F") : Color.parseColor("#000000"));
 
-        holder.tvTithi.setText(
-                dd != null && dd.getTithi() != null && !dd.getTithi().isEmpty()
-                        ? dd.getTithi().get(0).getName()
-                        : ""
-        );
-
-        holder.tvNakshatra.setText(
-                dd != null && dd.getNakshatra() != null && !dd.getNakshatra().isEmpty()
-                        ? dd.getNakshatra().get(0).getName()
-                        : ""
-        );
-
-        holder.tvSunrise.setText(
-                dd != null ? DateTimeUtil.formatISOToTime(dd.getSunrise()) : ""
-        );
-
-        holder.itemView.setOnClickListener(v -> listener.onDayClick(d));
+        h.itemView.setOnClickListener(v -> {
+            if (listener != null) listener.onClick(day);
+        });
     }
 
-    @Override public int getItemCount() { return days.size(); }
+    @Override
+    public int getItemCount() {
+        return days.size();
+    }
 
     static class VH extends RecyclerView.ViewHolder {
-        TextView tvDate, tvVaara, tvTithi, tvNakshatra, tvSunrise;
-        View root;
-        VH(View v) {
-            super(v);
-            root = v.findViewById(R.id.rootLayout);
-            tvDate = v.findViewById(R.id.tvDate);
-            tvTithi = v.findViewById(R.id.tvTithi);
-            tvNakshatra = v.findViewById(R.id.tvNakshatra);
-            tvSunrise = v.findViewById(R.id.tvSunrise);
+        TextView tvDate, tvTithi, tvNakshatra;
+
+        VH(@NonNull View itemView) {
+            super(itemView);
+            tvDate = itemView.findViewById(R.id.tvDate);
+            tvTithi = itemView.findViewById(R.id.tvTithi);
+            tvNakshatra = itemView.findViewById(R.id.tvNakshatra);
         }
     }
 }

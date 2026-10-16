@@ -1,30 +1,19 @@
 package com.dst.ayyapatelugu.Model;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class DateTimeUtil {
 
-    // Converts ISO DateTime → HH:mm (24-hour)
-    public static String formatISOToTime(String isoDate) {
-        if (isoDate == null || isoDate.isEmpty()) return "";
-
+    // "2026-10-01T06:09:46+05:30" -> "06:09 AM"
+    public static String formatISOToTime(String iso) {
         try {
-            // Example: "2025-02-11T06:22:00+05:30" or "06:22"
-            if (isoDate.contains("T")) {
-                SimpleDateFormat iso = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                Date d = iso.parse(isoDate.substring(0, 19));
-                SimpleDateFormat out = new SimpleDateFormat("HH:mm");
-                return out.format(d);
-            } else {
-                // if API gives direct time like "06:22"
-                return isoDate;
-            }
-
+            if (iso == null || iso.length() < 16) return "";
+            int h = Integer.parseInt(iso.substring(11, 13));
+            String m = iso.substring(14, 16);
+            String ampm = h >= 12 ? "PM" : "AM";
+            int h12 = h % 12;
+            if (h12 == 0) h12 = 12;
+            return String.format(java.util.Locale.US, "%02d:%s %s", h12, m, ampm);
         } catch (Exception e) {
-            e.printStackTrace();
-            return isoDate; // fallback
+            return "";
         }
     }
 }
-

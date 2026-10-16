@@ -162,7 +162,7 @@ public class LocationForegroundService extends Service {
                                             );
 
 
-                                            checkTemples(location);
+                                            checkTemples(currentLocation);
 
 
                                         }
@@ -218,7 +218,7 @@ public class LocationForegroundService extends Service {
                                             );
 
 
-                                            checkAyyappa(location);
+                                            checkAyyappa(currentLocation);
 
 
                                         }
@@ -307,6 +307,33 @@ public class LocationForegroundService extends Service {
     }
 
     // ================= ANNADANAM =================
+
+    // GREEN marker logic (same as AnadanamMapFragment): today must be between starting date and ending date
+    private boolean isAnnadanamActive(MapDataResponse.Result item) {
+        try {
+            Calendar now = Calendar.getInstance();
+
+            Calendar startDay = Calendar.getInstance();
+            startDay.setTimeInMillis(Long.parseLong(item.getStartingDate()) * 1000);
+            startDay.set(Calendar.HOUR_OF_DAY, 0);
+            startDay.set(Calendar.MINUTE, 0);
+            startDay.set(Calendar.SECOND, 0);
+            startDay.set(Calendar.MILLISECOND, 0);
+
+            Calendar endDay = Calendar.getInstance();
+            endDay.setTimeInMillis(Long.parseLong(item.getEndingDate()) * 1000);
+            endDay.set(Calendar.HOUR_OF_DAY, 23);
+            endDay.set(Calendar.MINUTE, 59);
+            endDay.set(Calendar.SECOND, 59);
+            endDay.set(Calendar.MILLISECOND, 999);
+
+            return !now.before(startDay) && !now.after(endDay);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     private void checkAnnadanam(Location loc) {
 
         if (!isAnnadanamMapActive) return;
@@ -359,7 +386,7 @@ public class LocationForegroundService extends Service {
                         res
                 );
 
-                if (res[0] <= ANNADANAM_DISTANCE) {
+                if (res[0] <= ANNADANAM_DISTANCE && isAnnadanamActive(item)) {
 
                     nearbyList.add(item);
 
@@ -403,14 +430,14 @@ public class LocationForegroundService extends Service {
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this, CHANNEL_ANNADANAM)
                         .setSmallIcon(R.drawable.ic_launcher_foreground)
-                        .setContentTitle("\uD83D\uDE4F అన్నదానం నిర్వహించే దేవాలయాలు ")
-                        .setContentText("మీ సమీపంలో "
+                        .setContentTitle("\uD83D\uDE4F అన్నదానం నిర్వహించే దేవాలయాలు")
+                        .setContentText("మీ సమీపంలో"
                                 + nearbyList.size()
-                                + " దేవాలయాలు అందుబాటులో ఉన్నాయి.\n"
+                                + " అన్నదానాలు జరుగుతున్నాయి.\n"
                                 + "వివరాల కోసం క్లిక్ చేయండి."
                         )
                         .setStyle(new NotificationCompat.BigTextStyle()
-                                .bigText(nearbyList.size() + " Annadanam temples are within 5 KM.\nTap to view the complete list."))
+                                .bigText(nearbyList.size() + " Annadanam temples are active within 5 KM.\nTap to view the complete list."))
                         .setPriority(NotificationCompat.PRIORITY_HIGH)
                         .setAutoCancel(true)
                         .setContentIntent(pi);

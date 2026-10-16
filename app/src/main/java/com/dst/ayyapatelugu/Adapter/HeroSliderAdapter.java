@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.dst.ayyapatelugu.Model.BannerResponse;
 import com.dst.ayyapatelugu.R;
+import com.dst.ayyapatelugu.Services.LinkRouter;
 
 import java.util.List;
 
@@ -48,11 +49,6 @@ public class HeroSliderAdapter extends RecyclerView.Adapter<HeroSliderAdapter.He
     public void onBindViewHolder(@NonNull HeroViewHolder h, int position) {
         final BannerResponse.BannerItem b = banners.get(position);
 
-        // Full image, no cropping: height follows the banner aspect ratio
-        ViewGroup.LayoutParams lp = h.image.getLayoutParams();
-        lp.height = imageHeightPx(context);
-        h.image.setLayoutParams(lp);
-
         // Image
         Glide.with(context)
                 .load(imageBaseUrl + b.image)
@@ -68,6 +64,10 @@ public class HeroSliderAdapter extends RecyclerView.Adapter<HeroSliderAdapter.He
         } else {
             h.subtitle.setVisibility(View.GONE);
         }
+
+        // Transparent box behind title + subtitle only when there is some text
+        boolean hasText = !TextUtils.isEmpty(b.title) || !TextUtils.isEmpty(b.description);
+        h.textBox.setVisibility(hasText ? View.VISIBLE : View.GONE);
 
         boolean hasBtn1 = !TextUtils.isEmpty(b.buttonText1) && !TextUtils.isEmpty(b.buttonUrl1);
         boolean hasBtn2 = !TextUtils.isEmpty(b.buttonText2) && !TextUtils.isEmpty(b.buttonUrl2);
@@ -103,13 +103,7 @@ public class HeroSliderAdapter extends RecyclerView.Adapter<HeroSliderAdapter.He
     }
 
     private void openUrl(String url) {
-        if (TextUtils.isEmpty(url)) return;
-        try {
-            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url.trim()));
-            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(i);
-        } catch (ActivityNotFoundException ignored) {
-        }
+        LinkRouter.open(context, url);   // app:// -> inside app, otherwise browser
     }
 
     @Override
@@ -120,10 +114,11 @@ public class HeroSliderAdapter extends RecyclerView.Adapter<HeroSliderAdapter.He
     static class HeroViewHolder extends RecyclerView.ViewHolder {
         final ImageView image;
         final TextView title, subtitle, primary, secondary;
-        final View buttonRow;
+        final View buttonRow, textBox;
 
         HeroViewHolder(@NonNull View itemView) {
             super(itemView);
+            textBox = itemView.findViewById(R.id.heroTextBox);
             image = itemView.findViewById(R.id.heroImage);
             title = itemView.findViewById(R.id.heroTitle);
             subtitle = itemView.findViewById(R.id.heroSubtitle);

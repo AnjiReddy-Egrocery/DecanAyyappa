@@ -11,8 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:gravity="center"
-        android:padding="6dp"
-        >
+        android:padding="6dp">
 
         <ImageView
             android:id="@+id/btnPrev"
@@ -46,9 +45,7 @@
         android:layout_height="40dp"
         android:orientation="horizontal"
         android:gravity="center"
-        android:paddingTop="8dp"
-        android:background="#000"
-        android:paddingBottom="8dp">
+        android:background="#000">
 
         <TextView style="@style/WeekHeaderStylesun" android:text="Sun"/>
         <TextView style="@style/WeekHeaderStyle" android:text="Mon"/>
@@ -57,24 +54,15 @@
         <TextView style="@style/WeekHeaderStyle" android:text="Thu"/>
         <TextView style="@style/WeekHeaderStyle" android:text="Fri"/>
         <TextView style="@style/WeekHeaderStyle" android:text="Sat"/>
-
-
     </LinearLayout>
 
-    <com.dst.ayyapatelugu.Services.ZoomLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-
-    <!-- Calendar Grid -->
+    <!-- Calendar Grid: ZoomLayout teesesanu (idi height 0 problem ki karanam) -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvCalendar"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
-
-    </com.dst.ayyapatelugu.Services.ZoomLayout>
-
-
+        android:layout_weight="1"
+        android:layout_marginBottom="75dp"
+        android:clipToPadding="false"/>
 
 </LinearLayout>

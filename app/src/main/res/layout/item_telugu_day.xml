@@ -1,49 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="4dp"
-    android:id="@+id/rootLayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/day_box_bg">
+    android:layout_height="80dp"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="2dp"
+    android:background="@drawable/bg_day_cell">
 
-    <!-- DATE -->
     <TextView
         android:id="@+id/tvDate"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18dp"
+        android:textSize="16sp"
         android:textStyle="bold"
-        android:textColor="#D32F2F"
-        android:gravity="center"/>
+        android:textColor="#000000"/>
 
-    <!-- VAARA -->
-
-    <!-- TITHI -->
     <TextView
         android:id="@+id/tvTithi"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:textColor="#000"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textSize="10sp"
+        android:textColor="#BC0F0F"/>
 
-    <!-- NAKSHATRA -->
     <TextView
         android:id="@+id/tvNakshatra"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:textColor="#000"
-        android:gravity="center"/>
-
-    <!-- SUNRISE -->
-    <TextView
-        android:id="@+id/tvSunrise"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:textColor="#000"
-        android:gravity="center"/>
-
+        android:gravity="center"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textSize="9sp"
+        android:textColor="#555555"/>
 </LinearLayout>
