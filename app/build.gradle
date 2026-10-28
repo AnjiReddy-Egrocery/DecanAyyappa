@@ -11,8 +11,8 @@ android {
         applicationId "com.dst.ayyapatelugu"
         minSdk 23
         targetSdk 36
-        versionCode 85
-        versionName '1.86'
+        versionCode 90
+        versionName '1.91'
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {
@@ -24,7 +24,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -119,6 +119,8 @@ dependencies {
     implementation "androidx.media3:media3-ui:1.4.1"
 
     implementation 'com.github.yalantis:ucrop:2.2.8'
+
+    implementation "androidx.lifecycle:lifecycle-process:2.8.7"
 
 
 

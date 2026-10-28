@@ -187,7 +187,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     Handler heroHandler = new Handler(Looper.getMainLooper());
     Runnable heroRunnable;
     private static final long HERO_AUTO_SLIDE_MS = 4000;
-    SwipeRefreshLayout swipeRefreshLayout,swipeRefreshLayout1,swipeRefreshLayout2;
+    SwipeRefreshLayout swipeRefreshLayout,swipeRefreshLayout1,swipeRefreshLayout2,swipeRefreshHome;
 
     RecyclerView recyclerviewnews;
 
@@ -203,6 +203,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     List<AddImageResponse.AdItem> adImages = new ArrayList<>();
     ImageView[] adsDotViews;
     LinearLayout layoutAdsContainer;
+    int pendingRefresh = 0;
 
 
     @Override
@@ -211,6 +212,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         //getSupportActionBar().setLogo(R.drawable.user_profile_background);
         //getSupportActionBar().setDisplayUseLogoEnabled(true);
         setContentView(R.layout.activity_home);
+
+
+        swipeRefreshHome = findViewById(R.id.swipeRefreshHome);
+        swipeRefreshHome.setColorSchemeColors(0xFFBC0F0F);
+        swipeRefreshHome.setOnRefreshListener(this::refreshAll);
 
         // Back button: onBackPressed() is not called when targeting API 36 (predictive back),
         // so the exit dialog is registered as a back callback instead.
@@ -438,7 +444,21 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    private void refreshAll() {
+        pendingRefresh = 5;               // 5 API calls
+        loadHeroBanners();
+        loadAds();
+        newsfetchDataFromDataBase();
+        ayyappafetchDataFromDataBase();
+        fetchDataFromDataBase();
+    }
 
+    private void finishRefresh() {
+        if (pendingRefresh > 0) pendingRefresh--;
+        if (pendingRefresh <= 0 && swipeRefreshHome != null) {
+            swipeRefreshHome.setRefreshing(false);
+        }
+    }
     // ---------------------------------------------------------------------------------
     // Hero section: full-width carousel, data from GET APICalls/banner-images
     // ---------------------------------------------------------------------------------
@@ -489,6 +509,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         apiClient.getBannerImages().enqueue(new Callback<BannerResponse>() {
             @Override
             public void onResponse(Call<BannerResponse> call, Response<BannerResponse> response) {
+                finishRefresh();
                 if (isFinishing() || isDestroyed()) return;
 
                 BannerResponse body = response.body();
@@ -503,6 +524,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onFailure(Call<BannerResponse> call, Throwable t) {
+                finishRefresh();
                 Log.e("HERO_API", String.valueOf(t.getMessage()));
                 if (!isFinishing() && !isDestroyed()) {
                     hideHero();
@@ -606,6 +628,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         apiClient.getAdImages().enqueue(new Callback<AddImageResponse>() {
             @Override
             public void onResponse(Call<AddImageResponse> call, Response<AddImageResponse> response) {
+                finishRefresh();
                 if (isFinishing() || isDestroyed()) return;
 
                 AddImageResponse body = response.body();
@@ -622,6 +645,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             }
             @Override
             public void onFailure(Call<AddImageResponse> call, Throwable t) {
+                finishRefresh();
                 Log.e("ADS_API", String.valueOf(t.getMessage()));
                 if (!isFinishing() && !isDestroyed()) {
                     hideAds();
@@ -766,7 +790,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         call.enqueue(new Callback<NewsList>() {
             @Override
             public void onResponse(Call<NewsList> call, Response<NewsList> response) {
-                swipeRefreshLayout.setRefreshing(false); // Hide loader
+                finishRefresh();
+
                 NewsList newsList1=response.body();
                 newsList = new ArrayList<>(Arrays.asList(newsList1.getResult()));
 
@@ -777,7 +802,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onFailure(Call<NewsList> call, Throwable t) {
-                swipeRefreshLayout.setRefreshing(false); // Hide loader
+                finishRefresh();
                 newsList = SharedPreferencesManager.getNewsList(HomeActivity.this);
                 if (newsList != null && !newsList.isEmpty()) {
                     Log.d("Data Check", "NewsList size: " + newsList.size());
@@ -883,7 +908,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         modelCall.enqueue(new Callback<AyyappaTempleList>() {
             @Override
             public void onResponse(Call<AyyappaTempleList> call, Response<AyyappaTempleList> response) {
-                swipeRefreshLayout.setRefreshing(false); // Hide loader
+                finishRefresh();
+
                 AyyappaTempleList list= response.body();
                 ayyaTempleListModels = Arrays.asList(list.getResult());
 
@@ -896,7 +922,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onFailure(Call<AyyappaTempleList> call, Throwable t) {
-                swipeRefreshLayout.setRefreshing(false); // Hide loader
+                finishRefresh();
                 ayyaTempleListModels = SharedPreferencesManager.getAyyappaTemplesList(HomeActivity.this);
                 if (ayyaTempleListModels != null && !ayyaTempleListModels.isEmpty()) {
                     // Update the RecyclerView
@@ -1004,7 +1030,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         modelCall.enqueue(new Callback<TemplesList>() {
             @Override
             public void onResponse(Call<TemplesList> call, Response<TemplesList> response) {
-                swipeRefreshLayout1.setRefreshing(false); // Hide loader
+                finishRefresh();
                 TemplesList list=response.body();
                 templeList=new ArrayList<>(Arrays.asList(list.getResult()));
 
@@ -1016,7 +1042,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onFailure(Call<TemplesList> call, Throwable t) {
-                swipeRefreshLayout1.setRefreshing(false); // Hide loader
+                finishRefresh();
                 templeList = SharedPreferencesManager.getTemplesList(HomeActivity.this);
                 if (templeList != null && !templeList.isEmpty()) {
                     // Update the RecyclerView

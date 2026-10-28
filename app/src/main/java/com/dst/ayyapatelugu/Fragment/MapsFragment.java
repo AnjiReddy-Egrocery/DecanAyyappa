@@ -20,8 +20,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -41,7 +39,6 @@ import com.dst.ayyapatelugu.Adapter.TemplesAdapter;
 import com.dst.ayyapatelugu.Adapter.TemplesMapAdapter;
 import com.dst.ayyapatelugu.DataBase.SharedManager;
 import com.dst.ayyapatelugu.Model.AyyappaTempleMapDataResponse;
-import com.dst.ayyapatelugu.Model.TempleMapDataResponse;
 import com.dst.ayyapatelugu.R;
 import com.dst.ayyapatelugu.Services.APiInterface;
 import com.dst.ayyapatelugu.Services.LocationForegroundService;
@@ -393,7 +390,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void startAyyappaTempleTracking() {
-        Intent i =
+        LocationForegroundService.send(requireContext(), "AYYAPPA_ON");
+        /*Intent i =
                 new Intent(
                         requireContext(),
                         LocationForegroundService.class
@@ -405,7 +403,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         ContextCompat.startForegroundService(
                 requireContext(),
                 i
-        );
+        );*/
     }
 
 
@@ -563,12 +561,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
 
 
-                            Intent i = new Intent(getActivity(),
-                                    LocationForegroundService.class);
-                            i.setAction("AYYAPPA_ON");
-                            requireActivity().startService(i);
-
-
+                            if (isAdded() && isResumed()) {
+                                LocationForegroundService.send(requireContext(), "AYYAPPA_ON");
+                            }
                             // displayNearByTemples(); // ✅ Force UI refresh
                         } else {
                             Log.e("API Response", "Invalid response: " + response.code());
@@ -755,18 +750,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onPause() {
         super.onPause();
-        Intent i =
-                new Intent(
-                        requireContext(),
-                        LocationForegroundService.class
-                );
-
-        i.setAction("AYYAPPA_OFF");
-
-
-        ContextCompat.startForegroundService(
-                requireContext(),
-                i
-        );
+        if (getContext() != null) {
+            LocationForegroundService.send(getContext(), "AYYAPPA_OFF");
+        }
     }
 }

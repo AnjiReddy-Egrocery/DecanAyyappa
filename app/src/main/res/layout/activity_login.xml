@@ -133,7 +133,7 @@
                 android:text="New User ? Can Register Here....."
                 android:textSize="16dp"
                 android:layout_marginTop="20dp"
-                android:textColor="#FFF"
+                android:textColor="#000"
                 android:gravity="center"
                 android:textStyle="bold"
                 android:background="@drawable/text_background"

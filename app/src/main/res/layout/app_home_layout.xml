@@ -11,6 +11,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshHome"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="75dp">
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -880,7 +886,7 @@
 
         </LinearLayout>
     </ScrollView>
-
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </com.dst.ayyapatelugu.Services.ZoomLayout>
 
 

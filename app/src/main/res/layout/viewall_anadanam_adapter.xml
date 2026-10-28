@@ -19,6 +19,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/layout_seva_all"
+            android:gravity="center_vertical"
+            android:layout_gravity="center"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
             android:orientation="horizontal">
 
             <ImageView
@@ -34,22 +38,65 @@
                 android:clipToOutline="true"
                 android:contentDescription="@string/app_name"/>
 
+            <!-- Name + Distance -->
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
                 android:orientation="vertical">
+
                 <TextView
                     android:id="@+id/txt_name"
                     android:textSize="16dp"
                     android:text="Title"
-                    android:layout_below="@+id/img"
                     android:textColor="#fff"
-                    android:gravity="center_vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textStyle="bold"/>
+                    android:layout_height="wrap_content"
+                    android:textStyle="normal"/>
+
+                <TextView
+                    android:id="@+id/txt_distance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="#FFF"
+                    android:textSize="13dp"
+                    android:textStyle="normal"
+                    android:visibility="gone"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="right"
+                    android:layout_marginTop="12dp">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/start_navigation_button"
+                        android:background="@drawable/navigation_bg"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Start Navigation"
+                            android:textSize="14dp"
+                            android:layout_marginLeft="10dp"
+                            android:textColor="#FFF"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"/>
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/navigation_icon_white"
+                            android:backgroundTint="#fff" />
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
+
+            <!-- Get Direction button (right side) -->
+
 
         </LinearLayout>
 
@@ -57,6 +104,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
+            android:layout_marginTop="12dp"
             android:background="#fff"/>
     </LinearLayout>
 </LinearLayout>

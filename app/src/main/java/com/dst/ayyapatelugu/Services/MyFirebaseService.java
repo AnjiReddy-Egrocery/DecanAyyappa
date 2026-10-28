@@ -11,6 +11,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
+import androidx.core.text.HtmlCompat;
 
 import com.dst.ayyapatelugu.Activity.AyyapaKarmaDetailsActivity;
 import com.dst.ayyapatelugu.Activity.AyyapaMandaliDetailsActivity;
@@ -61,9 +62,10 @@ public class MyFirebaseService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage message) {
         if (message.getData().size() > 0) {
 
-            String title = message.getData().get("title");
-            String body = message.getData().get("message");
-            String type = message.getData().get("notificationFor");
+
+            String title = cleanHtml(message.getData().get("title"));
+            String body  = cleanHtml(message.getData().get("message"));
+            String type  = message.getData().get("notificationFor");
 
             Intent intent;
 
@@ -352,6 +354,15 @@ public class MyFirebaseService extends FirebaseMessagingService {
         }
     }
 
+    private String cleanHtml(String text) {
+        if (text == null) return "";
+        return HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                .toString()
+                .replace('\u00A0', ' ')   // &nbsp; ni normal space ga
+                .replace("\uFFFC", "")    // image placeholder remove
+                .trim();
+    }
+
     private void showNotification(String title, String body, Intent intent) {
 
 
@@ -382,6 +393,7 @@ public class MyFirebaseService extends FirebaseMessagingService {
                 new NotificationCompat.Builder(this, channelId)
                         .setContentTitle(title)
                         .setContentText(body)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                         .setSmallIcon(R.drawable.applogo)
                         .setAutoCancel(true)
                         .setContentIntent(pendingIntent)

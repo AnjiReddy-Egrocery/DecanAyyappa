@@ -1,23 +1,48 @@
 package com.dst.ayyapatelugu.Services;
 
 import android.Manifest;
-import android.app.*;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.*;
-import androidx.annotation.Nullable;
-import androidx.core.app.*;
-
-import com.dst.ayyapatelugu.Activity.*;
-import com.dst.ayyapatelugu.DataBase.*;
-import com.dst.ayyapatelugu.Model.*;
-import com.dst.ayyapatelugu.R;
-import com.google.android.gms.location.*;
-import android.app.Service;
+import android.os.Build;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Looper;
 import android.util.Log;
 
-import java.util.*;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
+import com.dst.ayyapatelugu.Activity.AnadanamActivity;
+import com.dst.ayyapatelugu.Activity.NearbyAnnadanamListActivity;
+import com.dst.ayyapatelugu.Activity.NearbyAyyappaTempleListActivity;
+import com.dst.ayyapatelugu.Activity.NearbyTempleListActivity;
+import com.dst.ayyapatelugu.Activity.ViewAllAyyappaTemplesActivity;
+import com.dst.ayyapatelugu.Activity.ViewAllTemplesActivity;
+import com.dst.ayyapatelugu.DataBase.SharedManager;
+import com.dst.ayyapatelugu.DataBase.SharedPreferenceHelper;
+import com.dst.ayyapatelugu.DataBase.SharedPreferenceManager;
+import com.dst.ayyapatelugu.Model.AyyappaTempleMapDataResponse;
+import com.dst.ayyapatelugu.Model.MapDataResponse;
+import com.dst.ayyapatelugu.Model.TempleMapDataResponse;
+import com.dst.ayyapatelugu.R;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 
 public class LocationForegroundService extends Service {
 
@@ -44,18 +69,64 @@ public class LocationForegroundService extends Service {
 
     // 🔥 Prevent duplicate in same session
     /*private Set<String> notified = new HashSet<>();*/
+    public static boolean running = false;
 
+    public static void send(android.content.Context ctx, String action) {
+        ctx = ctx.getApplicationContext();
+        Intent i = new Intent(ctx, LocationForegroundService.class);
+        i.setAction(action);
+
+        if (action.endsWith("_ON")) {
+            boolean granted = androidx.core.content.ContextCompat.checkSelfPermission(
+                    ctx, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+
+            // App screen meeda unnappude start cheyyali
+            boolean inForeground = androidx.lifecycle.ProcessLifecycleOwner.get()
+                    .getLifecycle().getCurrentState()
+                    .isAtLeast(androidx.lifecycle.Lifecycle.State.STARTED);
+
+            if (!granted || !inForeground) return;
+
+            try {
+                androidx.core.content.ContextCompat.startForegroundService(ctx, i);
+            } catch (Exception e) {
+                Log.e("TempleService", "Service start failed", e);
+            }
+        } else {
+            if (!running) return;
+            ctx.startService(i);
+        }
+    }
+
+    private boolean hasLocationPermission() {
+        return ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private boolean anyActive() {
+        return isAnnadanamMapActive || isTempleMapActive || isAyyappaMapActive;
+    }
     @Override
     public void onCreate() {
         super.onCreate();
-
+        running = true;
         createChannel();
-        startForeground(1, buildForegroundNotification());
-
         client = LocationServices.getFusedLocationProviderClient(this);
 
+        try {
+            Notification n = buildForegroundNotification();
+            if (Build.VERSION.SDK_INT >= 29) {
+                startForeground(1, n, android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION);
+            } else {
+                startForeground(1, n);
+            }
+        } catch (Exception e) {
+            Log.e("TempleService", "startForeground failed", e);
+            stopSelf();
+            return;
+        }
 
-
+        if (!hasLocationPermission()) { stopSelf(); return; }
         startLocationUpdates();
         startChecker();
     }
@@ -63,8 +134,12 @@ public class LocationForegroundService extends Service {
     // ================= MAP CONTROL =================
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent == null || intent.getAction() == null || !hasLocationPermission()) {
+            stopSelf();
+            return START_NOT_STICKY;
+        }
 
-        if (intent != null && intent.getAction() != null) {
+
 
             switch (intent.getAction()) {
 
@@ -248,9 +323,12 @@ public class LocationForegroundService extends Service {
                     isAyyappaMapActive = false;
                     break;
             }
-        }
 
-        return START_STICKY;
+
+        if (!anyActive()) {       // anni OFF aithe service aapandi
+            stopSelf();
+        }
+        return START_NOT_STICKY;
     }
 
     // ================= LOCATION =================
@@ -861,6 +939,7 @@ public class LocationForegroundService extends Service {
 
     @Override
     public void onDestroy() {
+        running = false;
         super.onDestroy();
 
         if (handler != null && runnable != null) {

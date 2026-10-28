@@ -21,8 +21,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -391,7 +389,8 @@ public class TemplesMapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void startTempleTracking() {
-        Intent i =
+        LocationForegroundService.send(requireContext(), "TEMPLE_ON");
+        /*Intent i =
                 new Intent(
                         requireContext(),
                         LocationForegroundService.class
@@ -403,7 +402,7 @@ public class TemplesMapFragment extends Fragment implements OnMapReadyCallback {
         ContextCompat.startForegroundService(
                 requireContext(),
                 i
-        );
+        );*/
     }
 
 
@@ -619,13 +618,9 @@ public class TemplesMapFragment extends Fragment implements OnMapReadyCallback {
 
                             // Save data to SharedPreferences for future use
                             SharedPreferenceManager.saveTempleData(getContext(), templeList);
-                            Intent i = new Intent(getActivity(),
-                                    LocationForegroundService.class);
-                            i.setAction("TEMPLE_ON");
-                            requireActivity().startService(i);
-                            Log.d("TempleService",
-                                    "Saved Temple Count = "
-                                            + templeList.size());
+                            if (isAdded() && isResumed()) {
+                                LocationForegroundService.send(requireContext(), "TEMPLE_ON");
+                            }
                         } else {
                             // Handle error
                         }
@@ -726,7 +721,10 @@ public class TemplesMapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onPause() {
         super.onPause();
-        Intent i =
+        if (getContext() != null) {
+            LocationForegroundService.send(getContext(), "TEMPLE_OFF");
+        }
+        /*Intent i =
                 new Intent(
                         requireContext(),
                         LocationForegroundService.class
@@ -738,6 +736,6 @@ public class TemplesMapFragment extends Fragment implements OnMapReadyCallback {
         ContextCompat.startForegroundService(
                 requireContext(),
                 i
-        );
+        );*/
     }
 }

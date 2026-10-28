@@ -20,7 +20,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> <!-- ========== FOREGROUND SERVICE ========== -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" /> <!-- ========== BOOT RESTART AUTO START ========== -->
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!--<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />-->
 
     <application
         android:allowBackup="false"
@@ -243,6 +243,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+<!--
         <receiver
             android:name=".Services.BootReceiver"
             android:enabled="true"
@@ -252,6 +253,7 @@
                 <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+-->
     </application>
 
 </manifest>

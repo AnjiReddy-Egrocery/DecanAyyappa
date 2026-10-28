@@ -166,12 +166,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-
-
-
-
-        askLocationPermission();
-
         //linearAuth = findViewById(R.id.layout_auth);
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();

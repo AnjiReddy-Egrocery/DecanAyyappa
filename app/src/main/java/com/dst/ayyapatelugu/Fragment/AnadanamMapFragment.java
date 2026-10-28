@@ -1,12 +1,12 @@
 package com.dst.ayyapatelugu.Fragment;
 
 
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.icu.util.Calendar;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,7 +27,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.dst.ayyapatelugu.Activity.AnadanamActivity;
 import com.dst.ayyapatelugu.DataBase.SharedPreferenceHelper;
 import com.dst.ayyapatelugu.Model.MapDataResponse;
 import com.dst.ayyapatelugu.R;
@@ -230,7 +229,8 @@ public class AnadanamMapFragment extends Fragment implements OnMapReadyCallback 
     }
 
     private void startAnnadanamTracking() {
-        Intent i =
+        LocationForegroundService.send(requireContext(), "ANNADANAM_ON");
+        /*Intent i =
                 new Intent(
                         requireContext(),
                         LocationForegroundService.class
@@ -242,7 +242,7 @@ public class AnadanamMapFragment extends Fragment implements OnMapReadyCallback 
         ContextCompat.startForegroundService(
                 requireContext(),
                 i
-        );
+        );*/
 
     }
 
@@ -303,9 +303,9 @@ public class AnadanamMapFragment extends Fragment implements OnMapReadyCallback 
                     mapList = data;
                     new Handler().postDelayed(() -> addMarkers(data), 200);
 
-                    Intent i = new Intent(getActivity(), LocationForegroundService.class);
-                    i.setAction("ANNADANAM_ON");
-                    requireActivity().startService(i);
+                    if (isAdded() && isResumed()) {
+                        LocationForegroundService.send(requireContext(), "ANNADANAM_ON");
+                    }
                 }
             }
 
@@ -468,6 +468,7 @@ public class AnadanamMapFragment extends Fragment implements OnMapReadyCallback 
         if (infoCard == null) return;
         selectedMarker = marker;
         bindInfoCard(infoCard, marker);
+        refreshUserLocation(marker);
 
         // Wait for the card to be measured, then place it above the marker
         infoCard.setVisibility(View.INVISIBLE);
@@ -478,6 +479,50 @@ public class AnadanamMapFragment extends Fragment implements OnMapReadyCallback 
                 centerMarkerWithCard();
             }
         });
+    }
+
+    private void refreshUserLocation(Marker marker) {
+        if (getContext() == null) return;
+        if (ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) return;
+
+        LocationServices.getFusedLocationProviderClient(getContext())
+                .getLastLocation()
+                .addOnSuccessListener(location -> {
+                    if (location != null) {
+                        userLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        if (selectedMarker != null && selectedMarker.equals(marker)) {
+                            updateDistance(marker);
+                        }
+                    }
+                });
+    }
+    private void updateDistance(Marker marker) {
+        if (infoCard == null) return;
+        TextView distanceView = infoCard.findViewById(R.id.info_distance);
+        if (distanceView == null) return;
+
+        if (userLocation == null || marker == null) {
+            distanceView.setVisibility(View.GONE);
+            return;
+        }
+
+        float[] result = new float[1];
+        Location.distanceBetween(
+                userLocation.latitude, userLocation.longitude,
+                marker.getPosition().latitude, marker.getPosition().longitude,
+                result);
+
+        float meters = result[0];
+        String text;
+        if (meters < 1000) {
+            text = String.format(Locale.US, "%d m", Math.round(meters));
+        } else {
+            text = String.format(Locale.US, "%.1f km", meters / 1000f);
+        }
+
+        distanceView.setText("Distance : " + text);
+        distanceView.setVisibility(View.VISIBLE);
     }
 
     // Scrolls the map so that (card + pin) ends up in the middle of the screen
@@ -572,14 +617,13 @@ public class AnadanamMapFragment extends Fragment implements OnMapReadyCallback 
     private void bindInfoCard(View view, Marker marker) {
 
         TextView title = view.findViewById(R.id.info_window_title);
-        TextView loc = view.findViewById(R.id.info_location);
+
         TextView sDate = view.findViewById(R.id.info_start_date);
         TextView eDate = view.findViewById(R.id.info_end_date);
-        TextView sTime = view.findViewById(R.id.info_start_time);
-        TextView eTime = view.findViewById(R.id.info_end_time);
+        TextView time = view.findViewById(R.id.info_time);
 
         title.setText(marker.getTitle());
-        loc.setText(marker.getSnippet());
+       // loc.setText(marker.getSnippet());
 
         Object tagObj = marker.getTag();
 
@@ -590,10 +634,21 @@ public class AnadanamMapFragment extends Fragment implements OnMapReadyCallback 
             MapDataResponse.Result d = (MapDataResponse.Result) arr[0];
             boolean isActive = (boolean) arr[1];   // <-- GREEN marker? or RED marker?
 
+            String titleText = marker.getTitle();
+            String locEnglish = d.getLocationenglish();
+
+            if (locEnglish != null && !locEnglish.trim().isEmpty()
+                    && !locEnglish.trim().startsWith("http")) {
+                titleText = titleText + ", " + locEnglish.trim();
+            }
+
+            title.setText(titleText);
+
+            updateDistance(marker);
+
             sDate.setText("From : " + formatDate(d.getStartingDate()));
             eDate.setText("To : " + formatDate(d.getEndingDate()));
-            sTime.setText("Start Time: " + formatTime(d.getStartTime()));
-            eTime.setText("End Time: " + formatTime(d.getEndTime()));
+            time.setText("Time : " + formatTime(d.getStartTime()) + " to " + formatTime(d.getEndTime()));
 
             // 🔥 If marker is RED → ALWAYS UNCONDITIONALLY RED
             // 🔥 If marker is GREEN → Check time
@@ -642,8 +697,7 @@ public class AnadanamMapFragment extends Fragment implements OnMapReadyCallback 
                 }
             }
 
-            sTime.setTextColor(finalColor);
-            eTime.setTextColor(finalColor);
+            time.setTextColor(finalColor);
         }
     }
 
@@ -677,19 +731,9 @@ public class AnadanamMapFragment extends Fragment implements OnMapReadyCallback 
         super.onPause();
 
 
-        Intent i =
-                new Intent(
-                        requireContext(),
-                        LocationForegroundService.class
-                );
-
-        i.setAction("ANNADANAM_OFF");
-
-
-        ContextCompat.startForegroundService(
-                requireContext(),
-                i
-        );
+        if (getContext() != null) {
+            LocationForegroundService.send(getContext(), "ANNADANAM_OFF");
+        }
 
     }
 }

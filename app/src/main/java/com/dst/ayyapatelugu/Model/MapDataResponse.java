@@ -53,6 +53,16 @@ public class MapDataResponse {
         private String startTime;
         private String endTime;
         private String location;
+        private String locationenglish;
+
+        public String getLocationenglish() {
+            return locationenglish;
+        }
+
+        public void setLocationenglish(String locationenglish) {
+            this.locationenglish = locationenglish;
+        }
+
         private String latitude;
         private String longitude;
         private String zipCode;
