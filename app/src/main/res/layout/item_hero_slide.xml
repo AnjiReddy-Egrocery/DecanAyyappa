@@ -24,7 +24,7 @@
         <!-- Title + subtitle share ONE light transparent background -->
         <LinearLayout
             android:id="@+id/heroTextBox"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/hero_text_bg"
             android:gravity="center_horizontal"
@@ -36,28 +36,27 @@
 
             <TextView
                 android:id="@+id/heroTitle"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:gravity="center"
-                android:maxLines="1"
+                android:maxLines="2"
                 android:textColor="#FFFFFF"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/heroSubtitle"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
                 android:ellipsize="end"
                 android:gravity="center"
-                android:maxLines="1"
+                android:maxLines="2"
                 android:textColor="#FFEED3"
                 android:textSize="12sp"
                 android:visibility="gone" />
         </LinearLayout>
-
         <!-- Buttons at the bottom-middle of the image -->
         <LinearLayout
             android:id="@+id/heroButtonRow"

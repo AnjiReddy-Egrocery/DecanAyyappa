@@ -11,8 +11,11 @@ android {
         applicationId "com.dst.ayyapatelugu"
         minSdk 23
         targetSdk 36
-        versionCode 90
-        versionName '1.91'
+        versionCode 92
+        versionName '1.93' +
+                '' +
+                '' +
+                ''
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {

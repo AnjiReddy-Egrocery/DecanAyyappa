@@ -63,7 +63,7 @@ public class ViewAllAnadanamListAdapter extends RecyclerView.Adapter<ViewAllAnad
         String profilepic = templesListModel.getImage();
         String imageUrl = "https://www.ayyappatelugu.com/public/assets/annadhanam_images/" + profilepic;
         String id = templesListModel.getAnnadhanamId();
-        String name = templesListModel.getAnnadhanamName();
+        String name = templesListModel.getAnnadhanamNameTelugu() + "," + templesListModel.getLocationenglish();
 
         holder.tvTempleName.setText(name);
 

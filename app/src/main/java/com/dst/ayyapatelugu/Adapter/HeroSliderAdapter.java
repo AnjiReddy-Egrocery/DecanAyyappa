@@ -55,8 +55,13 @@ public class HeroSliderAdapter extends RecyclerView.Adapter<HeroSliderAdapter.He
                 .into(h.image);
 
         // Title
-        h.title.setText(b.title == null ? "" : b.title);
-
+        // Title: text after "||" goes to the next line
+        String t = b.title == null ? "" : b.title.trim();
+        if (t.contains("||")) {
+            String[] parts = t.split("\\|\\|", 2);
+            t = parts[0].trim() + "\n" + parts[1].trim();
+        }
+        h.title.setText(t);
         // Subtitle = description (hidden when empty)
         if (!TextUtils.isEmpty(b.description)) {
             h.subtitle.setText(b.description);

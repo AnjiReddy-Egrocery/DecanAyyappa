@@ -9,6 +9,16 @@ public class AnadanamListModel {
     private String startTime;
     private String endTime;
     private String location;
+    private String locationenglish;
+
+    public String getLocationenglish() {
+        return locationenglish;
+    }
+
+    public void setLocationenglish(String locationenglish) {
+        this.locationenglish = locationenglish;
+    }
+
     private String latitude;
     private String longitude;
     private String image;
@@ -19,7 +29,7 @@ public class AnadanamListModel {
 
     public AnadanamListModel(String annadhanamId, String annadhanamName, String annadhanamNameTelugu,
                              String startingDate, String endingDate, String startTime, String endTime,
-                             String location, String latitude, String longitude, String image) {
+                             String location, String locationenglish, String latitude, String longitude, String image) {
         this.annadhanamId = annadhanamId;
         this.annadhanamName = annadhanamName;
         this.annadhanamNameTelugu = annadhanamNameTelugu;
@@ -31,6 +41,7 @@ public class AnadanamListModel {
         this.latitude = latitude;
         this.longitude = longitude;
         this.image = image;
+        this.locationenglish  = locationenglish;
     }
 
     public String getAnnadhanamId() {
