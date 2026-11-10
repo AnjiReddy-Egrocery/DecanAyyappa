@@ -1,86 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_logo"
-    android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:orientation="vertical">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="80dp"
         android:orientation="vertical">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textStyle="bold"
-            android:textColor="#fff"
-            android:textSize="14dp"
-            android:text="శబరిమల ఆలయం దర్శనానికి అనుమతించు రోజుల వివరముల క్యాలెండరు"/>
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:text="శబరిమల ఆలయం దర్శనానికి అనుమతించు రోజుల వివరముల క్యాలెండరు"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <!-- Year selector -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:weightSum="3"
+            android:layout_marginTop="12dp"
             android:gravity="center"
-            android:layout_marginTop="16dp"
             android:orientation="horizontal">
+
             <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/image_left"
-                android:src="@drawable/baseline_chevron_left_24"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
                 android:layout_weight="1"
-                android:visibility="visible"
-                android:gravity="center"/>
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Previous year"
+                android:src="@drawable/baseline_chevron_left_24" />
+
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="2023-24"
-                android:textStyle="bold"
-                android:textColor="#fff"
-                android:textSize="18dp"
                 android:id="@+id/txt_calender"
+                android:layout_width="0dp"
+                android:layout_height="21dp"
                 android:layout_weight="1"
-                android:gravity="center"/>
+                android:gravity="center"
+                android:text=""
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
             <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/baseline_chevron_right_24"
-                android:layout_weight="1"
                 android:id="@+id/image_right"
-                android:gravity="center"/>
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Next year"
+                android:src="@drawable/baseline_chevron_right_24" />
         </LinearLayout>
+
         <com.dst.ayyapatelugu.Services.ZoomLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/swipeRefresh"
-            android:layout_width="match_parent"
-            android:layout_marginTop="12dp"
-            android:layout_height="match_parent">
 
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefresh"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp">
 
-            <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="16dp"
-            android:id="@+id/recycler_calender"/>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_calender"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingBottom="16dp" />
 
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
         </com.dst.ayyapatelugu.Services.ZoomLayout>
 
     </LinearLayout>
-
-
-
-
 </LinearLayout>
-
-
-
-
-

@@ -1,6 +1,7 @@
 package com.dst.ayyapatelugu.Services;
 
 import com.dst.ayyapatelugu.Model.ActivitiesDetailsResponse;
+import com.dst.ayyapatelugu.Model.AdClickResponse;
 import com.dst.ayyapatelugu.Model.AddImageResponse;
 import com.dst.ayyapatelugu.Model.AnadanamDetailResponse;
 import com.dst.ayyapatelugu.Model.AnadanamList;
@@ -243,10 +244,19 @@ public interface APiInterface {
     @POST("APICalls/Users/userLoginWithoutPassword")
     Call<LoginDataResponse> LoginData(@Part("loginMobile") RequestBody loginMobile );
 
-    @FormUrlEncoded
+    @Multipart
     @POST("APICalls/Calendar/index")
     Call<CalenderDataResponse> calenderData(
-            @Field("Year") RequestBody year
+            @Part("year") RequestBody year
+    );
+
+    @Multipart
+    @POST("APICalls/userAdsClickTracking")
+    Call<AdClickResponse> userAdsClickTracking(
+            @Part("imageId") RequestBody imageId,
+            @Part("registerId") RequestBody registerId,
+            @Part("fullName") RequestBody fullName,
+            @Part("mobileNumber") RequestBody mobileNumber
     );
 
     @Multipart

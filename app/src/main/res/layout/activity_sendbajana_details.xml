@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_logo"
+    android:fitsSystemWindows="true"
+    tools:context=".HomeActivity">
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#BC0F0F">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#BC0F0F">
+            <include
+                layout="@layout/headr_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"/>
+
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="14dp"
+        android:layout_marginRight="14dp"
+        android:layout_marginBottom="50dp"
+        android:layout_marginTop="67dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Provide BajanaMandali Details"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:layout_marginTop="16dp"
+            android:textColor="#FFEB3B"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginRight="1dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginTop="12dp">
+
+            <EditText
+                android:id="@+id/edt_name_bajanamandali"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Enter the Name Of BajanaMandali"
+                android:paddingLeft="10dp"
+                android:textColorHint="#fff"
+                android:inputType="textAutoComplete"
+                android:background="@drawable/enq_edt_border"/>
+            <EditText
+                android:id="@+id/edt_contact_person"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="12dp"
+                android:hint="Enter the Contact PersonName"
+                android:paddingLeft="10dp"
+                android:textColorHint="#fff"
+                android:inputType="textAutoComplete"
+                android:background="@drawable/enq_edt_border"/>
+            <EditText
+                android:id="@+id/edt_number"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="12dp"
+                android:hint="Enter the MobileNumber"
+                android:paddingLeft="10dp"
+                android:textColorHint="#fff"
+                android:inputType="textAutoComplete"
+                android:background="@drawable/enq_edt_border"/>
+
+
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="12dp"
+                android:text="Submit"
+                android:textColor="#FFF"
+                android:textSize="18dp"
+                android:id="@+id/but_submit"
+                android:layout_marginBottom="20dp"
+                android:backgroundTint="#43A5B1"
+                android:textStyle="normal"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

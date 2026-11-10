@@ -50,10 +50,9 @@ public class AyyappaTourseDetailsAdapter extends RecyclerView.Adapter<AyyappaTou
         String details = modal.getDevotees();
         String Amount = modal.getAmount();
         holder.tvtitle.setText(name);
-        holder.tvaddress.setText(days);
-        holder.tvdetails.setText(details);
-        holder.tvamount.setText(Amount);
-
+        holder.layoutDays.setVisibility(isPositive(days) ? View.VISIBLE : View.GONE);
+        holder.layoutDevotees.setVisibility(isPositive(details) ? View.VISIBLE : View.GONE);
+        holder.layoutAmount.setVisibility(isPositive(Amount) ? View.VISIBLE : View.GONE);
         Picasso.get().load(imgUrl).into(holder.image);
 
         holder.layoutTourseDetails.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +73,15 @@ public class AyyappaTourseDetailsAdapter extends RecyclerView.Adapter<AyyappaTou
         // Glide.with(context).load(movieList.get(position).getImageUrl()).apply(RequestOptions.centerCropTransform()).into(holder.image);
     }
 
+    private boolean isPositive(String days) {
+        if (days == null) return false;
+        try {
+            return Double.parseDouble(days.trim().replace(",", "")) > 0;
+        } catch (NumberFormatException e) {
+            return false;   // empty, null, "abc" anni hide
+        }
+    }
+
     @Override
     public int getItemCount() {
         if (listModel != null) {
@@ -89,18 +97,18 @@ public class AyyappaTourseDetailsAdapter extends RecyclerView.Adapter<AyyappaTou
     }
 
     public class MyviewHolder extends RecyclerView.ViewHolder {
-        TextView tvtitle, tvaddress, tvdetails, tvamount;
+        TextView tvtitle;
         ImageView image;
-        LinearLayout layoutTourseDetails;
+        LinearLayout layoutTourseDetails,layoutDays,layoutDevotees,layoutAmount;
 
         //Button butDetails;
 
         public MyviewHolder(View itemView) {
             super(itemView);
             tvtitle = (TextView) itemView.findViewById(R.id.txt);
-            tvaddress = (TextView) itemView.findViewById(R.id.txt_add);
-            tvdetails = (TextView) itemView.findViewById(R.id.txt_details);
-            tvamount = (TextView) itemView.findViewById(R.id.txt_amount);
+            layoutDays = (LinearLayout) itemView.findViewById(R.id.layout_days);
+            layoutDevotees = (LinearLayout) itemView.findViewById(R.id.layout_devotees);
+            layoutAmount = (LinearLayout) itemView.findViewById(R.id.layout_amount);
             image = (ImageView) itemView.findViewById(R.id.img);
             layoutTourseDetails = (LinearLayout) itemView.findViewById(R.id.layout_tourse_details);
             //butDetails = (Button) itemView.findViewById(R.id.but_details);

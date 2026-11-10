@@ -72,7 +72,7 @@ public class AnadanamActivity extends AppCompatActivity  {
     TabLayout tabLayout;
     ViewPager viewPager;
     ImageView imageAnadanam,imageNityaPooja;
-    TextView textAndanam,txtNityaPooja;
+    TextView textAndanam,txtNityaPooja,txtSendAnaPrasadmDetails;
 
     @SuppressLint("MissingInflatedId")
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -98,6 +98,15 @@ public class AnadanamActivity extends AppCompatActivity  {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+
+        txtSendAnaPrasadmDetails= findViewById(R.id.txt_send_anaprasad_details);
+        txtSendAnaPrasadmDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AnadanamActivity.this,SendAnaPrasadamDetailsActivity.class);
+                startActivity(intent);
             }
         });
 

@@ -6,10 +6,10 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -17,19 +17,24 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -37,11 +42,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-
 import com.bumptech.glide.Glide;
 import com.dst.ayyapatelugu.Activity.AboutActivity;
 import com.dst.ayyapatelugu.Activity.AnadanamActivity;
-import com.dst.ayyapatelugu.Activity.AyyaappaDevlyaluActivity;
 import com.dst.ayyapatelugu.Activity.AyyapaBooksListActivity;
 import com.dst.ayyapatelugu.Activity.AyyappaBajanaSognsActivity;
 import com.dst.ayyapatelugu.Activity.AyyappaKaryamListActivity;
@@ -50,7 +53,6 @@ import com.dst.ayyapatelugu.Activity.AyyappaPetamListActivity;
 import com.dst.ayyapatelugu.Activity.AyyappaTourseDetailsACtivity;
 import com.dst.ayyapatelugu.Activity.BlogsActivity;
 import com.dst.ayyapatelugu.Activity.CalenderActivity;
-import com.dst.ayyapatelugu.Activity.DevlyaluActivity;
 import com.dst.ayyapatelugu.Activity.GuruSwamiListActivity;
 import com.dst.ayyapatelugu.Activity.ImagesListActivity;
 import com.dst.ayyapatelugu.Activity.NityaPoojaActivity;
@@ -63,8 +65,6 @@ import com.dst.ayyapatelugu.Activity.SevaDetailsActivity;
 import com.dst.ayyapatelugu.Activity.SharanughoshaActivity;
 import com.dst.ayyapatelugu.Activity.TeluguCalenderActivity;
 import com.dst.ayyapatelugu.Activity.ViewAllAyyappaTemplesActivity;
-import com.dst.ayyapatelugu.Activity.ViewAllDetailsActivity;
-import com.dst.ayyapatelugu.Activity.ViewAllNewsDetailsActivity;
 import com.dst.ayyapatelugu.Activity.ViewAllNewsListActivity;
 import com.dst.ayyapatelugu.Activity.ViewAllTemplesActivity;
 import com.dst.ayyapatelugu.Adapter.AdsSliderAdapter;
@@ -72,13 +72,9 @@ import com.dst.ayyapatelugu.Adapter.AllNewsListAdapter;
 import com.dst.ayyapatelugu.Adapter.HeroSliderAdapter;
 import com.dst.ayyapatelugu.Adapter.AyyappaListAdapter;
 import com.dst.ayyapatelugu.Adapter.AyyappaTemplesListAdapter;
-import com.dst.ayyapatelugu.Adapter.NewsListAdapter;
-import com.dst.ayyapatelugu.Adapter.SevaListAdapter;
-import com.dst.ayyapatelugu.Adapter.ViewAllListAdapter;
-import com.dst.ayyapatelugu.Adapter.ViewAllNewsListAdapter;
 import com.dst.ayyapatelugu.DataBase.SharedPrefManager;
-import com.dst.ayyapatelugu.DataBase.SharedPreferencesHelper;
 import com.dst.ayyapatelugu.DataBase.SharedPreferencesManager;
+import com.dst.ayyapatelugu.Model.AdClickResponse;
 import com.dst.ayyapatelugu.Model.AddImageResponse;
 import com.dst.ayyapatelugu.Model.AyyaTempleListModel;
 import com.dst.ayyapatelugu.Model.AyyappaTempleList;
@@ -91,7 +87,7 @@ import com.dst.ayyapatelugu.Model.SevaListModel;
 import com.dst.ayyapatelugu.Model.TemplesList;
 import com.dst.ayyapatelugu.Model.TemplesListModel;
 import com.dst.ayyapatelugu.Services.APiInterface;
-import com.dst.ayyapatelugu.Services.ImageLoader;
+import com.dst.ayyapatelugu.Services.LinkRouter;
 import com.dst.ayyapatelugu.Services.UnsafeTrustManager;
 import com.dst.ayyapatelugu.User.LoginActivity;
 import com.dst.ayyapatelugu.User.PrivacyPolicyActivity;
@@ -102,16 +98,21 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.play.core.appupdate.AppUpdateInfo;
+import com.google.android.play.core.appupdate.AppUpdateManager;
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
+import com.google.android.play.core.install.model.UpdateAvailability;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -131,52 +132,31 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
 
-    //LinearLayout layoutSeva;
-    // Button buttonViewAll;
     List<SevaListModel> sevaList;
     private Retrofit retrofit;
 
-    Button butBajanaSongs;
-    LinearLayout layoutBajanaSongs;
-
     Button butAllNews;
-    // RecyclerView recyclerviewnews;
-
-    //List<NewsListModel> newsList;
-    /*LinearLayout layoutNews;*/
-    private boolean isActivityOpened = false;
-
-    //NewsListAdapter viewNewsListAdapter;
-
-
-
 
     List<TemplesListModel> templeList;
     RecyclerView recyclerviewTemples;
-
     AyyappaTemplesListAdapter ayyappaTemplesListAdapter;
     private LinearLayoutManager layoutManagerTemple;
 
-
-
     List<AyyaTempleListModel> ayyaTempleListModels;
     RecyclerView recyclerviewAyyappaTemples;
-
     AyyappaListAdapter ayyappaListAdapter;
     private LinearLayoutManager layoutManagerAyyappaTemple;
 
-    private LinearLayoutManager layoutManagerNews;
-
-
     private static final int REQUEST_PERMISSION_CODE = 1;
 
-    LinearLayout layoutBhajanamandali,layoutGuruSwami,layoutPoojaPetam,layoutCalender,layoutTourse,layoutAnadanam,layoutBooks,layoutProducts,layoutsharanughosha,layoutNityapooja;
-    ImageView imageAnadanam,imageNityaPooja;
-    TextView textAndanam,txtNityaPooja;
+    LinearLayout layoutBhajanamandali, layoutGuruSwami, layoutPoojaPetam, layoutCalender, layoutTourse,
+            layoutAnadanam, layoutBooks, layoutProducts, layoutsharanughosha, layoutNityapooja;
+    ImageView imageAnadanam, imageNityaPooja;
+    TextView textAndanam, txtNityaPooja;
 
-    private ImageView leftIcon, rightIcon,leftIconAyyappa, rightIconAyyappa,leftnews,rightnews;
+    private ImageView leftIcon, rightIcon, leftIconAyyappa, rightIconAyyappa;
 
-    Button butViewAll,viewallButton;
+    Button butViewAll, viewallButton;
 
     // Hero section (dynamic data from API)
     ViewPager2 heroViewPager;
@@ -187,10 +167,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     Handler heroHandler = new Handler(Looper.getMainLooper());
     Runnable heroRunnable;
     private static final long HERO_AUTO_SLIDE_MS = 4000;
-    SwipeRefreshLayout swipeRefreshLayout,swipeRefreshLayout1,swipeRefreshLayout2,swipeRefreshHome;
+    SwipeRefreshLayout swipeRefreshLayout, swipeRefreshLayout1, swipeRefreshLayout2, swipeRefreshHome;
 
     RecyclerView recyclerviewnews;
-
     List<NewsListModel> newsList;
     AllNewsListAdapter viewAllNewsListAdapter;
 
@@ -204,22 +183,29 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     ImageView[] adsDotViews;
     LinearLayout layoutAdsContainer;
     int pendingRefresh = 0;
+    private boolean adClickInProgress = false;
 
+    // ---------------- In-app update ----------------
+    private static final String PLAY_STORE_URL =
+            "https://play.google.com/store/apps/details?id=com.dst.ayyapatelugu";
+    private static final String PLAY_STORE_MARKET_URL =
+            "market://details?id=com.dst.ayyapatelugu";
+    private static final String UPDATE_CHANNEL_ID = "app_update";
+    private static final int UPDATE_NOTIFICATION_ID = 1001;
+    private static final int REQUEST_NOTIFICATION_PERMISSION = 2002;
+    private boolean updateDialogShown = false;
+    private AlertDialog updateDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //getSupportActionBar().setLogo(R.drawable.user_profile_background);
-        //getSupportActionBar().setDisplayUseLogoEnabled(true);
         setContentView(R.layout.activity_home);
-
 
         swipeRefreshHome = findViewById(R.id.swipeRefreshHome);
         swipeRefreshHome.setColorSchemeColors(0xFFBC0F0F);
         swipeRefreshHome.setOnRefreshListener(this::refreshAll);
 
-        // Back button: onBackPressed() is not called when targeting API 36 (predictive back),
-        // so the exit dialog is registered as a back callback instead.
+        // Back button: predictive back (API 36) ki callback
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -233,133 +219,69 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         setSupportActionBar(toolbar);
 
-        toolbar.setLogoDescription(getResources().getString(R.string.title_tool_bar)); // set description for the logo
+        toolbar.setLogoDescription(getResources().getString(R.string.title_tool_bar));
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.nav_open, R.string.nav_close);
         toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.white));
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+
         layoutBhajanamandali = findViewById(R.id.layout_bhajana_mandali);
-        layoutBhajanamandali.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent mandaliIntent=new Intent(HomeActivity.this,AyyappaMandaliListActivity.class);
-                startActivity(mandaliIntent);
-            }
-        });
+        layoutBhajanamandali.setOnClickListener(v ->
+                startActivity(new Intent(HomeActivity.this, AyyappaMandaliListActivity.class)));
+
         layoutGuruSwami = findViewById(R.id.layout_guru_swami);
-        layoutGuruSwami.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent guruswamiIntent=new Intent(HomeActivity.this,GuruSwamiListActivity.class);
-                startActivity(guruswamiIntent);
-            }
-        });
+        layoutGuruSwami.setOnClickListener(v ->
+                startActivity(new Intent(HomeActivity.this, GuruSwamiListActivity.class)));
+
         layoutPoojaPetam = findViewById(R.id.layout_poojapetam);
-        layoutPoojaPetam.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(HomeActivity.this,AyyappaPetamListActivity.class);
-                startActivity(intent);
-            }
-        });
+        layoutPoojaPetam.setOnClickListener(v ->
+                startActivity(new Intent(HomeActivity.this, AyyappaPetamListActivity.class)));
+
         layoutsharanughosha = findViewById(R.id.layout_sharanughosha);
-        layoutsharanughosha.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, SharanughoshaActivity.class);
-                startActivity(intent);
-            }
-        });
+        layoutsharanughosha.setOnClickListener(v ->
+                startActivity(new Intent(HomeActivity.this, SharanughoshaActivity.class)));
 
         layoutNityapooja = findViewById(R.id.layout_nityapooja);
-        layoutNityapooja.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, NityaPoojaActivity.class);
-                startActivity(intent);
-            }
-        });
-        layoutCalender= findViewById(R.id.layout_calender);
-        layoutCalender.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent calenderIntent=new Intent(HomeActivity.this,CalenderActivity.class);
-                startActivity(calenderIntent);
-            }
-        });
+        layoutNityapooja.setOnClickListener(v ->
+                startActivity(new Intent(HomeActivity.this, NityaPoojaActivity.class)));
+
+        layoutCalender = findViewById(R.id.layout_calender);
+        layoutCalender.setOnClickListener(v ->
+                startActivity(new Intent(HomeActivity.this, CalenderActivity.class)));
+
         layoutTourse = findViewById(R.id.layout_tourse);
-        layoutTourse.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent tourseIntent=new Intent(HomeActivity.this,AyyappaTourseDetailsACtivity.class);
-                startActivity(tourseIntent);
-            }
-        });
-        imageAnadanam=findViewById(R.id.layout_image_anadanam);
-        imageAnadanam.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(HomeActivity.this,AnadanamActivity.class);
-                startActivity(intent);
-            }
-        });
+        layoutTourse.setOnClickListener(v ->
+                startActivity(new Intent(HomeActivity.this, AyyappaTourseDetailsACtivity.class)));
+
+        imageAnadanam = findViewById(R.id.layout_image_anadanam);
+        imageAnadanam.setOnClickListener(v ->
+                startActivity(new Intent(HomeActivity.this, AnadanamActivity.class)));
+
         textAndanam = findViewById(R.id.layout_txt_anadanam);
-        textAndanam.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(HomeActivity.this,AnadanamActivity.class);
-                startActivity(intent);
-            }
-        });
+        textAndanam.setOnClickListener(v ->
+                startActivity(new Intent(HomeActivity.this, AnadanamActivity.class)));
 
         layoutAnadanam = findViewById(R.id.layout_anadanam);
-        layoutAnadanam.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(HomeActivity.this,AnadanamActivity.class);
-                startActivity(intent);
-            }
-        });
+        layoutAnadanam.setOnClickListener(v ->
+                startActivity(new Intent(HomeActivity.this, AnadanamActivity.class)));
 
         txtNityaPooja = findViewById(R.id.txt_nitya_pooja);
-        txtNityaPooja.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        txtNityaPooja.setOnClickListener(v ->
+                startActivity(new Intent(HomeActivity.this, NityaPoojaActivity.class)));
 
-                Intent intent=new Intent(HomeActivity.this, NityaPoojaActivity.class);
-                startActivity(intent);
-
-            }
-        });
         imageNityaPooja = findViewById(R.id.img_nitya_pooja);
-        imageNityaPooja.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(HomeActivity.this,NityaPoojaActivity.class);
-                startActivity(intent);
-            }
-        });
+        imageNityaPooja.setOnClickListener(v ->
+                startActivity(new Intent(HomeActivity.this, NityaPoojaActivity.class)));
+
         layoutBooks = findViewById(R.id.layout_books);
-        layoutBooks.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(HomeActivity.this,AyyapaBooksListActivity.class);
-                startActivity(intent);
-            }
-        });
+        layoutBooks.setOnClickListener(v ->
+                startActivity(new Intent(HomeActivity.this, AyyapaBooksListActivity.class)));
 
         layoutProducts = findViewById(R.id.layout_products);
-        layoutProducts.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent=new Intent(HomeActivity.this, ProductsListActivity.class);
-                startActivity(intent);
-
-            }
-        });
+        layoutProducts.setOnClickListener(v ->
+                startActivity(new Intent(HomeActivity.this, ProductsListActivity.class)));
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -373,77 +295,128 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         gsc = GoogleSignIn.getClient(HomeActivity.this, gso);
 
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        String name="";
-        String email="";
-
+        String name = "";
+        String email = "";
 
         if (account != null) {
             name = account.getDisplayName().toString();
             email = account.getEmail().toString();
             String image = String.valueOf(account.getPhotoUrl());
             Picasso.get().load(image).into(imageView);
-        }else {
-
+        } else {
             result = SharedPrefManager.getInstance(getApplicationContext()).getUserData();
 
             String firstName = result.getUserFirstName();
             String lastname = result.getUserLastName();
 
-            name = firstName + " " + lastname; // space add చేయండి
-
+            name = firstName + " " + lastname;
             email = result.getUserEmail();
 
             txtName.setText(name);
             txtEmail.setText(email);
-
         }
 
         txtName.setText(name);
         txtEmail.setText(email);
 
+        String profilePic = SharedPrefManager.getInstance(this).getProfilePic();
 
-
-
-        String profilePic =
-                SharedPrefManager.getInstance(this)
-                        .getProfilePic();
-
-        Log.d("HEADER_PROFILE", profilePic);
+        Log.d("HEADER_PROFILE", String.valueOf(profilePic));
 
         if (profilePic != null
                 && !profilePic.isEmpty()
                 && !profilePic.startsWith("http")) {
-
-            profilePic = "https://www.ayyappatelugu.com/public/assets/user_images/"
-                    + profilePic;
+            profilePic = "https://www.ayyappatelugu.com/public/assets/user_images/" + profilePic;
         }
-
 
         Log.d("HEADER_PROFILE", "profilePic = " + profilePic);
 
         Glide.with(this)
                 .load(profilePic)
-
                 .circleCrop()
                 .into(imageView);
-
 
         checkAndRequestPermissions();
 
         sevaMethod();
-
         newsMethod();
         bajanaSongsMethod();
-
         TemplesListMethod();
         AyyaTemplesListMethod();
-
         adsCarouselMethod();
-
         heroSectionMethod();
 
+        checkForUpdate();
     }
 
+    // ---------------------------------------------------------------------------------
+    // In-app update: dialog (Update / Ignore) + notification
+    // ---------------------------------------------------------------------------------
+    private void checkForUpdate() {
+        AppUpdateManager manager = AppUpdateManagerFactory.create(this);
+        manager.getAppUpdateInfo().addOnSuccessListener((AppUpdateInfo info) -> {
+            if (info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                    && !updateDialogShown
+                    && !isFinishing() && !isDestroyed()) {
+                updateDialogShown = true;
+                showUpdateDialog();
+                showUpdateNotification();
+            }
+        });
+    }
+
+    private void showUpdateDialog() {
+        updateDialog = new AlertDialog.Builder(this)
+                .setTitle("Update Available")
+                .setMessage("A new version of Ayyappa Telugu is available. Please update to get the latest features.")
+                .setCancelable(true)
+                .setPositiveButton("Update", (dialog, which) -> openPlayStore())
+                .setNegativeButton("Ignore", (dialog, which) -> dialog.dismiss())
+                .create();
+        updateDialog.show();
+    }
+
+    private void openPlayStore() {
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE_MARKET_URL)));
+        } catch (ActivityNotFoundException e) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE_URL)));
+        }
+    }
+
+    private void showUpdateNotification() {
+        if (Build.VERSION.SDK_INT >= 33
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_NOTIFICATION_PERMISSION);
+            return;
+        }
+
+        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            nm.createNotificationChannel(new NotificationChannel(
+                    UPDATE_CHANNEL_ID, "App Updates", NotificationManager.IMPORTANCE_DEFAULT));
+        }
+
+        Intent storeIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE_URL));
+        PendingIntent pi = PendingIntent.getActivity(this, 0, storeIntent,
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, UPDATE_CHANNEL_ID)
+                .setSmallIcon(R.drawable.applogo)
+                .setContentTitle("Update Available")
+                .setContentText("A new version of Ayyappa Telugu is available. Tap to update.")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pi)
+                .setAutoCancel(true);
+
+        nm.notify(UPDATE_NOTIFICATION_ID, builder.build());
+    }
+
+    // ---------------------------------------------------------------------------------
+    // Refresh
+    // ---------------------------------------------------------------------------------
     private void refreshAll() {
         pendingRefresh = 5;               // 5 API calls
         loadHeroBanners();
@@ -459,6 +432,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             swipeRefreshHome.setRefreshing(false);
         }
     }
+
     // ---------------------------------------------------------------------------------
     // Hero section: full-width carousel, data from GET APICalls/banner-images
     // ---------------------------------------------------------------------------------
@@ -467,19 +441,16 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         heroDots = findViewById(R.id.heroDots);
         layoutHeroContainer = findViewById(R.id.layout_hero);
 
-        // Show only after data arrives
         layoutHeroContainer.setVisibility(View.GONE);
 
         heroViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
                 updateHeroDots(position);
-                // restart the timer after a manual swipe
                 startHeroAutoSlide();
             }
         });
 
-        // auto slide (loops back to first slide)
         heroRunnable = () -> {
             if (heroBanners != null && heroBanners.size() > 1) {
                 int next = (heroViewPager.getCurrentItem() + 1) % heroBanners.size();
@@ -536,14 +507,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private void showHero(BannerResponse body) {
         heroBanners = body.result;
 
-        // pager height = image height only (19:6); title, subtitle and buttons are drawn ON the image
         ViewGroup.LayoutParams lp = heroViewPager.getLayoutParams();
         lp.height = HeroSliderAdapter.imageHeightPx(this);
         heroViewPager.setLayoutParams(lp);
 
         heroViewPager.setAdapter(new HeroSliderAdapter(HomeActivity.this, body.imageUrl, heroBanners));
 
-        // dots (as many as the API returns)
         heroDots.removeAllViews();
         heroDotViews = new ImageView[heroBanners.size()];
         int size = (int) (8 * getResources().getDisplayMetrics().density);
@@ -582,22 +551,24 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    // ---------------------------------------------------------------------------------
+    // Ads carousel
+    // ---------------------------------------------------------------------------------
     private void adsCarouselMethod() {
         adsViewPager = findViewById(R.id.adsViewPager);
         adsDots = findViewById(R.id.adsDots);
         layoutAdsContainer = findViewById(R.id.layout_ads);
 
-        // Data vachaka matrame chupistam
         layoutAdsContainer.setVisibility(View.GONE);
 
         adsViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
                 if (adImages == null || adImages.isEmpty()) return;
-                updateAdsDots(position % adImages.size());                }
+                updateAdsDots(position % adImages.size());
+            }
         });
 
-        // auto slide
         adsRunnable = () -> {
             if (adImages != null && adImages.size() > 1) {
                 adsViewPager.setCurrentItem(adsViewPager.getCurrentItem() + 1, true);
@@ -605,7 +576,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             }
         };
 
-
+        setupAdsTapDetector();
         loadAds();
     }
 
@@ -643,6 +614,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     hideAds();
                 }
             }
+
             @Override
             public void onFailure(Call<AddImageResponse> call, Throwable t) {
                 finishRefresh();
@@ -658,11 +630,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         adImages = body.result;
         adsViewPager.setAdapter(new AdsSliderAdapter(HomeActivity.this, body.imageUrl, adImages));
 
-        // dots (API lo enni images unte anni)
         adsDots.removeAllViews();
         adsDotViews = new ImageView[adImages.size()];
-        int size = (int) (8 * getResources().getDisplayMetrics().density);   // 8dp
-        int margin = (int) (4 * getResources().getDisplayMetrics().density); // 4dp
+        int size = (int) (8 * getResources().getDisplayMetrics().density);
+        int margin = (int) (4 * getResources().getDisplayMetrics().density);
         for (int i = 0; i < adsDotViews.length; i++) {
             adsDotViews[i] = new ImageView(this);
             adsDotViews[i].setImageResource(R.drawable.dot_inactive);
@@ -675,14 +646,124 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         layoutAdsContainer.setVisibility(View.VISIBLE);
 
-        // auto slide start
         adsHandler.removeCallbacks(adsRunnable);
         if (adImages.size() > 1) {
             int half = Integer.MAX_VALUE / 2;
             int start = half - (half % adImages.size());
             adsViewPager.setCurrentItem(start, false);
-            adsHandler.postDelayed(adsRunnable, 3000);   // <- idi add cheyyandi
+            adsHandler.postDelayed(adsRunnable, 3000);
         }
+    }
+
+    // ---------------------------------------------------------------------------------
+    // Ads click tracking: API call first, redirect after
+    // ---------------------------------------------------------------------------------
+    private void setupAdsTapDetector() {
+        View child = adsViewPager.getChildAt(0);
+        if (!(child instanceof RecyclerView)) return;
+        RecyclerView inner = (RecyclerView) child;
+
+        final GestureDetector detector = new GestureDetector(this,
+                new GestureDetector.SimpleOnGestureListener() {
+                    @Override
+                    public boolean onSingleTapUp(MotionEvent e) {
+                        onAdClicked();
+                        return true;
+                    }
+                });
+
+        inner.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                detector.onTouchEvent(e);
+                return false; // swipe ki disturb cheyadu
+            }
+        });
+    }
+
+    private RequestBody textPart(String value) {
+        return RequestBody.create(MediaType.parse("text/plain"), value == null ? "" : value);
+    }
+
+    // Gson tho object nunchi field value teesukuntundi (field names tho compile problem radu)
+    private String jsonField(Object obj, String... keys) {
+        if (obj == null) return "";
+        try {
+            JsonObject o = new Gson().toJsonTree(obj).getAsJsonObject();
+            for (String k : keys) {
+                if (o.has(k) && !o.get(k).isJsonNull()) return o.get(k).getAsString();
+            }
+        } catch (Exception ignored) {
+        }
+        return "";
+    }
+
+    private void onAdClicked() {
+        if (adClickInProgress || adImages == null || adImages.isEmpty()) return;
+
+        int pos = adsViewPager.getCurrentItem() % adImages.size();
+        AddImageResponse.AdItem ad = adImages.get(pos);
+
+        LoginDataResponse.Result user =
+                SharedPrefManager.getInstance(getApplicationContext()).getUserData();
+
+        String imageId = jsonField(ad, "adimageId", "imageId", "image_id", "adId", "ad_id");
+        final String redirectUrl = jsonField(ad, "adimageUrl", "link", "url", "redirectUrl", "redirect_url");
+
+        String registerId = user != null ? user.getUserId() : "";
+        String fullName = user != null
+                ? (user.getUserFirstName() + " " + user.getUserLastName()).trim()
+                : String.valueOf(txtName.getText());
+        String mobile = jsonField(user, "userMobile", "user_mobile", "userMobileNumber",
+                "mobileNumber", "mobile", "userPhone", "phone");
+
+        Log.d("AD_CLICK", "imageId=" + imageId + " registerId=" + registerId
+                + " fullName=" + fullName + " mobile=" + mobile + " url=" + redirectUrl);
+
+        adClickInProgress = true;
+
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .sslSocketFactory(UnsafeTrustManager.createTrustAllSslSocketFactory(), UnsafeTrustManager.createTrustAllTrustManager())
+                .hostnameVerifier((hostname, session) -> true)
+                .addInterceptor(logging)
+                .build();
+        Retrofit rf = new Retrofit.Builder()
+                .baseUrl("https://www.ayyappatelugu.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+        APiInterface api = rf.create(APiInterface.class);
+
+        api.userAdsClickTracking(
+                textPart(imageId),
+                textPart(registerId),
+                textPart(fullName),
+                textPart(mobile)
+        ).enqueue(new Callback<AdClickResponse>() {
+            @Override
+            public void onResponse(Call<AdClickResponse> call, Response<AdClickResponse> response) {
+                adClickInProgress = false;
+                Log.d("AD_CLICK", "http=" + response.code()
+                        + " body=" + new Gson().toJson(response.body()));
+                openAdLink(redirectUrl);   // API tharuvatha redirect
+            }
+
+            @Override
+            public void onFailure(Call<AdClickResponse> call, Throwable t) {
+                adClickInProgress = false;
+                Log.e("AD_CLICK", String.valueOf(t.getMessage()));
+                openAdLink(redirectUrl);   // API fail ayina user ni redirect chestam
+            }
+        });
+    }
+
+    private void openAdLink(String url) {
+        if (isFinishing() || isDestroyed()) return;
+        if (url == null || url.trim().isEmpty()) return;
+        LinkRouter.open(HomeActivity.this, url.trim());   // app:// -> inside app, otherwise browser
     }
 
     private void hideAds() {
@@ -700,88 +781,56 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-
-
     private void bajanaSongsMethod() {
-        // butBajanaSongs = findViewById(R.id.viewall_but_bajana_songs);
-        //layoutBajanaSongs = findViewById(R.id.layout_bajana_songs);
-
-        /*butBajanaSongs.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(HomeActivity.this, AyyappaBajanaSognsActivity.class);
-                startActivity(intent);
-            }
-        });*/
-       /* layoutBajanaSongs.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(HomeActivity.this, AyyappaBajanaSognsActivity.class);
-                startActivity(intent);
-            }
-        });*/
+        // (unused) bajana songs section removed from home
     }
 
+    // ---------------------------------------------------------------------------------
+    // News
+    // ---------------------------------------------------------------------------------
     private void newsMethod() {
         recyclerviewnews = findViewById(R.id.recycler_news);
         butAllNews = findViewById(R.id.viewall_but_news);
-        //layoutNews = findViewById(R.id.layout_news);
         newsList = new ArrayList<>();
 
-        LinearLayoutManager layoutManager =new LinearLayoutManager(this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerviewnews.setLayoutManager(layoutManager);
 
         newsfechedDatafromShredPreferences();
-        butAllNews.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentnews=new Intent(HomeActivity.this,ViewAllNewsListActivity.class);
-
-                startActivity(intentnews);
-            }
-        });
-
+        butAllNews.setOnClickListener(v ->
+                startActivity(new Intent(HomeActivity.this, ViewAllNewsListActivity.class)));
 
         swipeRefreshLayout2 = findViewById(R.id.swipeRefreshLayout2);
-
         swipeRefreshLayout2.setOnRefreshListener(() -> {
-            ayyappafetchDataFromDataBase();  // Manual Pull Refresh API Call
+            ayyappafetchDataFromDataBase();
         });
-
-
-
     }
 
     private void newsfechedDatafromShredPreferences() {
         newsfetchDataFromDataBase();
 
-        List<NewsListModel> newsListModels= SharedPreferencesManager.getNewsList(HomeActivity.this);
+        List<NewsListModel> newsListModels = SharedPreferencesManager.getNewsList(HomeActivity.this);
         if (newsListModels != null && !newsListModels.isEmpty()) {
-            // Data exists in SharedPreferences, update RecyclerView
             updateRecyclerViewNews(newsListModels);
         } else {
-            // Data doesn't exist in SharedPreferences, fetch from the network
             newsfetchDataFromDataBase();
         }
-
     }
-
-
 
     private void newsfetchDataFromDataBase() {
         if (swipeRefreshLayout != null && !swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setRefreshing(true); // Show refresh loader
+            swipeRefreshLayout.setRefreshing(true);
         }
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .sslSocketFactory(UnsafeTrustManager.createTrustAllSslSocketFactory(), UnsafeTrustManager.createTrustAllTrustManager())
-                .hostnameVerifier((hostname, session) -> true) // Bypasses hostname verification
+                .hostnameVerifier((hostname, session) -> true)
                 .addInterceptor(loggingInterceptor)
                 .build();
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://www.ayyappatelugu.com/") // Replace with your API URL
+                .baseUrl("https://www.ayyappatelugu.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
@@ -792,7 +841,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             public void onResponse(Call<NewsList> call, Response<NewsList> response) {
                 finishRefresh();
 
-                NewsList newsList1=response.body();
+                NewsList newsList1 = response.body();
                 newsList = new ArrayList<>(Arrays.asList(newsList1.getResult()));
 
                 SharedPreferencesManager.saveNewsList(HomeActivity.this, newsList);
@@ -808,60 +857,44 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     Log.d("Data Check", "NewsList size: " + newsList.size());
                     updateRecyclerViewNews(newsList);
                 }
-
             }
         });
     }
 
     private void updateRecyclerViewNews(List<NewsListModel> newsListModels) {
-        viewAllNewsListAdapter = new AllNewsListAdapter(HomeActivity.this,newsListModels);
+        viewAllNewsListAdapter = new AllNewsListAdapter(HomeActivity.this, newsListModels);
         recyclerviewnews.setAdapter(viewAllNewsListAdapter);
-
     }
 
+    // ---------------------------------------------------------------------------------
+    // Ayyappa temples
+    // ---------------------------------------------------------------------------------
     private void AyyaTemplesListMethod() {
-
         recyclerviewAyyappaTemples = findViewById(R.id.recycler_ayyappa_temples);
         viewallButton = findViewById(R.id.viewall_but);
-        viewallButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent= new Intent(HomeActivity.this, ViewAllAyyappaTemplesActivity.class);
-                startActivity(intent);
-            }
-        });
+        viewallButton.setOnClickListener(v ->
+                startActivity(new Intent(HomeActivity.this, ViewAllAyyappaTemplesActivity.class)));
+
         leftIconAyyappa = findViewById(R.id.leftIcon1);
         rightIconAyyappa = findViewById(R.id.rightIcon1);
         ayyaTempleListModels = new ArrayList<>();
 
-        layoutManagerAyyappaTemple =new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
+        layoutManagerAyyappaTemple = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerviewAyyappaTemples.setLayoutManager(layoutManagerAyyappaTemple);
 
         ayyappafechedDatafromShredPreferences();
 
-        leftIconAyyappa.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                scrollRecyclerViewLeftayyappa();
-            }
-        });
+        leftIconAyyappa.setOnClickListener(v -> scrollRecyclerViewLeftayyappa());
+        rightIconAyyappa.setOnClickListener(v -> scrollRecyclerViewRightayyappa());
 
-        rightIconAyyappa.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                scrollRecyclerViewRightayyappa();
-            }
-        });
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
-
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            ayyappafetchDataFromDataBase();  // Manual Pull Refresh API Call
+            ayyappafetchDataFromDataBase();
         });
-
-
     }
 
     private void scrollRecyclerViewRightayyappa() {
+        if (ayyappaListAdapter == null) return;
         int visiblePosition = layoutManagerAyyappaTemple.findLastVisibleItemPosition();
         if (visiblePosition < ayyappaListAdapter.getItemCount() - 1) {
             recyclerviewAyyappaTemples.smoothScrollToPosition(visiblePosition + 1);
@@ -878,45 +911,41 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private void ayyappafechedDatafromShredPreferences() {
         ayyappafetchDataFromDataBase();
 
-        // 2. Meanwhile show cached data (if exists) until network response comes
         List<AyyaTempleListModel> templesListModels = SharedPreferencesManager.getAyyappaTemplesList(HomeActivity.this);
         if (templesListModels != null && !templesListModels.isEmpty()) {
-            // Show cached data instantly
             ayyappaupdateRecyclerView(templesListModels);
         }
     }
 
     private void ayyappafetchDataFromDataBase() {
         if (swipeRefreshLayout != null && !swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setRefreshing(true); // Show refresh loader
+            swipeRefreshLayout.setRefreshing(true);
         }
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .sslSocketFactory(UnsafeTrustManager.createTrustAllSslSocketFactory(), UnsafeTrustManager.createTrustAllTrustManager())
-                .hostnameVerifier((hostname, session) -> true) // Bypasses hostname verification
+                .hostnameVerifier((hostname, session) -> true)
                 .addInterceptor(loggingInterceptor)
                 .build();
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://www.ayyappatelugu.com/") // Replace with your API URL
+                .baseUrl("https://www.ayyappatelugu.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
         APiInterface apiClient = retrofit.create(APiInterface.class);
-        Call<AyyappaTempleList> modelCall=apiClient.getAyyappaTempleList();
+        Call<AyyappaTempleList> modelCall = apiClient.getAyyappaTempleList();
         modelCall.enqueue(new Callback<AyyappaTempleList>() {
             @Override
             public void onResponse(Call<AyyappaTempleList> call, Response<AyyappaTempleList> response) {
                 finishRefresh();
 
-                AyyappaTempleList list= response.body();
+                AyyappaTempleList list = response.body();
                 ayyaTempleListModels = Arrays.asList(list.getResult());
 
-                // Save to SharedPreferences for caching
                 SharedPreferencesManager.saveAyyappaTempleList(HomeActivity.this, ayyaTempleListModels);
 
-                // Update RecyclerView
                 ayyappaupdateRecyclerView(ayyaTempleListModels);
             }
 
@@ -925,12 +954,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 finishRefresh();
                 ayyaTempleListModels = SharedPreferencesManager.getAyyappaTemplesList(HomeActivity.this);
                 if (ayyaTempleListModels != null && !ayyaTempleListModels.isEmpty()) {
-                    // Update the RecyclerView
                     ayyappaupdateRecyclerView(ayyaTempleListModels);
                 }
             }
         });
-
     }
 
     private void ayyappaupdateRecyclerView(List<AyyaTempleListModel> templesListModels) {
@@ -938,51 +965,40 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 ? templesListModels.subList(0, 10)
                 : templesListModels;
 
-        ayyappaListAdapter = new AyyappaListAdapter(HomeActivity.this,limitedList);
+        ayyappaListAdapter = new AyyappaListAdapter(HomeActivity.this, limitedList);
         recyclerviewAyyappaTemples.setAdapter(ayyappaListAdapter);
     }
 
+    // ---------------------------------------------------------------------------------
+    // Temples
+    // ---------------------------------------------------------------------------------
     private void TemplesListMethod() {
         recyclerviewTemples = findViewById(R.id.recycler_temples);
 
         butViewAll = findViewById(R.id.but_viewAll);
-        butViewAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent= new Intent(HomeActivity.this, ViewAllTemplesActivity.class);
-                startActivity(intent);
-            }
-        });
+        butViewAll.setOnClickListener(v ->
+                startActivity(new Intent(HomeActivity.this, ViewAllTemplesActivity.class)));
+
         leftIcon = findViewById(R.id.leftIcon);
         rightIcon = findViewById(R.id.rightIcon);
         templeList = new ArrayList<>();
 
-        layoutManagerTemple =new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
+        layoutManagerTemple = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerviewTemples.setLayoutManager(layoutManagerTemple);
 
         fechedDatafromShredPreferences();
 
-        leftIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                scrollRecyclerViewLeft();
-            }
-        });
+        leftIcon.setOnClickListener(v -> scrollRecyclerViewLeft());
+        rightIcon.setOnClickListener(v -> scrollRecyclerViewRight());
 
-        rightIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                scrollRecyclerViewRight();
-            }
-        });
         swipeRefreshLayout1 = findViewById(R.id.swipeRefreshLayout1);
-
         swipeRefreshLayout1.setOnRefreshListener(() -> {
-            fetchDataFromDataBase();  // Manual Pull Refresh API Call
+            fetchDataFromDataBase();
         });
     }
 
     private void scrollRecyclerViewRight() {
+        if (ayyappaTemplesListAdapter == null) return;
         int visiblePosition = layoutManagerTemple.findLastVisibleItemPosition();
         if (visiblePosition < ayyappaTemplesListAdapter.getItemCount() - 1) {
             recyclerviewTemples.smoothScrollToPosition(visiblePosition + 1);
@@ -998,46 +1014,43 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     private void fechedDatafromShredPreferences() {
         fetchDataFromDataBase();
-        List<TemplesListModel> templesListModels= SharedPreferencesManager.getTemplesList(HomeActivity.this);
+        List<TemplesListModel> templesListModels = SharedPreferencesManager.getTemplesList(HomeActivity.this);
         if (templesListModels != null && !templesListModels.isEmpty()) {
-            // Data exists in SharedPreferences, update RecyclerView
             updateRecyclerView(templesListModels);
         } else {
-            // Data doesn't exist in SharedPreferences, fetch from the network
             fetchDataFromDataBase();
         }
     }
 
     private void fetchDataFromDataBase() {
         if (swipeRefreshLayout1 != null && !swipeRefreshLayout1.isRefreshing()) {
-            swipeRefreshLayout1.setRefreshing(true); // Show refresh loader
+            swipeRefreshLayout1.setRefreshing(true);
         }
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .sslSocketFactory(UnsafeTrustManager.createTrustAllSslSocketFactory(), UnsafeTrustManager.createTrustAllTrustManager())
-                .hostnameVerifier((hostname, session) -> true) // Bypasses hostname verification
+                .hostnameVerifier((hostname, session) -> true)
                 .addInterceptor(loggingInterceptor)
                 .build();
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://www.ayyappatelugu.com/") // Replace with your API URL
+                .baseUrl("https://www.ayyappatelugu.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
         APiInterface apiClient = retrofit.create(APiInterface.class);
-        Call<TemplesList> modelCall=apiClient.getTempleList();
+        Call<TemplesList> modelCall = apiClient.getTempleList();
         modelCall.enqueue(new Callback<TemplesList>() {
             @Override
             public void onResponse(Call<TemplesList> call, Response<TemplesList> response) {
                 finishRefresh();
-                TemplesList list=response.body();
-                templeList=new ArrayList<>(Arrays.asList(list.getResult()));
+                TemplesList list = response.body();
+                templeList = new ArrayList<>(Arrays.asList(list.getResult()));
 
                 SharedPreferencesManager.saveTempleList(HomeActivity.this, templeList);
 
                 updateRecyclerView(templeList);
-
             }
 
             @Override
@@ -1045,69 +1058,38 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 finishRefresh();
                 templeList = SharedPreferencesManager.getTemplesList(HomeActivity.this);
                 if (templeList != null && !templeList.isEmpty()) {
-                    // Update the RecyclerView
                     updateRecyclerView(templeList);
                 }
-
             }
         });
-
     }
 
     private void updateRecyclerView(List<TemplesListModel> templesListModels) {
-
         List<TemplesListModel> limitedList = templesListModels.size() > 10
                 ? templesListModels.subList(0, 10)
                 : templesListModels;
 
-        // Set up the adapter with the limited list
         ayyappaTemplesListAdapter = new AyyappaTemplesListAdapter(HomeActivity.this, limitedList);
         recyclerviewTemples.setAdapter(ayyappaTemplesListAdapter);
     }
 
-
-
+    // ---------------------------------------------------------------------------------
+    // Seva (unused)
+    // ---------------------------------------------------------------------------------
     private void sevaMethod() {
-//        buttonViewAll = findViewById(R.id.but_view_all);
-        // layoutSeva = findViewById(R.id.layout_seva);
-        /*buttonViewAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(HomeActivity.this, ViewAllDetailsActivity.class);
-                startActivity(intent);
-
-            }
-        });*/
-
-      /*  layoutSeva.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!isActivityOpened) {
-                    isActivityOpened = true;
-                    // Open the desired activity
-                    SevaDtailsMethod();
-
-                    // Optionally reset after some time or when the target activity is closed
-                    new Handler().postDelayed(() -> isActivityOpened = false, 1000);
-                }
-
-            }
-        });*/
-
+        // (unused) seva section removed from home
     }
 
     private void SevaDtailsMethod() {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY); // Change to Level.BASIC for less detail
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        // Create OkHttpClient without SSL bypassing
         OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(loggingInterceptor) // Add the logging interceptor
+                .addInterceptor(loggingInterceptor)
                 .build();
 
-        // Initialize Retrofit with the OkHttpClient
         retrofit = new Retrofit.Builder()
-                .baseUrl("https://www.ayyappatelugu.com/") // Ensure this is your correct base URL
+                .baseUrl("https://www.ayyappatelugu.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
@@ -1119,13 +1101,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             public void onResponse(Call<SevaList> call, Response<SevaList> response) {
                 if (response.isSuccessful()) {
                     SevaList data = response.body();
-                    sevaList=new ArrayList<>(Arrays.asList(data.getResult()));
+                    sevaList = new ArrayList<>(Arrays.asList(data.getResult()));
                     SevaListModel modal = sevaList.get(0);
                     String profilePic = modal.getImage();
                     String imgUrl = "https://www.ayyappatelugu.com/assets/seva_samasthalu/" + profilePic;
                     String name = modal.getTitle();
-                    String smalldiscription= modal.getSmalldescription();
-                    String discription = modal.getDescription();;
+                    String smalldiscription = modal.getSmalldescription();
+                    String discription = modal.getDescription();
 
                     Intent intent = new Intent(HomeActivity.this, SevaDetailsActivity.class);
                     intent.putExtra("ItemName", name);
@@ -1133,22 +1115,21 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     intent.putExtra("imagePath", imgUrl);
                     intent.putExtra("Discription", discription);
                     startActivity(intent);
-
                 } else {
-                    // Handle unsuccessful response
-                    // You might want to show an error message or handle it in some way
                     Log.e("API Response", "Unsuccessful: " + response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<SevaList> call, Throwable t) {
-                // Handle failure, for example, show an error message
                 Log.e("API Failure", "Error: " + t.getMessage());
             }
         });
     }
 
+    // ---------------------------------------------------------------------------------
+    // Permissions
+    // ---------------------------------------------------------------------------------
     private void checkAndRequestPermissions() {
         String[] permissions = {
                 Manifest.permission.READ_CONTACTS,
@@ -1157,9 +1138,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.READ_CONTACTS,
                 Manifest.permission.READ_PHONE_NUMBERS
-
         };
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -1167,7 +1146,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 ActivityCompat.requestPermissions(this, permissions, REQUEST_PERMISSION_CODE);
             }
         }
-
     }
 
     private boolean arePermissionsGranted(String[] permissions) {
@@ -1177,8 +1155,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             }
         }
         return true;
-
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -1188,11 +1166,26 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 // showPermissionDeniedDialog();
             }
         }
+
+        if (requestCode == REQUEST_NOTIFICATION_PERMISSION
+                && grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            showUpdateNotification();
+        }
     }
 
+    private boolean areAllPermissionsGranted(int[] grantResults) {
+        for (int result : grantResults) {
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-
-
+    // ---------------------------------------------------------------------------------
+    // Exit dialog
+    // ---------------------------------------------------------------------------------
     private void showExitConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Do you want to exit Ayyappa Telugu?")
@@ -1205,23 +1198,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss(); // Dismiss the dialog
+                        dialog.dismiss();
                     }
                 });
 
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-    private boolean areAllPermissionsGranted(int[] grantResults) {
-        for (int result : grantResults) {
-            if (result != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -1230,128 +1213,89 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         if (toggle.onOptionsItemSelected(item)) {
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-
+    // ---------------------------------------------------------------------------------
+    // Navigation drawer
+    // ---------------------------------------------------------------------------------
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int action = item.getItemId();
         if (action == R.id.Ayyapa_karyam) {
-
-            Intent intent = new Intent(HomeActivity.this, AyyappaKaryamListActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(HomeActivity.this, AyyappaKaryamListActivity.class));
 
         } else if (action == R.id.guruswami_list) {
-
-            Intent intent = new Intent(HomeActivity.this, GuruSwamiListActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(HomeActivity.this, GuruSwamiListActivity.class));
 
         } else if (action == R.id.ayyappa_mandali) {
+            startActivity(new Intent(HomeActivity.this, AyyappaMandaliListActivity.class));
 
-            Intent intent = new Intent(HomeActivity.this, AyyappaMandaliListActivity.class);
-            startActivity(intent);
-
-        }else if (action == R.id.ayyappa_decration) {
-
-            Intent intent = new Intent(HomeActivity.this, AyyappaPetamListActivity.class);
-            startActivity(intent);
+        } else if (action == R.id.ayyappa_decration) {
+            startActivity(new Intent(HomeActivity.this, AyyappaPetamListActivity.class));
 
         } else if (action == R.id.ayyappa_tours) {
-
-            Intent intent = new Intent(HomeActivity.this, AyyappaTourseDetailsACtivity.class);
-            startActivity(intent);
+            startActivity(new Intent(HomeActivity.this, AyyappaTourseDetailsACtivity.class));
 
         } else if (action == R.id.ayyappa_books) {
+            startActivity(new Intent(HomeActivity.this, AyyapaBooksListActivity.class));
 
-            Intent intent = new Intent(HomeActivity.this, AyyapaBooksListActivity.class);
-            startActivity(intent);
         } else if (action == R.id.ayyappa_details) {
+            startActivity(new Intent(HomeActivity.this, AboutActivity.class));
 
-            Intent intent = new Intent(HomeActivity.this, AboutActivity.class);
-            startActivity(intent);
-        } else if (action == R.id.ayyappa_calender){
+        } else if (action == R.id.ayyappa_calender) {
+            startActivity(new Intent(HomeActivity.this, CalenderActivity.class));
 
-            Intent intent=new Intent(HomeActivity.this, CalenderActivity.class);
-            startActivity(intent);
+        } else if (action == R.id.ayyappa_blogs) {
+            startActivity(new Intent(HomeActivity.this, BlogsActivity.class));
 
+        } else if (action == R.id.ayyappa_Padayatra) {
+            startActivity(new Intent(HomeActivity.this, PadayatraActivity.class));
 
-        }else if (action == R.id.ayyappa_blogs){
+        } else if (action == R.id.ayyappa_telugu_calender) {
+            startActivity(new Intent(HomeActivity.this, TeluguCalenderActivity.class));
 
-            Intent intent=new Intent(HomeActivity.this, BlogsActivity.class);
-            startActivity(intent);
-
-
-        }else if (action == R.id.ayyappa_Padayatra){
-
-            Intent intent=new Intent(HomeActivity.this, PadayatraActivity.class);
-            startActivity(intent);
-
-
-        } else if (action == R.id.ayyappa_telugu_calender){
-
-            Intent intent=new Intent(HomeActivity.this, TeluguCalenderActivity.class);
-            startActivity(intent);
-
-
-        }else if (action == R.id.menu_panchagam){
-
-            Intent intent = new Intent(HomeActivity.this, PanchagamActivity.class);
-            startActivity(intent);
+        } else if (action == R.id.menu_panchagam) {
+            startActivity(new Intent(HomeActivity.this, PanchagamActivity.class));
 
         } else if (action == R.id.Ayyapa_bajana_songs) {
+            startActivity(new Intent(HomeActivity.this, AyyappaBajanaSognsActivity.class));
 
-            Intent intent = new Intent(HomeActivity.this, AyyappaBajanaSognsActivity.class);
+        } else if (action == R.id.ayyappa_anadanam) {
+            startActivity(new Intent(HomeActivity.this, AnadanamActivity.class));
+
+        } else if (action == R.id.ayyappa_devalyalu) {
+            startActivity(new Intent(HomeActivity.this, ViewAllTemplesActivity.class));
+
+        } else if (action == R.id.ayyappa_ayyappadevlyalu) {
+            startActivity(new Intent(HomeActivity.this, ViewAllAyyappaTemplesActivity.class));
+
+        } else if (action == R.id.ayyappa_policy) {
+            startActivity(new Intent(HomeActivity.this, PrivacyPolicyActivity.class));
+
+        } else if (action == R.id.ayyappa_profile) {
+            startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
+
+        } else if (action == R.id.ayyappa_images) {
+            Intent intent = new Intent(HomeActivity.this, ImagesListActivity.class);
+            if (result != null) {
+                intent.putExtra("userId", result.getUserId());
+            }
             startActivity(intent);
 
-        } else if(action == R.id.ayyappa_anadanam){
+        } else if (action == R.id.ayyappa_videos) {
+            startActivity(new Intent(HomeActivity.this, PostVideosActivity.class));
 
-            Intent intent=new Intent(HomeActivity.this, AnadanamActivity.class);
-            startActivity(intent);
-
-        }else if(action == R.id.ayyappa_devalyalu){
-
-            Intent intent=new Intent(HomeActivity.this, ViewAllTemplesActivity.class);
-            startActivity(intent);
-
-        }else if(action == R.id.ayyappa_ayyappadevlyalu){
-
-            Intent intent=new Intent(HomeActivity.this, ViewAllAyyappaTemplesActivity.class);
-            startActivity(intent);
-
-        }else if(action == R.id.ayyappa_policy){
-
-            Intent intent=new Intent(HomeActivity.this, PrivacyPolicyActivity.class);
-            startActivity(intent);
-
-        }else if(action == R.id.ayyappa_profile){
-
-            Intent intent=new Intent(HomeActivity.this, ProfileActivity.class);
-            startActivity(intent);
-
-        }else if(action == R.id.ayyappa_images){
-
-            Intent intent=new Intent(HomeActivity.this, ImagesListActivity.class);
-            intent.putExtra("userId",result.getUserId());
-            startActivity(intent);
-
-        }else if(action == R.id.ayyappa_videos){
-
-            Intent intent=new Intent(HomeActivity.this, PostVideosActivity.class);
-            startActivity(intent);
-
-        }else if (action == R.id.log_out) {
+        } else if (action == R.id.log_out) {
             gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     SharedPrefManager.getInstance(getApplicationContext()).logout();
                     finish();
-                    Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
-                    startActivity(intent);
+                    startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                 }
             });
         }
@@ -1361,11 +1305,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    // ---------------------------------------------------------------------------------
+    // Lifecycle
+    // ---------------------------------------------------------------------------------
     @Override
     protected void onStart() {
         super.onStart();
 
-        // Check if the user is logged in
         if (!SharedPrefManager.getInstance(this).isLoggedIn()) {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -1373,7 +1319,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             finish();
         }
     }
-
 
     @Override
     protected void onResume() {
@@ -1397,8 +1342,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         super.onDestroy();
         if (heroRunnable != null) heroHandler.removeCallbacks(heroRunnable);
         if (adsRunnable != null) adsHandler.removeCallbacks(adsRunnable);
+        if (updateDialog != null && updateDialog.isShowing()) updateDialog.dismiss();
     }
-
-
-
 }

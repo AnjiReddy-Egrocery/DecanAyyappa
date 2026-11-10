@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_logo"
+    android:fitsSystemWindows="true"
+    tools:context=".Activity.SendAnaPrasadamDetailsActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#BC0F0F">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#BC0F0F">
+
+            <include
+                layout="@layout/headr_toolbar"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center" />
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:paddingBottom="30dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="Provide Annadanam Details"
+                android:textColor="#FFEB3B"
+                android:textSize="20sp" />
+
+            <!-- Name -->
+            <EditText
+                android:id="@+id/edt_name"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/enq_edt_border"
+                android:hint="Enter the Name"
+                android:inputType="textPersonName"
+                android:paddingLeft="10dp"
+                android:textColor="#fff"
+                android:textColorHint="#fff" />
+
+            <!-- Type -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="Type"
+                android:textColor="#fff"
+                android:textSize="16sp" />
+
+            <RadioGroup
+                android:id="@+id/rg_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rb_biksha"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:buttonTint="#FFEB3B"
+                    android:text="Biksha"
+                    android:textColor="#fff" />
+
+                <RadioButton
+                    android:id="@+id/rb_alpaharam"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:buttonTint="#FFEB3B"
+                    android:text="Alpaharam"
+                    android:textColor="#fff" />
+            </RadioGroup>
+
+            <!-- Dates -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/edt_start_date"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/enq_edt_border"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:hint="Start Date"
+                    android:paddingLeft="10dp"
+                    android:textColor="#fff"
+                    android:textColorHint="#fff" />
+
+                <EditText
+                    android:id="@+id/edt_end_date"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/enq_edt_border"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:hint="End Date"
+                    android:paddingLeft="10dp"
+                    android:textColor="#fff"
+                    android:textColorHint="#fff" />
+            </LinearLayout>
+
+            <!-- Times -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/edt_start_time"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/enq_edt_border"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:hint="Start Time"
+                    android:paddingLeft="10dp"
+                    android:textColor="#fff"
+                    android:textColorHint="#fff" />
+
+                <EditText
+                    android:id="@+id/edt_end_time"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/enq_edt_border"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:hint="End Time"
+                    android:paddingLeft="10dp"
+                    android:textColor="#fff"
+                    android:textColorHint="#fff" />
+            </LinearLayout>
+
+            <!-- Location Map + search -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/edt_location"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/enq_edt_border"
+                    android:hint="Location Map (type or move map)"
+                    android:imeOptions="actionSearch"
+                    android:inputType="textPostalAddress"
+                    android:paddingLeft="10dp"
+                    android:singleLine="true"
+                    android:textColor="#fff"
+                    android:textColorHint="#fff" />
+
+                <ImageButton
+                    android:id="@+id/btn_search"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="8dp"
+                    android:background="#43A5B1"
+                    android:contentDescription="Search"
+                    android:src="@android:drawable/ic_menu_search" />
+            </LinearLayout>
+
+            <!-- Map + center pin -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginTop="12dp">
+
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/map"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <!-- pin tip exact ga map center lo undali -->
+                <ImageView
+                    android:id="@+id/img_center_pin"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="40dp"
+                    android:contentDescription="Selected location"
+                    android:src="@drawable/ic_location_pin" />
+
+                <!-- map meeda touch ni ScrollView tinakunda -->
+                <View
+                    android:id="@+id/map_touch_overlay"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent" />
+
+                <!-- My Location button (overlay tarvata, last lo) -->
+                <ImageButton
+                    android:id="@+id/btn_my_location"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="bottom|start"
+                    android:layout_margin="12dp"
+                    android:background="@drawable/bg_my_location"
+                    android:contentDescription="My location"
+                    android:src="@android:drawable/ic_menu_mylocation" />
+            </FrameLayout>
+
+            <!-- Latitude / Longitude -->
+         <!--   <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/edt_latitude"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/enq_edt_border"
+                    android:focusable="false"
+                    android:hint="Latitude"
+                    android:paddingLeft="10dp"
+                    android:textColor="#fff"
+                    android:textColorHint="#fff" />
+
+                <EditText
+                    android:id="@+id/edt_longitude"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/enq_edt_border"
+                    android:focusable="false"
+                    android:hint="Longitude"
+                    android:paddingLeft="10dp"
+                    android:textColor="#fff"
+                    android:textColorHint="#fff" />
+            </LinearLayout>-->
+
+            <Button
+                android:id="@+id/but_submit"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="#43A5B1"
+                android:text="Submit"
+                android:textColor="#FFF"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -93,7 +93,7 @@ public class GuruSwamiListActivity extends AppCompatActivity {
 
     private Retrofit retrofit;
     ImageView imageAnadanam,imageNityaPooja;
-    TextView textAndanam,txtNityaPooja;
+    TextView textAndanam,txtNityaPooja,txtSendGuruDetails;
 
     private static final Transliterator latinToTelugu = Transliterator.getInstance("Latin-Telugu");
 
@@ -164,7 +164,16 @@ public class GuruSwamiListActivity extends AppCompatActivity {
             }
         });
 
-        searchView = findViewById(R.id.searchView);
+        txtSendGuruDetails= findViewById(R.id.txt_send_guru_details);
+        txtSendGuruDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(GuruSwamiListActivity.this,SendGuruDetailsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+                searchView = findViewById(R.id.searchView);
         searchView = findViewById(R.id.searchView);
         searchView.setQueryHint("Search by name, city, or mobile number");
         searchView.setIconifiedByDefault(false); // Keep it expanded

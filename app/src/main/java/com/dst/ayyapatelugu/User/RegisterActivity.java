@@ -18,16 +18,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
-import android.text.TextUtils;
-import android.text.method.HideReturnsTransformationMethod;
-import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -44,7 +39,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,39 +54,35 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RegisterActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
-
     LinearLayout layoutLogin;
     EditText edtFirstName, edtLastName, edtNumber, edtEmail;
     Button butRegister;
-
 
     private GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 9001;
     private static final int RC_SIGN_UP_WITH_GOOGLE = 9002;
 
-
     private static final int CREDENTIAL_PICKER_REQUEST = 1001;
     private static final int REQUEST_PHONE_NUMBER_PERMISSION = 100;
-    private static final int REQUEST_ACCOUNTS_PERMISSION = 1001;
-    private static final int REQUEST_GOOGLE_SIGN_IN = 9001;
+    private static final int REQUEST_GET_ACCOUNTS_PERMISSION = 123;
+    private static final int REQUEST_CODE_EMAIL_PICKER = 2001;
+    private static final String GOOGLE_ACCOUNT_TYPE = "com.google";
+    private static final int MAX_SIM_RETRY = 3;
 
     AlertDialog loadingDialog;
     private int simRetryCount = 0;
-    private static final int MAX_SIM_RETRY = 3;
-    private static final int REQUEST_CODE_EMAIL_PICKER = 2001;
-    private static final String GOOGLE_ACCOUNT_TYPE = "com.google";
 
+    // Android app => 0
     final String isIOS = "0";
 
-
+    // request already running ayite malli pampakunda
+    private boolean isRequestInProgress = false;
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
-
 
         edtFirstName = findViewById(R.id.edt_name);
         edtLastName = findViewById(R.id.edt_last_name);
@@ -101,12 +91,6 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
 
         layoutLogin = findViewById(R.id.layout_login);
         butRegister = findViewById(R.id.but_register);
-        //linearSignUpWithGmail=findViewById(R.id.layout_signup_gmail);
-
-
-        Log.d("GoogleSignIn", "edtEmail initialized: " + (edtEmail != null));
-
-
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -117,64 +101,93 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        edtNumber.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkAndRequestPermissions();
-            }
+        edtNumber.setOnClickListener(view -> {
+            clearFocusAndHideKeyboard();
+            checkAndRequestPermissions();
         });
 
-        edtEmail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkPermissionAndShowAccounts();
-            }
+        edtEmail.setOnClickListener(v -> {
+            clearFocusAndHideKeyboard();
+            checkPermissionAndShowAccounts();
         });
 
-
-
-        /*linearSignUpWithGmail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signUpWithGoogle(false);
+        edtLastName.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) {
+                clearFocusAndHideKeyboard();
+                return true;
             }
-        });*/
-        layoutLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }
+            return false;
         });
 
+        layoutLogin.setOnClickListener(view -> {
+            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+            startActivity(intent);
+        });
 
-        butRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String name = edtFirstName.getText().toString().trim();
-                String lastname = edtLastName.getText().toString().trim();
-                String number = edtNumber.getText().toString().trim();
-                String email = edtEmail.getText().toString().trim();
+        butRegister.setOnClickListener(view -> {
+            if (isRequestInProgress) return;   // double tap ni aaputundi
 
+            // Validation anta RegisterValidator lo
+            RegisterValidator.Result result = RegisterValidator.validate(
+                    edtFirstName.getText().toString(),
+                    edtLastName.getText().toString(),
+                    edtEmail.getText().toString(),
+                    edtNumber.getText().toString());
 
-
-
-
-                if (isValidFirstName(name)
-                        && isValidLastName(lastname)
-                        && isValidEmail(email)
-                        && isValidMobileNumber(number)
-                       ) {
-
-                    validationMethod(name, lastname, number, email,isIOS);
-                    //Toast.makeText(RegisterActivity.this,"Data is Saved",Toast.LENGTH_LONG).show();
-                }
+            if (!result.isValid()) {
+                Toast.makeText(this, result.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                focusField(result.getField());
+                return;
             }
+
+            setRegisterBusy(true);
+            showLoadingDialog();   // loader start
+            validationMethod(result.getFirstName(), result.getLastName(),
+                    result.getMobile(), result.getEmail(), isIOS);
         });
     }
+
+    private void clearFocusAndHideKeyboard() {
+        View current = getCurrentFocus();
+        if (current != null) {
+            android.view.inputmethod.InputMethodManager imm =
+                    (android.view.inputmethod.InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) imm.hideSoftInputFromWindow(current.getWindowToken(), 0);
+            current.clearFocus();
+        }
+        findViewById(R.id.layout_form).requestFocus();   // cursor ekkada undadu
+    }
+
+    // ---------------------------------------------------------------------
+    // Button / busy state (busy = false ayite loader kuda close avtundi)
+    // ---------------------------------------------------------------------
+
+    private void setRegisterBusy(boolean busy) {
+        isRequestInProgress = busy;
+        butRegister.setEnabled(!busy);
+        if (!busy) hideLoadingDialog();
+    }
+
+    // ---------------------------------------------------------------------
+    // Error vachina field meeda focus
+    // ---------------------------------------------------------------------
+
+    private void focusField(RegisterValidator.Field field) {
+        switch (field) {
+            case FIRST_NAME: edtFirstName.requestFocus(); break;
+            case LAST_NAME:  edtLastName.requestFocus();  break;
+            case EMAIL:      edtEmail.requestFocus();     break;
+            case MOBILE:     edtNumber.requestFocus();    break;
+            default: break;
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // Permissions / SIM / email picker
+    // ---------------------------------------------------------------------
+
     private void checkAndRequestPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Check both permissions
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED ||
                     ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
 
@@ -189,25 +202,32 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
         }
     }
 
+    // ---------------------------------------------------------------------
+    // Loader
+    // ---------------------------------------------------------------------
+
     private void showLoadingDialog() {
+        if (isFinishing() || isDestroyed()) return;
+        if (loadingDialog != null && loadingDialog.isShowing()) return;   // double dialog radu
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(R.layout.dialog_loading); // we'll create this layout next
+        builder.setView(R.layout.dialog_loading);
         builder.setCancelable(false);
         loadingDialog = builder.create();
         loadingDialog.show();
     }
+
     private void hideLoadingDialog() {
         if (loadingDialog != null && loadingDialog.isShowing()) {
             loadingDialog.dismiss();
         }
     }
 
-
     private void checkPermissionAndShowAccounts() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.GET_ACCOUNTS}, 123);
+                    new String[]{Manifest.permission.GET_ACCOUNTS}, REQUEST_GET_ACCOUNTS_PERMISSION);
         } else {
             showAccountPicker();
         }
@@ -222,12 +242,9 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
         startActivityForResult(intent, REQUEST_CODE_EMAIL_PICKER);
     }
 
-
-
     @SuppressLint("NewApi")
-    // Fetch multiple SIM numbers
     private void getSimNumbers() {
-        showLoadingDialog(); // 👈 show loader
+        showLoadingDialog();
 
         ArrayList<String> simNumbers = new ArrayList<>();
 
@@ -237,7 +254,8 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
             return;
         }
 
-        SubscriptionManager subscriptionManager = (SubscriptionManager) getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
+        SubscriptionManager subscriptionManager =
+                (SubscriptionManager) getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
         List<SubscriptionInfo> subscriptionInfoList = subscriptionManager.getActiveSubscriptionInfoList();
 
         if (subscriptionInfoList == null || subscriptionInfoList.isEmpty()) {
@@ -245,7 +263,8 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
                 simRetryCount++;
                 new Handler(Looper.getMainLooper()).postDelayed(this::getSimNumbers, 2000);
             } else {
-                hideLoadingDialog(); // 👈 hide if failed
+                simRetryCount = 0;
+                hideLoadingDialog();
                 Toast.makeText(this, "Unable to fetch SIM details.", Toast.LENGTH_SHORT).show();
             }
             return;
@@ -255,7 +274,7 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
         for (SubscriptionInfo info : subscriptionInfoList) {
             String phoneNumber = info.getNumber();
             int simSlot = info.getSimSlotIndex();
-            String carrierName = info.getCarrierName().toString();
+            String carrierName = String.valueOf(info.getCarrierName());
 
             if (phoneNumber == null || phoneNumber.isEmpty()) {
                 phoneNumber = "Number not available";
@@ -264,22 +283,28 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
             simNumbers.add("SIM " + (simSlot + 1) + " (" + carrierName + "): " + phoneNumber);
         }
 
-        hideLoadingDialog(); // 👈 hide after success
+        hideLoadingDialog();
 
         if (!simNumbers.isEmpty()) {
             showSimSelectionDialog(simNumbers);
         }
     }
 
+    private void enableManualMobileEntry(String toastMessage) {
+        edtNumber.setFocusableInTouchMode(true);
+        edtNumber.setFocusable(true);
+        edtNumber.setCursorVisible(true);
+        edtNumber.requestFocus();
+        edtNumber.setText("");
+        edtNumber.setHint("Enter your mobile number");
+        Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show();
+    }
 
-    // Show SIM selection dialog
     private void showSimSelectionDialog(ArrayList<String> simNumbers) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Select SIM Number");
 
         boolean hasUnavailableNumber = false;
-
-        // Check if any SIM has "Number not available"
         for (String sim : simNumbers) {
             if (sim.contains("Number not available")) {
                 hasUnavailableNumber = true;
@@ -287,7 +312,6 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
             }
         }
 
-        // Only add "Enter manually" if any number is not available
         if (hasUnavailableNumber) {
             simNumbers.add("Enter manually");
         }
@@ -298,39 +322,18 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
             String selected = simNumbers.get(which);
 
             if (selected.equals("Enter manually")) {
-                // Enable manual input
-                edtNumber.setFocusableInTouchMode(true);
-                edtNumber.setFocusable(true);
-                edtNumber.setCursorVisible(true);
-                edtNumber.requestFocus();
-                edtNumber.setText("");
-                edtNumber.setHint("Enter your mobile number");
-                Toast.makeText(this, "Please enter your number manually.", Toast.LENGTH_SHORT).show();
+                enableManualMobileEntry("Please enter your number manually.");
             } else {
-                // Extract number
                 String[] parts = selected.split(": ");
-                String selectedSimNumber = (parts.length > 1) ? parts[1].trim() : selected;
+                String raw = (parts.length > 1) ? parts[1].trim() : selected;
+                String selectedSimNumber = RegisterValidator.normalizeMobile(raw);
 
-                // ✅ Remove +91 or 91 prefix automatically
-                if (selectedSimNumber.startsWith("+91")) {
-                    selectedSimNumber = selectedSimNumber.substring(3);
-                } else if (selectedSimNumber.startsWith("91") && selectedSimNumber.length() > 10) {
-                    selectedSimNumber = selectedSimNumber.substring(2);
-                }
-
-                // ✅ Ensure it’s exactly 10 digits
-                if (selectedSimNumber.length() == 10 && selectedSimNumber.matches("\\d{10}")) {
+                if (selectedSimNumber.matches("[6-9]\\d{9}")) {
                     edtNumber.setText(selectedSimNumber);
                     edtNumber.setFocusable(false);
                     edtNumber.setCursorVisible(false);
                 } else {
-                    edtNumber.setFocusableInTouchMode(true);
-                    edtNumber.setFocusable(true);
-                    edtNumber.setCursorVisible(true);
-                    edtNumber.requestFocus();
-                    edtNumber.setText("");
-                    edtNumber.setHint("Enter your mobile number");
-                    Toast.makeText(this, "Invalid SIM number detected. Please enter manually.", Toast.LENGTH_SHORT).show();
+                    enableManualMobileEntry("Invalid SIM number detected. Please enter manually.");
                 }
             }
         });
@@ -339,13 +342,12 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
         builder.show();
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == REQUEST_PHONE_NUMBER_PERMISSION) {
-            boolean allGranted = true;
+            boolean allGranted = grantResults.length > 0;
             for (int result : grantResults) {
                 if (result != PackageManager.PERMISSION_GRANTED) {
                     allGranted = false;
@@ -360,328 +362,262 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
             }
         }
 
-        if (requestCode == 123 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == REQUEST_GET_ACCOUNTS_PERMISSION
+                && grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             showAccountPicker();
         }
     }
 
-
-
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CREDENTIAL_PICKER_REQUEST && resultCode == RESULT_OK) {
-            if (data != null) {
-                Credential credential = data.getParcelableExtra(Credential.EXTRA_KEY);
-                if (credential != null) {
-                    edtNumber.setText(credential.getId());  // Display the retrieved number
-                }
+
+        if (requestCode == CREDENTIAL_PICKER_REQUEST && resultCode == RESULT_OK && data != null) {
+            Credential credential = data.getParcelableExtra(Credential.EXTRA_KEY);
+            if (credential != null) {
+                edtNumber.setText(RegisterValidator.normalizeMobile(credential.getId()));
             }
         }
 
-        if (requestCode == REQUEST_CODE_EMAIL_PICKER && resultCode == RESULT_OK) {
-            if (data != null) {
-                String selectedEmail = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-                if (selectedEmail != null) {
-                    edtEmail.setText(selectedEmail);
-                }
+        if (requestCode == REQUEST_CODE_EMAIL_PICKER && resultCode == RESULT_OK && data != null) {
+            String selectedEmail = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+            if (selectedEmail != null) {
+                edtEmail.setText(RegisterValidator.normalizeEmail(selectedEmail));
             }
         }
     }
-
-
-
-//    public void ShowHidePass(View view) {
-//
-//        if(view.getId()==R.id.show_pass_btn){
-//            if(edtPassword.getTransformationMethod().equals(PasswordTransformationMethod.getInstance())){
-//                ((ImageView)(view)).setImageResource(R.drawable.visiablityoff);
-//                //Show Password
-//                edtPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-//            }
-//            else{
-//                ((ImageView)(view)).setImageResource(R.drawable.visiablity);
-//                //Hide Password
-//                edtPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
-//            }
-//        }
-//    }
-
-//    public void ShowHideConfirmPass(View view) {
-//
-//        if(view.getId()==R.id.show_Confirmpass_btn){
-//            if(edtReenterPassword.getTransformationMethod().equals(PasswordTransformationMethod.getInstance())){
-//                ((ImageView)(view)).setImageResource(R.drawable.visiablityoff);
-//                //Show Password
-//                edtReenterPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-//            }
-//            else{
-//                ((ImageView)(view)).setImageResource(R.drawable.visiablity);
-//                //Hide Password
-//                edtReenterPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
-//            }
-//        }
-//    }
 
     private void signUpWithGoogle(boolean isSignUp) {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, isSignUp ? RC_SIGN_UP_WITH_GOOGLE : RC_SIGN_IN);
     }
 
-    private boolean doPasswordsMatch(String password, String reEnterPassword) {
+    // ---------------------------------------------------------------------
+    // Retrofit helper
+    // ---------------------------------------------------------------------
 
-
-        return password.equals(reEnterPassword);
-    }
-
-    private boolean isValidPassword(String password) {
-        if (TextUtils.isEmpty(password)){
-            Toast.makeText(RegisterActivity.this,"Please enter your password",Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        return password.length() >= 6;
-    }
-
-    private boolean isValidMobileNumber(String number) {
-        if (TextUtils.isEmpty(number)){
-            Toast.makeText(RegisterActivity.this,"Please enter your mobile number",Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        return Patterns.PHONE.matcher(number).matches();
-    }
-
-    private boolean isValidLastName(String lastname) {
-         if (TextUtils.isEmpty(lastname)){
-             Toast.makeText(RegisterActivity.this,"Please enter your last name",Toast.LENGTH_SHORT).show();
-             return false;
-         }
-         return true;
-
-    }
-
-    private boolean isValidFirstName(String name) {
-        if (TextUtils.isEmpty(name)) {
-            Toast.makeText(RegisterActivity.this, "Please enter your first name", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        return true;
-    }
-
-    private boolean isValidEmail(String email) {
-        if (TextUtils.isEmpty(email)){
-            Toast.makeText(RegisterActivity.this,"Please Enter Your emailId",Toast.LENGTH_SHORT).show();
-        }
-        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
-        return email.matches(emailPattern);
-    }
-
-    private void validationMethod(String name, String lastname, String number, String email, String isIOS) {
-        Log.d("API_REQUEST", "name = " + name);
-        Log.d("API_REQUEST", "lastname = " + lastname);
-        Log.d("API_REQUEST", "number = " + number);
-        Log.d("API_REQUEST", "email = " + email);
-        Log.d("API_REQUEST", "isIOS = " + isIOS);
-        //progressBar.setVisibility(View.VISIBLE);
+    private APiInterface createApiClient() {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient client = new OkHttpClient.Builder()
-                .sslSocketFactory(UnsafeTrustManager.createTrustAllSslSocketFactory(), UnsafeTrustManager.createTrustAllTrustManager())
-                .hostnameVerifier((hostname, session) -> true) // Bypasses hostname verification
+                .sslSocketFactory(UnsafeTrustManager.createTrustAllSslSocketFactory(),
+                        UnsafeTrustManager.createTrustAllTrustManager())
+                .hostnameVerifier((hostname, session) -> true)
                 .addInterceptor(loggingInterceptor)
                 .build();
+
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://www.ayyappatelugu.com/") // Replace with your API URL
+                .baseUrl("https://www.ayyappatelugu.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
-        APiInterface apiClient = retrofit.create(APiInterface.class);
-        RequestBody firstnamePart = RequestBody.create(MediaType.parse("text/plain"), name);
-        RequestBody lastnamePart = RequestBody.create(MediaType.parse("text/plain"), lastname);
-        RequestBody emailPart = RequestBody.create(MediaType.parse("text/plain"), email);
-        RequestBody mobileNumberPart = RequestBody.create(MediaType.parse("text/plain"), number);
 
-        RequestBody isIOSPart = RequestBody.create(MediaType.parse("text/plain"), isIOS);
-        Log.d("API_REQUEST",
-                "Sending -> name=" + name +
-                        ", lastname=" + lastname +
-                        ", mobile=" + number +
-                        ", email=" + email +
-                        ", isIOS=" + isIOS);
-        Call<UserDataResponse> call = apiClient.postData(firstnamePart, lastnamePart, emailPart, mobileNumberPart, isIOSPart);
+        return retrofit.create(APiInterface.class);
+    }
+
+    private RequestBody text(String value) {
+        return RequestBody.create(MediaType.parse("text/plain"), value == null ? "" : value);
+    }
+
+    // ---------------------------------------------------------------------
+    // Register API
+    // ---------------------------------------------------------------------
+
+    private void validationMethod(String name, String lastname, String number, String email, String isIOS) {
+        Log.d("API_REQUEST", "Sending -> name=" + name + ", lastname=" + lastname
+                + ", mobile=" + number + ", email=" + email + ", isIOS=" + isIOS);
+
+        APiInterface apiClient = createApiClient();
+
+        Call<UserDataResponse> call = apiClient.postData(
+                text(name), text(lastname), text(email), text(number), text(isIOS));
+
         call.enqueue(new Callback<UserDataResponse>() {
             @Override
             public void onResponse(Call<UserDataResponse> call, Response<UserDataResponse> response) {
-                Log.d("RegisterActivity", "Response received: " + response.toString());
+                if (isFinishing() || isDestroyed()) return;
 
-                if (response.isSuccessful()) {
-                    UserDataResponse userDataResponse = response.body();
-                    if (userDataResponse != null) { // Check for null response
-                        Log.d("RegisterActivity", "UserDataResponse received with error code: " + userDataResponse.getErrorCode());
-
-                        if (userDataResponse.getErrorCode().equals("203")) {
-                            Toast.makeText(RegisterActivity.this, "Email and Mobile Number already exist", Toast.LENGTH_SHORT).show();
-                        } else if (userDataResponse.getErrorCode().equals("200")) {
-                            String registerId = "";
-                            String otp = "";
-                            List<UserDataResponse.Result> list = userDataResponse.getResult();
-                            for (UserDataResponse.Result result : list) {
-                                registerId = result.getRegisterId();
-                                otp = result.getOtp();
-                            }
-                            Log.d("RegisterActivity", "Registration successful. Register ID: " + registerId + ", OTP: " + otp);
-                            Toast.makeText(RegisterActivity.this, "User Registration Completed Successfully", Toast.LENGTH_LONG).show();
-                            conformationDialog(registerId, otp);
-                        }
-                    } else {
-                        Log.e("RegisterActivity", "UserDataResponse is null.");
-                        Toast.makeText(RegisterActivity.this, "Data Error: No response received", Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    Log.e("RegisterActivity", "Response error: " + response.errorBody().toString());
+                if (!response.isSuccessful()) {
+                    Log.e("RegisterActivity", "HTTP error: " + response.code());
                     Toast.makeText(RegisterActivity.this, "Data Error", Toast.LENGTH_LONG).show();
+                    setRegisterBusy(false);
+                    return;
+                }
+
+                UserDataResponse body = response.body();
+                if (body == null || body.getErrorCode() == null) {
+                    Log.e("RegisterActivity", "UserDataResponse is null.");
+                    Toast.makeText(RegisterActivity.this, "Data Error: No response received", Toast.LENGTH_LONG).show();
+                    setRegisterBusy(false);
+                    return;
+                }
+
+                String errorCode = body.getErrorCode();
+                Log.d("RegisterActivity", "errorCode = " + errorCode);
+
+                if ("203".equals(errorCode)) {
+                    // Server cheppina asalu message ne chupinchali
+                    String msg = body.getErrorMessage();
+                    if (msg == null || msg.trim().isEmpty()) {
+                        msg = "Email or Mobile Number already exists";
+                    }
+                    Toast.makeText(RegisterActivity.this, msg, Toast.LENGTH_LONG).show();
+                    setRegisterBusy(false);
+
+                } else if ("200".equals(errorCode)) {
+                    String registerId = "";
+                    String otp = "";
+                    List<UserDataResponse.Result> list = body.getResult();
+                    if (list != null) {
+                        for (UserDataResponse.Result result : list) {
+                            registerId = result.getRegisterId();
+                            otp = result.getOtp();
+                        }
+                    }
+                    Log.d("RegisterActivity", "Register ID: " + registerId);
+
+                    hideLoadingDialog();   // dialog mundu loader close
+                    // button disabled ga untundi; dialog lo cancel chesthe enable avutundi
+                    conformationDialog(registerId, otp);
+
+                } else {
+                    String msg = body.getErrorMessage();
+                    if (msg == null || msg.trim().isEmpty()) {
+                        msg = "Registration failed. Please try again.";
+                    }
+                    Toast.makeText(RegisterActivity.this, msg, Toast.LENGTH_LONG).show();
+                    setRegisterBusy(false);
                 }
             }
 
             @Override
             public void onFailure(Call<UserDataResponse> call, Throwable t) {
+                if (isFinishing() || isDestroyed()) return;
                 Log.e("RegisterActivity", "Network Error: " + t.getMessage());
                 Toast.makeText(RegisterActivity.this, "Network Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                setRegisterBusy(false);
             }
         });
     }
+
+    // ---------------------------------------------------------------------
+    // Confirmation dialog
+    // ---------------------------------------------------------------------
 
     private void conformationDialog(String registerId, String otp) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_confirmation, null);
         builder.setView(dialogView);
+        builder.setCancelable(false);
 
         CheckBox checkBox = dialogView.findViewById(R.id.simpleCheckBox);
         Button cancelButton = dialogView.findViewById(R.id.but_cancel);
         Button acceptButton = dialogView.findViewById(R.id.but_accept);
+        acceptButton.setEnabled(false);
 
-        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            // Enable or disable the "Accept" button based on checkbox state
-            acceptButton.setEnabled(isChecked);
-        });
+        // Okkasare create cheyali; ade dialog ni show/dismiss cheyali
+        AlertDialog dialog = builder.create();
 
-        // Set up listener for the "Accept" button
+        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> acceptButton.setEnabled(isChecked));
+
         acceptButton.setOnClickListener(v -> {
-            // Check if the user has agreed to the privacy policy
-            if (checkBox.isChecked()) {
-                otpVerfication(registerId,otp);
-            } else {
-                // User didn't agree, show a message or take appropriate action
+            if (!checkBox.isChecked()) {
                 Toast.makeText(this, "Please agree to the privacy policy", Toast.LENGTH_SHORT).show();
+                return;
             }
-
-            // Dismiss the dialog
-            builder.create().dismiss();
+            acceptButton.setEnabled(false);   // malli nokkakunda
+            dialog.dismiss();
+            showLoadingDialog();              // OTP verify kosam loader
+            otpVerfication(registerId, otp);
         });
 
-        // Set up listener for the "Cancel" button
         cancelButton.setOnClickListener(v -> {
-            // Perform any necessary actions on cancel button click
-            // For example, dismiss the dialog
-            builder.create().dismiss();
+            dialog.dismiss();
+            setRegisterBusy(false);
         });
 
-        // Show the dialog
-        builder.create().show();
+        dialog.show();
     }
 
+    // ---------------------------------------------------------------------
+    // OTP verification
+    // ---------------------------------------------------------------------
+
     private void otpVerfication(String registerId, String otp) {
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        APiInterface apiClient = createApiClient();
 
-        OkHttpClient client = new OkHttpClient.Builder()
-                .sslSocketFactory(UnsafeTrustManager.createTrustAllSslSocketFactory(), UnsafeTrustManager.createTrustAllTrustManager())
-                .hostnameVerifier((hostname, session) -> true) // Bypasses hostname verification
-                .addInterceptor(loggingInterceptor)
-                .build();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://www.ayyappatelugu.com/") // Replace with your API URL
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
-                .build();
-        APiInterface apiClient = retrofit.create(APiInterface.class);
-        RequestBody registerIdPart = RequestBody.create(MediaType.parse("text/plain"), registerId);
-        RequestBody otpPart = RequestBody.create(MediaType.parse("text/plain"), otp);
-
-        Call<VerifyUserDataResponse> call = apiClient.verifyData(registerIdPart,otpPart);
+        Call<VerifyUserDataResponse> call = apiClient.verifyData(text(registerId), text(otp));
         call.enqueue(new Callback<VerifyUserDataResponse>() {
             @Override
             public void onResponse(Call<VerifyUserDataResponse> call, Response<VerifyUserDataResponse> response) {
-                if (response.isSuccessful()){
-                    VerifyUserDataResponse verifyUserDataResponse=response.body();
-                    if (verifyUserDataResponse.getErrorCode().equals("201")){
-                        Toast.makeText(RegisterActivity.this,"Enter OTP is Invalid",Toast.LENGTH_LONG).show();
-                    }else if (verifyUserDataResponse.getErrorCode().equals("200")){
-                        Toast.makeText(RegisterActivity.this, "User Registration Completed Successfully", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                        startActivity(intent);
-                    }
+                if (isFinishing() || isDestroyed()) return;
+
+                VerifyUserDataResponse body = response.body();
+
+                if (!response.isSuccessful() || body == null || body.getErrorCode() == null) {
+                    Toast.makeText(RegisterActivity.this, "Verification failed. Please try again.", Toast.LENGTH_LONG).show();
+                    setRegisterBusy(false);
+                    return;
+                }
+
+                if ("201".equals(body.getErrorCode())) {
+                    Toast.makeText(RegisterActivity.this, "Entered OTP is invalid", Toast.LENGTH_LONG).show();
+                    setRegisterBusy(false);
+                } else if ("200".equals(body.getErrorCode())) {
+                    hideLoadingDialog();   // success: loader close
+                    Toast.makeText(RegisterActivity.this, "User Registration Completed Successfully", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(RegisterActivity.this, "Verification failed. Please try again.", Toast.LENGTH_LONG).show();
+                    setRegisterBusy(false);
                 }
             }
 
             @Override
             public void onFailure(Call<VerifyUserDataResponse> call, Throwable t) {
-
+                if (isFinishing() || isDestroyed()) return;
+                Toast.makeText(RegisterActivity.this, "Network Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                setRegisterBusy(false);
             }
         });
     }
-    private void performSignUp(GoogleSignInAccount account) {
-        // Extract information from the account and perform sign-up
 
+    // ---------------------------------------------------------------------
+    // Google sign-up (existing, currently unused)
+    // ---------------------------------------------------------------------
+
+    private void performSignUp(GoogleSignInAccount account) {
         String displayName = account.getDisplayName();
         String email = account.getEmail();
         String profilepic = String.valueOf(account.getPhotoUrl());
 
-        // Now, send this information to your server for user registration
         sendSignUpDataToServer(displayName, email, profilepic);
     }
 
     private void sendSignUpDataToServer(String displayName, String email, String profilepic) {
+        APiInterface apiClient = createApiClient();
 
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(loggingInterceptor)
-                .build();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://www.ayyappatelugu.com/") // Replace with your API URL
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
-                .build();
-        APiInterface apiClient = retrofit.create(APiInterface.class);
-
-        RequestBody displayPar = RequestBody.create(MediaType.parse("text/plain"), displayName);
-        RequestBody emailPart = RequestBody.create(MediaType.parse("text/plain"), email);
-        RequestBody photoPart = RequestBody.create(MediaType.parse("text/plain"), profilepic);
-
-        Call<SignUpWithGmail> call = apiClient.PostSignUp(displayPar, emailPart, photoPart);
+        Call<SignUpWithGmail> call = apiClient.PostSignUp(text(displayName), text(email), text(profilepic));
         call.enqueue(new Callback<SignUpWithGmail>() {
             @Override
             public void onResponse(Call<SignUpWithGmail> call, Response<SignUpWithGmail> response) {
-                if (response.isSuccessful()) {
-
+                if (response.isSuccessful() && response.body() != null) {
                     SignUpWithGmail signUpWithGmail = response.body();
-                    if (signUpWithGmail.getErrorCode().equals("200")) {
+                    if ("200".equals(signUpWithGmail.getErrorCode())) {
                         String displayName = "";
                         String email = "";
                         String photo = "";
                         List<SignUpWithGmail.Result> results = signUpWithGmail.getResult();
-                        for (int i = 0; i < results.size(); i++) {
-                            displayName = results.get(i).getFullName();
-                            email = results.get(i).getUserEmail();
-                            photo = results.get(i).getProfilePic();
-
-                            Log.e("Reddy", "displayname: " + displayName);
-                            Log.e("Reddy", "email: " + email);
-                            Log.e("Reddy", "photo: " + photo);
-
+                        if (results != null) {
+                            for (int i = 0; i < results.size(); i++) {
+                                displayName = results.get(i).getFullName();
+                                email = results.get(i).getUserEmail();
+                                photo = results.get(i).getProfilePic();
+                            }
                         }
 
                         Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
@@ -689,33 +625,28 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
                         intent.putExtra("email", email);
                         intent.putExtra("profilepic", photo);
                         startActivity(intent);
-
-
                     }
-
                 } else {
                     Toast.makeText(RegisterActivity.this, "Data Error", Toast.LENGTH_LONG).show();
                 }
-
             }
 
             @Override
             public void onFailure(Call<SignUpWithGmail> call, Throwable t) {
-
+                Log.e("RegisterActivity", "SignUp failure: " + t.getMessage());
             }
         });
     }
 
-
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        // Connection failed, show error message
-        Toast.makeText(RegisterActivity.this, "Connection to Google Play services failed. Please try again.", Toast.LENGTH_LONG).show();
+        Toast.makeText(RegisterActivity.this,
+                "Connection to Google Play services failed. Please try again.", Toast.LENGTH_LONG).show();
     }
 
-
-
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        hideLoadingDialog();   // window leak radu
+    }
 }
-
-

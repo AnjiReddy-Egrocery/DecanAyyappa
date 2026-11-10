@@ -33,7 +33,7 @@ public class ViewAnadanamDetailsActivity extends AppCompatActivity {
     TextView txtname, txttname, txtstarttime, txtendTime, txtlocation;
     ImageView imageView;
     ImageView imageAnadanam,imageNityaPooja;
-    TextView textAndanam,txtNityaPooja;
+    TextView textAndanam,txtNityaPooja,txtSendAnaPrasadmDetails;
 
     String annadhanamId;
 
@@ -108,6 +108,14 @@ public class ViewAnadanamDetailsActivity extends AppCompatActivity {
         });
 
 
+        txtSendAnaPrasadmDetails= findViewById(R.id.txt_send_anaprasad_details);
+        txtSendAnaPrasadmDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ViewAnadanamDetailsActivity.this,SendAnaPrasadamDetailsActivity.class);
+                startActivity(intent);
+            }
+        });
 
         imageView = findViewById(R.id.img);
         txtname = findViewById(R.id.txt_fname);

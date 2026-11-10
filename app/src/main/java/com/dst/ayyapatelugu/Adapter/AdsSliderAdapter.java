@@ -1,20 +1,15 @@
 package com.dst.ayyapatelugu.Adapter;
 
-import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.dst.ayyapatelugu.Model.AddImageResponse;
-import com.dst.ayyapatelugu.Services.LinkRouter;
 
 import java.util.List;
 
@@ -49,11 +44,7 @@ public class AdsSliderAdapter extends RecyclerView.Adapter<AdsSliderAdapter.VH> 
                 .load(baseUrl + item.image)
                 .into(iv);
 
-        iv.setOnClickListener(v -> openLink(item.adimageUrl));
-    }
-
-    private void openLink(String url) {
-        LinkRouter.open(context, url);   // app:// -> inside app, otherwise browser
+        // Click handling HomeActivity lo untundi (API track chesi, tarvata LinkRouter tho redirect)
     }
 
     @Override

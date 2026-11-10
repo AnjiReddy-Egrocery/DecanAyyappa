@@ -77,7 +77,7 @@ public class AyyappaPetamListActivity extends AppCompatActivity {
     SearchView searchView;
 
     ImageView imageAnadanam,imageNityaPooja;
-    TextView textAndanam,txtNityaPooja;
+    TextView textAndanam,txtNityaPooja,txtSendPoojaPetamDetails;
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -140,6 +140,15 @@ public class AyyappaPetamListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(AyyappaPetamListActivity.this,NityaPoojaActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        txtSendPoojaPetamDetails= findViewById(R.id.txt_send_guru_details);
+        txtSendPoojaPetamDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AyyappaPetamListActivity.this,SendPoojaPetamDetailsActivity.class);
                 startActivity(intent);
             }
         });

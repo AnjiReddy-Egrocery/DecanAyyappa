@@ -39,7 +39,7 @@ public class AyyapaPetamDetailsActivity extends AppCompatActivity {
     TextView txtFname, txtDname, txtVillage, txtnumber, txtemail, txtSpecilization, txtDiscription, txtGName;
     ImageView imageView;
     ImageView imageAnadanam,imageNityaPooja;
-    TextView textAndanam,txtNityaPooja;
+    TextView textAndanam,txtNityaPooja,txtSendPoojaPetamDetails;
     String decoratorId;
     String imagePath;
 
@@ -115,7 +115,14 @@ public class AyyapaPetamDetailsActivity extends AppCompatActivity {
             }
         });
 
-
+        txtSendPoojaPetamDetails= findViewById(R.id.txt_send_guru_details);
+        txtSendPoojaPetamDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AyyapaPetamDetailsActivity.this,SendPoojaPetamDetailsActivity.class);
+                startActivity(intent);
+            }
+        });
         imageView = findViewById(R.id.img);
         txtDname = findViewById(R.id.txt_name);
         txtFname = findViewById(R.id.txt_fname);

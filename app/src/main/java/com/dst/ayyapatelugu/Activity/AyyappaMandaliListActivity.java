@@ -74,7 +74,7 @@ public class AyyappaMandaliListActivity extends AppCompatActivity {
     private Retrofit retrofit;
 
     ImageView imageAnadanam,imageNityaPooja;
-    TextView textAndanam,txtNityaPooja;
+    TextView textAndanam,txtNityaPooja,txtSendMandaliDetails;
 
 
 
@@ -138,6 +138,15 @@ public class AyyappaMandaliListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(AyyappaMandaliListActivity.this,NityaPoojaActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        txtSendMandaliDetails= findViewById(R.id.txt_send_guru_details);
+        txtSendMandaliDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AyyappaMandaliListActivity.this,SendbajanaDetailsActivity.class);
                 startActivity(intent);
             }
         });

@@ -9,16 +9,12 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.Spanned;
-import android.text.util.Linkify;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.dst.ayyapatelugu.HomeActivity;
-import com.dst.ayyapatelugu.Model.BajanaMandaliDetailsResponse;
 import com.dst.ayyapatelugu.Model.TourseDetailsResponse;
 import com.dst.ayyapatelugu.R;
 import com.dst.ayyapatelugu.Services.APiInterface;
@@ -37,7 +33,7 @@ public class AyyappaTourseActivity extends AppCompatActivity {
 
     Toolbar toolbar;
 
-    TextView txtName, txtdays, txtdetails, txtamount;
+    TextView txtName;
     ImageView imageView;
 
     ImageView imageAnadanam,imageNityaPooja;
@@ -45,6 +41,7 @@ public class AyyappaTourseActivity extends AppCompatActivity {
 
     String tourpackageId;
     String imagePath;
+    LinearLayout layoutDays, layoutDevotees, layoutAmount;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint("MissingInflatedId")
@@ -116,9 +113,9 @@ public class AyyappaTourseActivity extends AppCompatActivity {
 
 
         txtName = findViewById(R.id.txt);
-        txtdays = findViewById(R.id.txt_add);
-        txtdetails = findViewById(R.id.txt_details);
-        txtamount = findViewById(R.id.txt_amount);
+        layoutDays = findViewById(R.id.layout_days);
+        layoutDevotees = findViewById(R.id.layout_devotees);
+        layoutAmount = findViewById(R.id.layout_amount);
         imageView = findViewById(R.id.img);
 
         Bundle bundle = getIntent().getExtras();
@@ -166,13 +163,22 @@ public class AyyappaTourseActivity extends AppCompatActivity {
 
                         TourseDetailsResponse.TourseItem item = data.result.get(0);
 
+                        String days = item.getDays();
+                        String details = item.getDevotees();
+                        String Amount = item.getAmount();
+
                         txtName.setText(item.getNameOfPlace());
-                        txtdays.setText(item.getDays());
-                        txtdetails.setText(item.getDevotees());
-                        txtamount.setText(item.getAmount());
+                        layoutDays.setVisibility(isPositive(days) ? View.VISIBLE : View.GONE);
+                        layoutDevotees.setVisibility(isPositive(details) ? View.VISIBLE : View.GONE);
+                        layoutAmount.setVisibility(isPositive(Amount) ? View.VISIBLE : View.GONE);
+
+                        String base = data.imageUrl;
+                        if (base != null && !base.contains("/img/")) {
+                            base = base.replace("/assets/", "/assets/img/");
+                        }
+                        String fullImageUrl = base + item.image;
 
 
-                        String fullImageUrl = data.imageUrl + item.image;
 
 
 
@@ -193,5 +199,14 @@ public class AyyappaTourseActivity extends AppCompatActivity {
                 Log.e("API_ERROR", t.getMessage());
             }
         });
+    }
+
+    private boolean isPositive(String days) {
+        if (days == null) return false;
+        try {
+            return Double.parseDouble(days.trim().replace(",", "")) > 0;
+        } catch (NumberFormatException e) {
+            return false;   // empty, null, "abc" anni hide
+        }
     }
 }

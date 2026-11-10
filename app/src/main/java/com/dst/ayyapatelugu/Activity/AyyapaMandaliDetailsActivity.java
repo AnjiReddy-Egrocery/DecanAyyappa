@@ -51,7 +51,7 @@ public class AyyapaMandaliDetailsActivity extends AppCompatActivity {
     ViewPager viewPager;
 
     ImageView imageAnadanam,imageNityaPooja;
-    TextView textAndanam,txtNityaPooja;
+    TextView textAndanam,txtNityaPooja,txtSendMandaliDetails;
 
     String bajanamandaliid;
     String imagePath;
@@ -126,6 +126,16 @@ public class AyyapaMandaliDetailsActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        txtSendMandaliDetails= findViewById(R.id.txt_send_guru_details);
+        txtSendMandaliDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AyyapaMandaliDetailsActivity.this,SendbajanaDetailsActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
 
         txtname = findViewById(R.id.txt_name);

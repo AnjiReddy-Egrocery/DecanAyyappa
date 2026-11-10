@@ -43,7 +43,7 @@ public class GuruSwamiDetailsActivity extends AppCompatActivity {
     ImageView imageView;
 
     ImageView imageAnadanam,imageNityaPooja;
-    TextView textAndanam,txtNityaPooja;
+    TextView textAndanam,txtNityaPooja,txtSendGuruDetails;
     String guruswamiId;
     String imagePath;
 
@@ -55,8 +55,7 @@ public class GuruSwamiDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_guru_swami_details);
 
         toolbar = findViewById(R.id.toolbar);
-    /*    toolbar.setLogo(R.drawable.user_profile_background);
-
+       /* toolbar.setLogo(R.drawable.user_profile_background);
         toolbar.setTitle("www.ayyappatelugu.com");
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));*/
 
@@ -66,6 +65,7 @@ public class GuruSwamiDetailsActivity extends AppCompatActivity {
         }
 
         Log.d("FCM_DEBUG", "Final: " + guruswamiId);
+
         setSupportActionBar(toolbar);
         ;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -79,6 +79,17 @@ public class GuruSwamiDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+
+
+
+        txtSendGuruDetails= findViewById(R.id.txt_send_guru_details);
+        txtSendGuruDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(GuruSwamiDetailsActivity.this,SendGuruDetailsActivity.class);
+                startActivity(intent);
             }
         });
 

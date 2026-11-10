@@ -54,7 +54,7 @@ public class ViewAllTemplesActivity extends AppCompatActivity {
     TabLayout tabLayout;
     ViewPager viewPager;
     ImageView imageAnadanam,imageNityaPooja;
-    TextView textAndanam,txtNityaPooja;
+    TextView textAndanam,txtNityaPooja,txtSendTemplesDetails;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +79,16 @@ public class ViewAllTemplesActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        txtSendTemplesDetails= findViewById(R.id.txt_send_temples_details);
+        txtSendTemplesDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ViewAllTemplesActivity.this,SendTemplesDetailsActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);

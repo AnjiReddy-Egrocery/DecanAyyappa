@@ -33,7 +33,8 @@ public class ViewTempleListDetailsActivity extends AppCompatActivity {
     TextView txtname, txttname, txtstarttime, txtendTime, txtlocation;
     ImageView imageView;
     ImageView imageAnadanam,imageNityaPooja;
-    TextView textAndanam,txtNityaPooja;
+    TextView textAndanam,txtNityaPooja,txtSendAyyappaTemplesDetails;
+    ;
 
     String templeId;
 
@@ -106,6 +107,14 @@ public class ViewTempleListDetailsActivity extends AppCompatActivity {
             }
         });
 
+        txtSendAyyappaTemplesDetails= findViewById(R.id.txt_send_ayyappatemples_details);
+        txtSendAyyappaTemplesDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ViewTempleListDetailsActivity.this,SendTemplesDetailsActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         imageView = findViewById(R.id.img);

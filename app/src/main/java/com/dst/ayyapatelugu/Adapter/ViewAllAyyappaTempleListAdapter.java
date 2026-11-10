@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dst.ayyapatelugu.Activity.ViewAllAyyappaTemplesActivity;
+import com.dst.ayyapatelugu.Activity.ViewAyyappaTempleListDetailsActivity;
 import com.dst.ayyapatelugu.Activity.ViewTempleListDetailsActivity;
 import com.dst.ayyapatelugu.Model.AyyaTempleListModel;
 import com.dst.ayyapatelugu.Model.BooksModelResult;
@@ -69,7 +70,7 @@ public class ViewAllAyyappaTempleListAdapter extends RecyclerView.Adapter<ViewAl
         holder.layoutAllAyyapaTemples.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, ViewTempleListDetailsActivity.class);
+                Intent intent = new Intent(mContext, ViewAyyappaTempleListDetailsActivity.class);
                 intent.putExtra("templeId",id);
                 intent.putExtra("Name",name);
                 intent.putExtra("TName",tName);
